@@ -13,6 +13,18 @@
 		D00C14292CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D00C14272CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld */; };
 		D00C142B2CBA7DD000AF2BD9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D00C142A2CBA7DD000AF2BD9 /* Assets.xcassets */; };
 		D00C142E2CBA7DD000AF2BD9 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = D00C142D2CBA7DD000AF2BD9 /* Base */; };
+		D00C14392CBA88B300AF2BD9 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C14382CBA88B300AF2BD9 /* NetworkService.swift */; };
+		D00C143B2CBA88D900AF2BD9 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C143A2CBA88D900AF2BD9 /* CoreDataManager.swift */; };
+		D00C143D2CBA88E900AF2BD9 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C143C2CBA88E900AF2BD9 /* DataManager.swift */; };
+		D00C143F2CBA89E800AF2BD9 /* NetworkProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C143E2CBA89E800AF2BD9 /* NetworkProtocol.swift */; };
+		D00C14412CBA8A3700AF2BD9 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C14402CBA8A3700AF2BD9 /* JSON.swift */; };
+		D00C14432CBA8D4B00AF2BD9 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C14422CBA8D4B00AF2BD9 /* NetworkManager.swift */; };
+		D00C14452CBA8D6100AF2BD9 /* NetworkMockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C14442CBA8D6100AF2BD9 /* NetworkMockManager.swift */; };
+		D00C14472CBA8F0300AF2BD9 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C14462CBA8F0300AF2BD9 /* NetworkError.swift */; };
+		D00C14492CBA8FD800AF2BD9 /* APIfunc.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C14482CBA8FD800AF2BD9 /* APIfunc.swift */; };
+		D00C144B2CBAC4F800AF2BD9 /* PetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */; };
+		D00C144D2CBAC54A00AF2BD9 /* NavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144C2CBAC54A00AF2BD9 /* NavBarView.swift */; };
+		D00C144F2CBAC84F00AF2BD9 /* PetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144E2CBAC84E00AF2BD9 /* PetModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +36,18 @@
 		D00C142A2CBA7DD000AF2BD9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D00C142D2CBA7DD000AF2BD9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D00C142F2CBA7DD000AF2BD9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D00C14382CBA88B300AF2BD9 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		D00C143A2CBA88D900AF2BD9 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		D00C143C2CBA88E900AF2BD9 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		D00C143E2CBA89E800AF2BD9 /* NetworkProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProtocol.swift; sourceTree = "<group>"; };
+		D00C14402CBA8A3700AF2BD9 /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
+		D00C14422CBA8D4B00AF2BD9 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		D00C14442CBA8D6100AF2BD9 /* NetworkMockManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMockManager.swift; sourceTree = "<group>"; };
+		D00C14462CBA8F0300AF2BD9 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
+		D00C14482CBA8FD800AF2BD9 /* APIfunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIfunc.swift; sourceTree = "<group>"; };
+		D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetProfileViewController.swift; sourceTree = "<group>"; };
+		D00C144C2CBAC54A00AF2BD9 /* NavBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarView.swift; sourceTree = "<group>"; };
+		D00C144E2CBAC84E00AF2BD9 /* PetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,15 +80,51 @@
 		D00C141D2CBA7DCE00AF2BD9 /* TheLastChance */ = {
 			isa = PBXGroup;
 			children = (
+				D00C14372CBA82C600AF2BD9 /* Models */,
+				D00C14362CBA82BC00AF2BD9 /* Views */,
+				D00C14352CBA82A900AF2BD9 /* ViewControllers */,
 				D00C141E2CBA7DCE00AF2BD9 /* AppDelegate.swift */,
 				D00C14202CBA7DCE00AF2BD9 /* SceneDelegate.swift */,
-				D00C14222CBA7DCE00AF2BD9 /* ViewController.swift */,
 				D00C142A2CBA7DD000AF2BD9 /* Assets.xcassets */,
 				D00C142C2CBA7DD000AF2BD9 /* LaunchScreen.storyboard */,
 				D00C142F2CBA7DD000AF2BD9 /* Info.plist */,
 				D00C14272CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld */,
 			);
 			path = TheLastChance;
+			sourceTree = "<group>";
+		};
+		D00C14352CBA82A900AF2BD9 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				D00C14222CBA7DCE00AF2BD9 /* ViewController.swift */,
+				D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		D00C14362CBA82BC00AF2BD9 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				D00C144C2CBAC54A00AF2BD9 /* NavBarView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D00C14372CBA82C600AF2BD9 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D00C143C2CBA88E900AF2BD9 /* DataManager.swift */,
+				D00C143E2CBA89E800AF2BD9 /* NetworkProtocol.swift */,
+				D00C14382CBA88B300AF2BD9 /* NetworkService.swift */,
+				D00C14422CBA8D4B00AF2BD9 /* NetworkManager.swift */,
+				D00C14442CBA8D6100AF2BD9 /* NetworkMockManager.swift */,
+				D00C14462CBA8F0300AF2BD9 /* NetworkError.swift */,
+				D00C143A2CBA88D900AF2BD9 /* CoreDataManager.swift */,
+				D00C14402CBA8A3700AF2BD9 /* JSON.swift */,
+				D00C14482CBA8FD800AF2BD9 /* APIfunc.swift */,
+				D00C144E2CBAC84E00AF2BD9 /* PetModel.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,10 +197,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D00C143B2CBA88D900AF2BD9 /* CoreDataManager.swift in Sources */,
 				D00C14232CBA7DCE00AF2BD9 /* ViewController.swift in Sources */,
+				D00C144D2CBAC54A00AF2BD9 /* NavBarView.swift in Sources */,
+				D00C144F2CBAC84F00AF2BD9 /* PetModel.swift in Sources */,
+				D00C14432CBA8D4B00AF2BD9 /* NetworkManager.swift in Sources */,
 				D00C14292CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld in Sources */,
+				D00C14412CBA8A3700AF2BD9 /* JSON.swift in Sources */,
+				D00C143D2CBA88E900AF2BD9 /* DataManager.swift in Sources */,
+				D00C143F2CBA89E800AF2BD9 /* NetworkProtocol.swift in Sources */,
+				D00C14392CBA88B300AF2BD9 /* NetworkService.swift in Sources */,
+				D00C144B2CBAC4F800AF2BD9 /* PetProfileViewController.swift in Sources */,
+				D00C14492CBA8FD800AF2BD9 /* APIfunc.swift in Sources */,
 				D00C141F2CBA7DCE00AF2BD9 /* AppDelegate.swift in Sources */,
+				D00C14472CBA8F0300AF2BD9 /* NetworkError.swift in Sources */,
 				D00C14212CBA7DCE00AF2BD9 /* SceneDelegate.swift in Sources */,
+				D00C14452CBA8D6100AF2BD9 /* NetworkMockManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
