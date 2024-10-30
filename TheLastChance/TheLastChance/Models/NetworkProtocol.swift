@@ -8,6 +8,6 @@
 import Foundation
 
 protocol NetworkProtocol {
-    func test(completion: @escaping (Result<JSON.Test, NetworkError>) -> Void)
-    func getPetProfile(completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void)
+    func getPets(userId: Int, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void)
+    func getPetProfile(petId: Int, completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void)
 }

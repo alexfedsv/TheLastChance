@@ -13,7 +13,7 @@ class DataManager {
         case mock
     }
     static let shared = DataManager()
-    var dataSource: DataSource = .net {
+    var dataSource: DataSource = .mock {
         didSet {
             updateProtocols()
         }

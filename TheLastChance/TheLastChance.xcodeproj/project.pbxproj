@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		D00C141F2CBA7DCE00AF2BD9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C141E2CBA7DCE00AF2BD9 /* AppDelegate.swift */; };
 		D00C14212CBA7DCE00AF2BD9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C14202CBA7DCE00AF2BD9 /* SceneDelegate.swift */; };
-		D00C14232CBA7DCE00AF2BD9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C14222CBA7DCE00AF2BD9 /* ViewController.swift */; };
+		D00C14232CBA7DCE00AF2BD9 /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C14222CBA7DCE00AF2BD9 /* UserProfileViewController.swift */; };
 		D00C14292CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D00C14272CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld */; };
 		D00C142B2CBA7DD000AF2BD9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D00C142A2CBA7DD000AF2BD9 /* Assets.xcassets */; };
 		D00C142E2CBA7DD000AF2BD9 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = D00C142D2CBA7DD000AF2BD9 /* Base */; };
@@ -24,14 +24,25 @@
 		D00C14492CBA8FD800AF2BD9 /* APIfunc.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C14482CBA8FD800AF2BD9 /* APIfunc.swift */; };
 		D00C144B2CBAC4F800AF2BD9 /* PetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */; };
 		D00C144D2CBAC54A00AF2BD9 /* NavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144C2CBAC54A00AF2BD9 /* NavBarView.swift */; };
-		D00C144F2CBAC84F00AF2BD9 /* PetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144E2CBAC84E00AF2BD9 /* PetModel.swift */; };
+		D00C144F2CBAC84F00AF2BD9 /* PetProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144E2CBAC84E00AF2BD9 /* PetProfileModel.swift */; };
+		D0BAC0AE2CD0E94200ACEFE6 /* UserProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0AD2CD0E94200ACEFE6 /* UserProfileModel.swift */; };
+		D0BAC0B02CD0F24600ACEFE6 /* PetsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0AF2CD0F24600ACEFE6 /* PetsModel.swift */; };
+		D0BAC0B22CD0F5F100ACEFE6 /* PetCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0B12CD0F5F100ACEFE6 /* PetCollectionViewCell.swift */; };
+		D0BAC0B52CD10BC200ACEFE6 /* MockPets.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0B42CD10BC200ACEFE6 /* MockPets.swift */; };
+		D0BAC0B72CD10BD200ACEFE6 /* MockUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0B62CD10BD200ACEFE6 /* MockUser.swift */; };
+		D0BAC0B92CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0B82CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift */; };
+		D0BAC0BB2CD1225700ACEFE6 /* MockImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0BA2CD1225700ACEFE6 /* MockImageHelper.swift */; };
+		D0F632312CD2512B000CDF34 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D0F632302CD2512B000CDF34 /* Colors.xcassets */; };
+		D0F632352CD2B3C8000CDF34 /* ServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */; };
+		D0F632372CD2B445000CDF34 /* ServicesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F632362CD2B445000CDF34 /* ServicesModel.swift */; };
+		D0F632392CD2B626000CDF34 /* ServicesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F632382CD2B626000CDF34 /* ServicesCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D00C141B2CBA7DCE00AF2BD9 /* TheLastChance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TheLastChance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D00C141E2CBA7DCE00AF2BD9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D00C14202CBA7DCE00AF2BD9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		D00C14222CBA7DCE00AF2BD9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		D00C14222CBA7DCE00AF2BD9 /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		D00C14282CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TheLastChance.xcdatamodel; sourceTree = "<group>"; };
 		D00C142A2CBA7DD000AF2BD9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D00C142D2CBA7DD000AF2BD9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -47,7 +58,18 @@
 		D00C14482CBA8FD800AF2BD9 /* APIfunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIfunc.swift; sourceTree = "<group>"; };
 		D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetProfileViewController.swift; sourceTree = "<group>"; };
 		D00C144C2CBAC54A00AF2BD9 /* NavBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarView.swift; sourceTree = "<group>"; };
-		D00C144E2CBAC84E00AF2BD9 /* PetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetModel.swift; sourceTree = "<group>"; };
+		D00C144E2CBAC84E00AF2BD9 /* PetProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetProfileModel.swift; sourceTree = "<group>"; };
+		D0BAC0AD2CD0E94200ACEFE6 /* UserProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileModel.swift; sourceTree = "<group>"; };
+		D0BAC0AF2CD0F24600ACEFE6 /* PetsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetsModel.swift; sourceTree = "<group>"; };
+		D0BAC0B12CD0F5F100ACEFE6 /* PetCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetCollectionViewCell.swift; sourceTree = "<group>"; };
+		D0BAC0B42CD10BC200ACEFE6 /* MockPets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPets.swift; sourceTree = "<group>"; };
+		D0BAC0B62CD10BD200ACEFE6 /* MockUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUser.swift; sourceTree = "<group>"; };
+		D0BAC0B82CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetAddCollectionViewCell.swift; sourceTree = "<group>"; };
+		D0BAC0BA2CD1225700ACEFE6 /* MockImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockImageHelper.swift; sourceTree = "<group>"; };
+		D0F632302CD2512B000CDF34 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
+		D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesViewController.swift; sourceTree = "<group>"; };
+		D0F632362CD2B445000CDF34 /* ServicesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesModel.swift; sourceTree = "<group>"; };
+		D0F632382CD2B626000CDF34 /* ServicesCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +108,7 @@
 				D00C141E2CBA7DCE00AF2BD9 /* AppDelegate.swift */,
 				D00C14202CBA7DCE00AF2BD9 /* SceneDelegate.swift */,
 				D00C142A2CBA7DD000AF2BD9 /* Assets.xcassets */,
+				D0F632302CD2512B000CDF34 /* Colors.xcassets */,
 				D00C142C2CBA7DD000AF2BD9 /* LaunchScreen.storyboard */,
 				D00C142F2CBA7DD000AF2BD9 /* Info.plist */,
 				D00C14272CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld */,
@@ -96,8 +119,9 @@
 		D00C14352CBA82A900AF2BD9 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				D00C14222CBA7DCE00AF2BD9 /* ViewController.swift */,
+				D00C14222CBA7DCE00AF2BD9 /* UserProfileViewController.swift */,
 				D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */,
+				D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -106,6 +130,9 @@
 			isa = PBXGroup;
 			children = (
 				D00C144C2CBAC54A00AF2BD9 /* NavBarView.swift */,
+				D0BAC0B12CD0F5F100ACEFE6 /* PetCollectionViewCell.swift */,
+				D0BAC0B82CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift */,
+				D0F632382CD2B626000CDF34 /* ServicesCollectionViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -113,6 +140,7 @@
 		D00C14372CBA82C600AF2BD9 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				D0BAC0B32CD10B9F00ACEFE6 /* Mock */,
 				D00C143C2CBA88E900AF2BD9 /* DataManager.swift */,
 				D00C143E2CBA89E800AF2BD9 /* NetworkProtocol.swift */,
 				D00C14382CBA88B300AF2BD9 /* NetworkService.swift */,
@@ -122,9 +150,22 @@
 				D00C143A2CBA88D900AF2BD9 /* CoreDataManager.swift */,
 				D00C14402CBA8A3700AF2BD9 /* JSON.swift */,
 				D00C14482CBA8FD800AF2BD9 /* APIfunc.swift */,
-				D00C144E2CBAC84E00AF2BD9 /* PetModel.swift */,
+				D00C144E2CBAC84E00AF2BD9 /* PetProfileModel.swift */,
+				D0BAC0AD2CD0E94200ACEFE6 /* UserProfileModel.swift */,
+				D0BAC0AF2CD0F24600ACEFE6 /* PetsModel.swift */,
+				D0F632362CD2B445000CDF34 /* ServicesModel.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		D0BAC0B32CD10B9F00ACEFE6 /* Mock */ = {
+			isa = PBXGroup;
+			children = (
+				D0BAC0B42CD10BC200ACEFE6 /* MockPets.swift */,
+				D0BAC0B62CD10BD200ACEFE6 /* MockUser.swift */,
+				D0BAC0BA2CD1225700ACEFE6 /* MockImageHelper.swift */,
+			);
+			path = Mock;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -185,6 +226,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0F632312CD2512B000CDF34 /* Colors.xcassets in Resources */,
 				D00C142B2CBA7DD000AF2BD9 /* Assets.xcassets in Resources */,
 				D00C142E2CBA7DD000AF2BD9 /* Base in Resources */,
 			);
@@ -198,18 +240,28 @@
 			buildActionMask = 2147483647;
 			files = (
 				D00C143B2CBA88D900AF2BD9 /* CoreDataManager.swift in Sources */,
-				D00C14232CBA7DCE00AF2BD9 /* ViewController.swift in Sources */,
+				D0F632372CD2B445000CDF34 /* ServicesModel.swift in Sources */,
+				D00C14232CBA7DCE00AF2BD9 /* UserProfileViewController.swift in Sources */,
+				D0BAC0B72CD10BD200ACEFE6 /* MockUser.swift in Sources */,
 				D00C144D2CBAC54A00AF2BD9 /* NavBarView.swift in Sources */,
-				D00C144F2CBAC84F00AF2BD9 /* PetModel.swift in Sources */,
+				D00C144F2CBAC84F00AF2BD9 /* PetProfileModel.swift in Sources */,
 				D00C14432CBA8D4B00AF2BD9 /* NetworkManager.swift in Sources */,
 				D00C14292CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld in Sources */,
 				D00C14412CBA8A3700AF2BD9 /* JSON.swift in Sources */,
 				D00C143D2CBA88E900AF2BD9 /* DataManager.swift in Sources */,
 				D00C143F2CBA89E800AF2BD9 /* NetworkProtocol.swift in Sources */,
+				D0BAC0AE2CD0E94200ACEFE6 /* UserProfileModel.swift in Sources */,
+				D0BAC0B22CD0F5F100ACEFE6 /* PetCollectionViewCell.swift in Sources */,
+				D0BAC0B92CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift in Sources */,
 				D00C14392CBA88B300AF2BD9 /* NetworkService.swift in Sources */,
+				D0BAC0BB2CD1225700ACEFE6 /* MockImageHelper.swift in Sources */,
 				D00C144B2CBAC4F800AF2BD9 /* PetProfileViewController.swift in Sources */,
 				D00C14492CBA8FD800AF2BD9 /* APIfunc.swift in Sources */,
+				D0BAC0B02CD0F24600ACEFE6 /* PetsModel.swift in Sources */,
+				D0F632352CD2B3C8000CDF34 /* ServicesViewController.swift in Sources */,
+				D0BAC0B52CD10BC200ACEFE6 /* MockPets.swift in Sources */,
 				D00C141F2CBA7DCE00AF2BD9 /* AppDelegate.swift in Sources */,
+				D0F632392CD2B626000CDF34 /* ServicesCollectionViewCell.swift in Sources */,
 				D00C14472CBA8F0300AF2BD9 /* NetworkError.swift in Sources */,
 				D00C14212CBA7DCE00AF2BD9 /* SceneDelegate.swift in Sources */,
 				D00C14452CBA8D6100AF2BD9 /* NetworkMockManager.swift in Sources */,

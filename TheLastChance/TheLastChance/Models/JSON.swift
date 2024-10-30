@@ -8,20 +8,40 @@
 import Foundation
 
 struct JSON {
-    struct Test: Codable {
-        var test: String?
+    struct PetIds: Codable {
+        var petIds: [Int]
         private enum CodingKeys: String, CodingKey {
-            case test = "test"
+            case petIds = "pet_ids"
         }
     }
     struct PetProfile: Codable {
+        var petId: Int
         var typeOfAnimal: String
-        var petBreed: String
         var petName: String
+        var petAvatar: String
         private enum CodingKeys: String, CodingKey {
+            case petId = "pet_id"
             case typeOfAnimal = "type_of_animal"
-            case petBreed = "breed"
             case petName = "name"
+            case petAvatar = "avatar"
+        }
+    }
+    struct UserProfile: Codable {
+        var username: String
+        var contacts: String
+        private enum CodingKeys: String, CodingKey {
+            case username = "username"
+            case contacts = "contacts"
+        }
+    }
+    struct Service: Codable {
+        var userId: Int
+        var title: String
+        var description: String
+        private enum CodingKeys: String, CodingKey {
+            case userId = "user_id"
+            case title = "title"
+            case description = "description"
         }
     }
 }

@@ -7,18 +7,18 @@
 
 import Foundation
 
-class PetModel {
+final class PetProfileModel {
     var typeOfAnimal: String
-    var petBreed: String
     var petName: String
-    init(typeOfAnimal: String, petBreed: String, petName: String) {
+    var petAvatar: Data?
+    init(typeOfAnimal: String, petAvatar: String, petName: String) {
         self.typeOfAnimal = typeOfAnimal
-        self.petBreed = petBreed
         self.petName = petName
+        self.petAvatar = Data(base64Encoded: petAvatar, options: .ignoreUnknownCharacters)
     }
     init(json: JSON.PetProfile) {
         self.typeOfAnimal = json.typeOfAnimal
-        self.petBreed = json.petBreed
         self.petName = json.petName
+        self.petAvatar = Data(base64Encoded: json.petAvatar, options: .ignoreUnknownCharacters)
     }
 }

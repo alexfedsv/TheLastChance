@@ -8,10 +8,9 @@
 import Foundation
 
 final class NetworkManager: NetworkService, NetworkProtocol {
-    func test(completion: @escaping (Result<JSON.Test, NetworkError>) -> Void) {
-        let parameters = [
-            "sdf": "0",
-            "sfsdf": "1"]
+
+    func getPets(userId: Int, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void) {
+        let parameters: [String: String] = [:]
         guard let request = createRequest(parameters: parameters, funcAPIs: APIfunc.test.rawValue) else {
             let error: NetworkError = .invalidRequest(atFunc: #function)
             completion(.failure(error))
@@ -27,7 +26,7 @@ final class NetworkManager: NetworkService, NetworkProtocol {
             } else if let response = response as? HTTPURLResponse, let data = data {
                 if response.statusCode == 200 {
                     do {
-                        let jsonObject = try JSONDecoder().decode(JSON.Test.self, from: data)
+                        let jsonObject = try JSONDecoder().decode(JSON.PetIds.self, from: data)
                         completion(.success(jsonObject))
                         return
                     } catch {
@@ -50,7 +49,7 @@ final class NetworkManager: NetworkService, NetworkProtocol {
             }
         }.resume()
     }
-    func getPetProfile(completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void) {
+    func getPetProfile(petId: Int, completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void) {
         let parameters: [String: String] = [:]
         guard let request = createRequest(parameters: parameters, funcAPIs: APIfunc.test.rawValue) else {
             let error: NetworkError = .invalidRequest(atFunc: #function)

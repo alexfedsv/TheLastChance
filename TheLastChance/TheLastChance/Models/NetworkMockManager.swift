@@ -8,14 +8,19 @@
 import Foundation
 
 final class NetworkMockManager: NetworkService, NetworkProtocol {
-    func test(completion: @escaping (Result<JSON.Test, NetworkError>) -> Void) {
-        print(#file)
-        print(#function)
-        completion(.failure(.mockServiceUnrealized(atFunc: #function)))
+    
+    func getPets(userId: Int, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
+            completion(.success(MockPets.shared.petIds))
+        })
     }
-    func getPetProfile(completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void) {
-        print(#file)
-        print(#function)
-        completion(.failure(.mockServiceUnrealized(atFunc: #function)))
+    func getPetProfile(petId: Int, completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
+            if let pet = MockPets.shared.pets.first(where: { $0.petId == petId }) {
+                completion(.success(pet))
+            } else {
+                completion(.failure(.notFoundMock(atFunc: #function)))
+            }
+        })
     }
 }
