@@ -46,7 +46,7 @@ final class UserProfileViewController: UIViewController {
         label.font = .systemFont(ofSize: 22)
         label.textColor = .white
         label.numberOfLines = 0
-        label.text = "Пользователь Пользовович"
+        //label.text = "Пользователь Пользовович"
         return label
     }()
     private var contactsLabel: UILabel = {
@@ -55,7 +55,7 @@ final class UserProfileViewController: UIViewController {
         label.font = .systemFont(ofSize: 22)
         label.textColor = .white
         label.numberOfLines = 0
-        label.text = "+79455678909"
+        //label.text = "+79455678909"
         return label
     }()
     var collectionView: UICollectionView!
@@ -105,11 +105,35 @@ final class UserProfileViewController: UIViewController {
         view.addSubview(collectionView)
         view.addSubview(separator2View)
         setupConstraints()
+        getUser()
         getPets()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         userPhotoImageView.layer.cornerRadius = userPhotoImageView.bounds.width / 2
+    }
+    private func setupUser() {
+        guard let userModel = userModel else { return }
+        DispatchQueue.main.async {
+            self.usernameLabel.text = userModel.username
+            self.contactsLabel.text = userModel.contacts
+            if let userImage = userModel.userImage {
+                self.userPhotoImageView.image = UIImage(data: userImage)
+            } else {
+                self.userPhotoImageView.image = nil
+            }
+        }
+    }
+    private func getUser() {
+        DataManager.shared.networkServiceProtocol.getUserProfile(userId: 1) { result in
+            switch result {
+            case .success(let success):
+                self.userModel = UserProfileModel(json: success)
+                self.setupUser()
+            case .failure(let failure):
+                print("[ERROR]: \(failure.message())")
+            }
+        }
     }
     private func getPets() {
         let dispatchGroup = DispatchGroup()
@@ -149,7 +173,7 @@ final class UserProfileViewController: UIViewController {
                 self.toServicesestButtonView.layer.opacity = 1
                 self.toServicesestButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                DataManager.shared.networkServiceProtocol.getPetProfile(petId: 1) { result in
+                /*DataManager.shared.networkServiceProtocol.getPetProfile(petId: 1) { result in
                     DispatchQueue.main.async {
                         switch result {
                         case .success(let success):
@@ -161,6 +185,21 @@ final class UserProfileViewController: UIViewController {
                         }
                         self.toServicesestButtonView.isUserInteractionEnabled = true
                     }
+                }*/
+                DataManager.shared.networkServiceProtocol.getServices { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let success):
+                            let servicesModel: ServicesModel = ServicesModel()
+                            for elem in success.services {
+                                servicesModel.services.append(ServiceModel(json: elem))
+                            }
+                            self.toServicesViewController(servicesModel: servicesModel)
+                        case .failure(let failure):
+                            break
+                        }
+                        self.toServicesestButtonView.isUserInteractionEnabled = true
+                    }
                 }
             }
         }
@@ -168,9 +207,14 @@ final class UserProfileViewController: UIViewController {
     private func toPetProfileViewController(petModel: PetProfileModel) {
         let viewController = PetProfileViewController()
         viewController.petModel = petModel
+        viewController.userModel = userModel
         self.navigationController?.pushViewController(viewController, animated: false)
     }
-    
+    private func toServicesViewController(servicesModel: ServicesModel) {
+        let viewController = ServicesViewController()
+        viewController.servicesModel = servicesModel
+        self.navigationController?.pushViewController(viewController, animated: false)
+    }
     
 }
 
@@ -272,5 +316,15 @@ extension UserProfileViewController: UICollectionViewDataSource, UICollectionVie
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 100, height: 150)
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.row < petsModel.pets.count {
+            let petModel = petsModel.pets[indexPath.row]
+            print("Выбрано животное: \(petModel.petName) из типа: \(petModel.typeOfAnimal)")
+            toPetProfileViewController(petModel: petModel)
+        }
+        if indexPath.row == petsModel.pets.count {
+            print("Нажата ячейка для добавления нового питомца")
+        }
     }
 }

@@ -28,14 +28,12 @@ final class ServicesCollectionViewCell: UICollectionViewCell {
     }()
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 13)
+        label.font = UIFont.boldSystemFont(ofSize: 18)
         return label
     }()
     private var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 13)
+        label.font = UIFont.systemFont(ofSize: 16)
         return label
     }()
     override init(frame: CGRect) {
@@ -52,10 +50,10 @@ final class ServicesCollectionViewCell: UICollectionViewCell {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    func setup(title: String, name: String, userImageData: Data?, petImageData: Data?) {
+    func setup(title: String, description: String, userImageData: Data?, petImageData: Data?) {
         DispatchQueue.main.async {
             self.titleLabel.text = title
-            self.descriptionLabel.text = name
+            self.descriptionLabel.text = description
             if let userImageData = userImageData {
                 self.userImageView.image = UIImage(data: userImageData)
             } else {
@@ -89,12 +87,12 @@ extension ServicesCollectionViewCell {
         userImageView.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.8).isActive = true
         userImageView.widthAnchor.constraint(equalTo: userImageView.heightAnchor).isActive = true
         
-        petImageView.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 5).isActive = true
-        petImageView.leadingAnchor.constraint(equalTo: self.userImageView.trailingAnchor, constant: -8).isActive = true
-        petImageView.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.7).isActive = true
+        petImageView.bottomAnchor.constraint(equalTo: userImageView.bottomAnchor).isActive = true
+        petImageView.leadingAnchor.constraint(equalTo: self.userImageView.trailingAnchor, constant: -12).isActive = true
+        petImageView.heightAnchor.constraint(equalTo: self.heightAnchor, multiplier: 0.6).isActive = true
         petImageView.widthAnchor.constraint(equalTo: petImageView.heightAnchor).isActive = true
 
-        titleLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 5).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 10).isActive = true
         titleLabel.leadingAnchor.constraint(equalTo: petImageView.trailingAnchor, constant: 5).isActive = true
         titleLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -5).isActive = true
         

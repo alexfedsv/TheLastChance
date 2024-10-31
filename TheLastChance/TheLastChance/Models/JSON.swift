@@ -18,30 +18,41 @@ struct JSON {
         var petId: Int
         var typeOfAnimal: String
         var petName: String
+        var info: String
         var petAvatar: String
         private enum CodingKeys: String, CodingKey {
             case petId = "pet_id"
             case typeOfAnimal = "type_of_animal"
             case petName = "name"
+            case info = "info"
             case petAvatar = "avatar"
         }
     }
     struct UserProfile: Codable {
         var username: String
         var contacts: String
+        var userImage: String
         private enum CodingKeys: String, CodingKey {
             case username = "username"
             case contacts = "contacts"
+            case userImage = "user_image"
         }
     }
-    struct Service: Codable {
-        var userId: Int
-        var title: String
-        var description: String
-        private enum CodingKeys: String, CodingKey {
-            case userId = "user_id"
-            case title = "title"
-            case description = "description"
+    struct Services: Codable {
+        struct Service: Codable {
+            var userId: Int
+            var title: String
+            var description: String
+            var userImage: String
+            var petImage: String
+            private enum CodingKeys: String, CodingKey {
+                case userId = "user_id"
+                case title = "title"
+                case description = "description"
+                case userImage = "user_image"
+                case petImage = "pet_image"
+            }
         }
+        var services: [Service]
     }
 }

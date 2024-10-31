@@ -9,14 +9,14 @@ import UIKit
 
 final class ServicesViewController: UIViewController {
 
-    var services: [ServicesModel] = []
+    var servicesModel: ServicesModel = ServicesModel()
     private var navBarView = NavBarView()
     var collectionView: UICollectionView!
    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(navBarView)
-        navBarView.setup(delegate: self, leftImage: UIImage(systemName: "chevron.backward"), leftCenterImage: nil, rightCenterImage: nil, rightImage: nil)
+        navBarView.setup(delegate: self, leftImage: UIImage(systemName: "chevron.backward"), leftCenterImage: UIImage(systemName: "house"), rightCenterImage: UIImage(systemName: "plus"), rightImage: UIImage(systemName: "slider.vertical.3"))
         view.backgroundColor = .purple
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -29,16 +29,12 @@ final class ServicesViewController: UIViewController {
         collectionView.register(ServicesCollectionViewCell.self, forCellWithReuseIdentifier: ServicesCollectionViewCell.identifier)
         view.addSubview(collectionView)
         setupConstraints()
-        getServices()
-    }
-    private func getServices() {
-        
     }
 }
 
 extension ServicesViewController: NavBarViewDelegate {
     func navBarLeftButtonTapped() {
-        print(#function)
+        navigationController?.popViewController(animated: true)
     }
     func navBarLeftCenterButtonTapped() {
         print(#function)
@@ -61,23 +57,23 @@ extension ServicesViewController {
         navBarView.heightAnchor.constraint(equalToConstant: NavBarView.viewHeight).isActive = true
         
         collectionView.topAnchor.constraint(equalTo: navBarView.bottomAnchor, constant: 10).isActive = true
+        collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
         collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
-        collectionView.heightAnchor.constraint(equalToConstant: 160).isActive = true
     }
 }
 extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return services.count
+        return servicesModel.services.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ServicesCollectionViewCell.identifier, for: indexPath) as? ServicesCollectionViewCell {
-            
+            cell.setup(title: servicesModel.services[indexPath.row].title, description: servicesModel.services[indexPath.row].description, userImageData: servicesModel.services[indexPath.row].userImageData, petImageData: servicesModel.services[indexPath.row].petImageData)
             return cell
         }
         return UICollectionViewCell()
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 100, height: 150)
+        return CGSize(width: collectionView.bounds.width, height: 70)
     }
 }
