@@ -12,42 +12,40 @@ final class PetProfileViewController: UIViewController {
     var userModel: UserProfileModel?
     var petModel: PetProfileModel?
     private var navBarView = NavBarView()
-    private var userPhotoImageView: UIImageView = {
+    private lazy var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
-        //imageView.image = UIImage(named: "dog")
         imageView.backgroundColor = .white
         return imageView
     }()
-    private var petPhotoImageView: UIImageView = {
+    private lazy var petPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
-        //imageView.image = UIImage(named: "dog")
         imageView.backgroundColor = .white
         return imageView
     }()
-    private var separator0View: UIView = {
+    private lazy var separator0View: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 12
         view.backgroundColor = .white
         return view
     }()
-    private var separator1View: UIView = {
+    private lazy var separator1View: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 12
         view.backgroundColor = .white
         return view
     }()
-    private var separator2View: UIView = {
+    private lazy var separator2View: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 12
         view.backgroundColor = .white
         return view
     }()
-    private var typeOfAnimalLabel: UILabel = {
+    private lazy var typeOfAnimalLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 22)
@@ -55,7 +53,7 @@ final class PetProfileViewController: UIViewController {
         label.numberOfLines = 0
         return label
     }()
-    private var petnameLabel: UILabel = {
+    private lazy var petnameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 22)
@@ -63,7 +61,7 @@ final class PetProfileViewController: UIViewController {
         label.numberOfLines = 0
         return label
     }()
-    private var infoLabel: UILabel = {
+    private lazy var infoLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 20)
         label.textColor = .white
@@ -80,7 +78,7 @@ final class PetProfileViewController: UIViewController {
         view.addSubview(typeOfAnimalLabel)
         view.addSubview(petnameLabel)
         view.addSubview(separator1View)
-        navBarView.setup(delegate: self, leftImage: UIImage(systemName: "chevron.backward"), leftCenterImage: nil, rightCenterImage: nil, rightImage: UIImage(systemName: "pencil"))
+        navBarView.setup(delegate: self, leftImage: UIImage(systemName: "chevron.backward"), leftCenterImage: UIImage(systemName: "house"), rightCenterImage: nil, rightImage: UIImage(systemName: "pencil"))
         view.backgroundColor = .purple
         view.addSubview(infoLabel)
         view.addSubview(separator2View)
@@ -111,11 +109,17 @@ final class PetProfileViewController: UIViewController {
             self.infoLabel.text = petModel.info
         }
     }
+    private func toAddEditPetViewController() {
+        let viewController = AddEditPetViewController()
+        viewController.userModel = userModel
+        viewController.petModel = petModel
+        self.navigationController?.pushViewController(viewController, animated: false)
+    }
 }
 
 extension PetProfileViewController: NavBarViewDelegate {
     func navBarLeftButtonTapped() {
-        print(#function)
+        navigationController?.popViewController(animated: true)
     }
     func navBarLeftCenterButtonTapped() {
         print(#function)
@@ -124,7 +128,7 @@ extension PetProfileViewController: NavBarViewDelegate {
         print(#function)
     }
     func navBarRightButtonTapped() {
-        print(#function)
+        toAddEditPetViewController()
     }
 }
 extension PetProfileViewController {

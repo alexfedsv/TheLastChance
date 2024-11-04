@@ -11,7 +11,7 @@ final class ServicesViewController: UIViewController {
 
     var servicesModel: ServicesModel = ServicesModel()
     private var navBarView = NavBarView()
-    var collectionView: UICollectionView!
+    private var collectionView: UICollectionView!
    
     override func viewDidLoad() {
         super.viewDidLoad()

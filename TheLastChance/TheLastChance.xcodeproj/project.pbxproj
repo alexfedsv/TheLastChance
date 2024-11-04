@@ -27,6 +27,7 @@
 		D00C144F2CBAC84F00AF2BD9 /* PetProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144E2CBAC84E00AF2BD9 /* PetProfileModel.swift */; };
 		D0413E9E2CD3C65400E8F4D9 /* MockServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0413E9D2CD3C65400E8F4D9 /* MockServices.swift */; };
 		D0413EA02CD3CA7100E8F4D9 /* ServicesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0413E9F2CD3CA7100E8F4D9 /* ServicesModel.swift */; };
+		D0413EA22CD3EDCB00E8F4D9 /* AddEditPetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0413EA12CD3EDCB00E8F4D9 /* AddEditPetViewController.swift */; };
 		D0BAC0AE2CD0E94200ACEFE6 /* UserProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0AD2CD0E94200ACEFE6 /* UserProfileModel.swift */; };
 		D0BAC0B02CD0F24600ACEFE6 /* PetsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0AF2CD0F24600ACEFE6 /* PetsModel.swift */; };
 		D0BAC0B22CD0F5F100ACEFE6 /* PetCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0B12CD0F5F100ACEFE6 /* PetCollectionViewCell.swift */; };
@@ -63,6 +64,7 @@
 		D00C144E2CBAC84E00AF2BD9 /* PetProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetProfileModel.swift; sourceTree = "<group>"; };
 		D0413E9D2CD3C65400E8F4D9 /* MockServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServices.swift; sourceTree = "<group>"; };
 		D0413E9F2CD3CA7100E8F4D9 /* ServicesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesModel.swift; sourceTree = "<group>"; };
+		D0413EA12CD3EDCB00E8F4D9 /* AddEditPetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditPetViewController.swift; sourceTree = "<group>"; };
 		D0BAC0AD2CD0E94200ACEFE6 /* UserProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileModel.swift; sourceTree = "<group>"; };
 		D0BAC0AF2CD0F24600ACEFE6 /* PetsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetsModel.swift; sourceTree = "<group>"; };
 		D0BAC0B12CD0F5F100ACEFE6 /* PetCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 				D00C14222CBA7DCE00AF2BD9 /* UserProfileViewController.swift */,
 				D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */,
 				D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */,
+				D0413EA12CD3EDCB00E8F4D9 /* AddEditPetViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -251,6 +254,7 @@
 				D0BAC0B72CD10BD200ACEFE6 /* MockUser.swift in Sources */,
 				D00C144D2CBAC54A00AF2BD9 /* NavBarView.swift in Sources */,
 				D00C144F2CBAC84F00AF2BD9 /* PetProfileModel.swift in Sources */,
+				D0413EA22CD3EDCB00E8F4D9 /* AddEditPetViewController.swift in Sources */,
 				D00C14432CBA8D4B00AF2BD9 /* NetworkManager.swift in Sources */,
 				D00C14292CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld in Sources */,
 				D00C14412CBA8A3700AF2BD9 /* JSON.swift in Sources */,

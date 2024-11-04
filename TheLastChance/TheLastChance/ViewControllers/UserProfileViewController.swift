@@ -15,7 +15,6 @@ final class UserProfileViewController: UIViewController {
     private var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
-        //imageView.image = UIImage(named: "dog")
         imageView.backgroundColor = .white
         return imageView
     }()
@@ -46,7 +45,6 @@ final class UserProfileViewController: UIViewController {
         label.font = .systemFont(ofSize: 22)
         label.textColor = .white
         label.numberOfLines = 0
-        //label.text = "Пользователь Пользовович"
         return label
     }()
     private var contactsLabel: UILabel = {
@@ -55,7 +53,6 @@ final class UserProfileViewController: UIViewController {
         label.font = .systemFont(ofSize: 22)
         label.textColor = .white
         label.numberOfLines = 0
-        //label.text = "+79455678909"
         return label
     }()
     var collectionView: UICollectionView!
@@ -65,17 +62,18 @@ final class UserProfileViewController: UIViewController {
         label.numberOfLines = 0
         return label
     }()
-    private var toServicesestButtonView: UIView = {
+    private var toServicesButtonView: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 12
         view.backgroundColor = .blue
         return view
     }()
-    private var testButtonLabel: UILabel = {
+    private var toServicesButtonLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.text = "К услугам"
+        label.textColor = .white
         return label
     }()
     override func viewDidLoad() {
@@ -88,9 +86,9 @@ final class UserProfileViewController: UIViewController {
         view.addSubview(separator1View)
         navBarView.setup(delegate: self, leftImage: UIImage(systemName: "chevron.backward"), leftCenterImage: nil, rightCenterImage: nil, rightImage: nil)
         view.addSubview(testLabel)
-        view.addSubview(toServicesestButtonView)
-        toServicesestButtonView.addSubview(testButtonLabel)
-        toServicesestButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toServices)))
+        view.addSubview(toServicesButtonView)
+        toServicesButtonView.addSubview(toServicesButtonLabel)
+        toServicesButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toServices)))
         view.backgroundColor = .purple
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -164,14 +162,14 @@ final class UserProfileViewController: UIViewController {
     }
     @objc
     private func toServices() {
-        toServicesestButtonView.isUserInteractionEnabled = false
+        toServicesButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.5) {
-            self.toServicesestButtonView.layer.opacity = 0.9
-            self.toServicesestButtonView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.toServicesButtonView.layer.opacity = 0.9
+            self.toServicesButtonView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         } completion: { _ in
             UIView.animate(withDuration: 0.5) {
-                self.toServicesestButtonView.layer.opacity = 1
-                self.toServicesestButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                self.toServicesButtonView.layer.opacity = 1
+                self.toServicesButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
                 /*DataManager.shared.networkServiceProtocol.getPetProfile(petId: 1) { result in
                     DispatchQueue.main.async {
@@ -198,7 +196,7 @@ final class UserProfileViewController: UIViewController {
                         case .failure(let failure):
                             break
                         }
-                        self.toServicesestButtonView.isUserInteractionEnabled = true
+                        self.toServicesButtonView.isUserInteractionEnabled = true
                     }
                 }
             }
@@ -213,6 +211,11 @@ final class UserProfileViewController: UIViewController {
     private func toServicesViewController(servicesModel: ServicesModel) {
         let viewController = ServicesViewController()
         viewController.servicesModel = servicesModel
+        self.navigationController?.pushViewController(viewController, animated: false)
+    }
+    private func toAddEditPetViewController() {
+        let viewController = AddEditPetViewController()
+        viewController.userModel = userModel
         self.navigationController?.pushViewController(viewController, animated: false)
     }
     
@@ -243,8 +246,8 @@ extension UserProfileViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         separator2View.translatesAutoresizingMaskIntoConstraints = false
         testLabel.translatesAutoresizingMaskIntoConstraints = false
-        toServicesestButtonView.translatesAutoresizingMaskIntoConstraints = false
-        testButtonLabel.translatesAutoresizingMaskIntoConstraints = false
+        toServicesButtonView.translatesAutoresizingMaskIntoConstraints = false
+        toServicesButtonLabel.translatesAutoresizingMaskIntoConstraints = false
         
         navBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         navBarView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
@@ -286,15 +289,15 @@ extension UserProfileViewController {
         
         testLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
         testLabel.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.8).isActive = true
-        testLabel.bottomAnchor.constraint(equalTo: toServicesestButtonView.topAnchor, constant: -40).isActive = true
+        testLabel.bottomAnchor.constraint(equalTo: toServicesButtonView.topAnchor, constant: -40).isActive = true
         
-        toServicesestButtonView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 25).isActive = true
-        toServicesestButtonView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -25).isActive = true
-        toServicesestButtonView.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        toServicesestButtonView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30).isActive = true
+        toServicesButtonView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 25).isActive = true
+        toServicesButtonView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -25).isActive = true
+        toServicesButtonView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        toServicesButtonView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30).isActive = true
         
-        testButtonLabel.centerYAnchor.constraint(equalTo: toServicesestButtonView.centerYAnchor).isActive = true
-        testButtonLabel.centerXAnchor.constraint(equalTo: toServicesestButtonView.centerXAnchor).isActive = true
+        toServicesButtonLabel.centerYAnchor.constraint(equalTo: toServicesButtonView.centerYAnchor).isActive = true
+        toServicesButtonLabel.centerXAnchor.constraint(equalTo: toServicesButtonView.centerXAnchor).isActive = true
     }
 }
 extension UserProfileViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -324,7 +327,7 @@ extension UserProfileViewController: UICollectionViewDataSource, UICollectionVie
             toPetProfileViewController(petModel: petModel)
         }
         if indexPath.row == petsModel.pets.count {
-            print("Нажата ячейка для добавления нового питомца")
+            toAddEditPetViewController()
         }
     }
 }
