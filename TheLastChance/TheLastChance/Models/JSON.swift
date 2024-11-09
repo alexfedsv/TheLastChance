@@ -15,7 +15,7 @@ struct JSON {
         }
     }
     struct PetProfile: Codable {
-        var petId: Int
+        var petId: Int?
         var typeOfAnimal: String
         var petName: String
         var info: String

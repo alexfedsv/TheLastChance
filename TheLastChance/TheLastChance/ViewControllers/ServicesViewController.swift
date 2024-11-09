@@ -40,7 +40,8 @@ extension ServicesViewController: NavBarViewDelegate {
         print(#function)
     }
     func navBarRightCenterButtonTapped() {
-        print(#function)
+        let viewController = AddServiceViewController()
+        self.navigationController?.pushViewController(viewController, animated: false)
     }
     func navBarRightButtonTapped() {
         print(#function)

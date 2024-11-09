@@ -9,13 +9,26 @@ import Foundation
 
 final class NetworkManager: NetworkService, NetworkProtocol {
 
+    enum HTTPMethod: String {
+        case POST
+        case GET
+    }
+    enum Headers: String {
+        case contentLength = "Content-Length"
+        case contentType = "Content-Type"
+        case path = "application/json"
+    }
+    private let baseURL: String = "http://83.166.238.38:8081/"
+    
     func getUserProfile(userId: Int, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void) {
-        let parameters: [String: String] = [:]
-        guard let request = createRequest(parameters: parameters, funcAPIs: APIfunc.test.rawValue) else {
+        guard let url = URL(string: baseURL + APIfunc.getUserInfo.rawValue + "/" + String(userId)) else {
             let error: NetworkError = .invalidRequest(atFunc: #function)
             completion(.failure(error))
             return
         }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.GET.rawValue
+        request.setValue(Headers.path.rawValue, forHTTPHeaderField: Headers.contentType.rawValue)
         let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) in
             if let error = error {
@@ -50,12 +63,14 @@ final class NetworkManager: NetworkService, NetworkProtocol {
         }.resume()
     }
     func getPets(userId: Int, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void) {
-        let parameters: [String: String] = [:]
-        guard let request = createRequest(parameters: parameters, funcAPIs: APIfunc.test.rawValue) else {
+        guard let url = URL(string: baseURL + APIfunc.getPets.rawValue + "/" + String(userId)) else {
             let error: NetworkError = .invalidRequest(atFunc: #function)
             completion(.failure(error))
             return
         }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.GET.rawValue
+        request.setValue(Headers.path.rawValue, forHTTPHeaderField: Headers.contentType.rawValue)
         let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) in
             if let error = error {
@@ -90,12 +105,14 @@ final class NetworkManager: NetworkService, NetworkProtocol {
         }.resume()
     }
     func getPetProfile(petId: Int, completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void) {
-        let parameters: [String: String] = [:]
-        guard let request = createRequest(parameters: parameters, funcAPIs: APIfunc.test.rawValue) else {
+        guard let url = URL(string: baseURL + APIfunc.getPetInfo.rawValue + "/" + String(petId)) else {
             let error: NetworkError = .invalidRequest(atFunc: #function)
             completion(.failure(error))
             return
         }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.GET.rawValue
+        request.setValue(Headers.path.rawValue, forHTTPHeaderField: Headers.contentType.rawValue)
         let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) in
             if let error = error {
@@ -130,12 +147,14 @@ final class NetworkManager: NetworkService, NetworkProtocol {
         }.resume()
     }
     func getServices(completion: @escaping (Result<JSON.Services, NetworkError>) -> Void) {
-        let parameters: [String: String] = [:]
-        guard let request = createRequest(parameters: parameters, funcAPIs: APIfunc.test.rawValue) else {
+        guard let url = URL(string: baseURL + "") else {
             let error: NetworkError = .invalidRequest(atFunc: #function)
             completion(.failure(error))
             return
         }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.GET.rawValue
+        request.setValue(Headers.path.rawValue, forHTTPHeaderField: Headers.contentType.rawValue)
         let session = URLSession.shared
         session.dataTask(with: request) { (data, response, error) in
             if let error = error {

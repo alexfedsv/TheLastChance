@@ -35,6 +35,9 @@
 		D0BAC0B72CD10BD200ACEFE6 /* MockUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0B62CD10BD200ACEFE6 /* MockUser.swift */; };
 		D0BAC0B92CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0B82CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift */; };
 		D0BAC0BB2CD1225700ACEFE6 /* MockImageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0BA2CD1225700ACEFE6 /* MockImageHelper.swift */; };
+		D0CDA8A32CDB85C000B67DC2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CDA8A22CDB85C000B67DC2 /* LoginViewController.swift */; };
+		D0CDA8A52CDB8F1B00B67DC2 /* AddServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CDA8A42CDB8F1B00B67DC2 /* AddServiceViewController.swift */; };
+		D0CDA8A72CDBA37500B67DC2 /* SegmentedControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CDA8A62CDBA37500B67DC2 /* SegmentedControlView.swift */; };
 		D0F632312CD2512B000CDF34 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D0F632302CD2512B000CDF34 /* Colors.xcassets */; };
 		D0F632352CD2B3C8000CDF34 /* ServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */; };
 		D0F632372CD2B445000CDF34 /* ServiceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F632362CD2B445000CDF34 /* ServiceModel.swift */; };
@@ -72,6 +75,9 @@
 		D0BAC0B62CD10BD200ACEFE6 /* MockUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUser.swift; sourceTree = "<group>"; };
 		D0BAC0B82CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetAddCollectionViewCell.swift; sourceTree = "<group>"; };
 		D0BAC0BA2CD1225700ACEFE6 /* MockImageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockImageHelper.swift; sourceTree = "<group>"; };
+		D0CDA8A22CDB85C000B67DC2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		D0CDA8A42CDB8F1B00B67DC2 /* AddServiceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddServiceViewController.swift; sourceTree = "<group>"; };
+		D0CDA8A62CDBA37500B67DC2 /* SegmentedControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlView.swift; sourceTree = "<group>"; };
 		D0F632302CD2512B000CDF34 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesViewController.swift; sourceTree = "<group>"; };
 		D0F632362CD2B445000CDF34 /* ServiceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceModel.swift; sourceTree = "<group>"; };
@@ -129,6 +135,8 @@
 				D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */,
 				D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */,
 				D0413EA12CD3EDCB00E8F4D9 /* AddEditPetViewController.swift */,
+				D0CDA8A22CDB85C000B67DC2 /* LoginViewController.swift */,
+				D0CDA8A42CDB8F1B00B67DC2 /* AddServiceViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -140,6 +148,7 @@
 				D0BAC0B12CD0F5F100ACEFE6 /* PetCollectionViewCell.swift */,
 				D0BAC0B82CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift */,
 				D0F632382CD2B626000CDF34 /* ServicesCollectionViewCell.swift */,
+				D0CDA8A62CDBA37500B67DC2 /* SegmentedControlView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -261,12 +270,15 @@
 				D00C143D2CBA88E900AF2BD9 /* DataManager.swift in Sources */,
 				D00C143F2CBA89E800AF2BD9 /* NetworkProtocol.swift in Sources */,
 				D0413EA02CD3CA7100E8F4D9 /* ServicesModel.swift in Sources */,
+				D0CDA8A72CDBA37500B67DC2 /* SegmentedControlView.swift in Sources */,
 				D0BAC0AE2CD0E94200ACEFE6 /* UserProfileModel.swift in Sources */,
 				D0BAC0B22CD0F5F100ACEFE6 /* PetCollectionViewCell.swift in Sources */,
 				D0BAC0B92CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift in Sources */,
 				D00C14392CBA88B300AF2BD9 /* NetworkService.swift in Sources */,
 				D0BAC0BB2CD1225700ACEFE6 /* MockImageHelper.swift in Sources */,
+				D0CDA8A32CDB85C000B67DC2 /* LoginViewController.swift in Sources */,
 				D00C144B2CBAC4F800AF2BD9 /* PetProfileViewController.swift in Sources */,
+				D0CDA8A52CDB8F1B00B67DC2 /* AddServiceViewController.swift in Sources */,
 				D00C14492CBA8FD800AF2BD9 /* APIfunc.swift in Sources */,
 				D0BAC0B02CD0F24600ACEFE6 /* PetsModel.swift in Sources */,
 				D0F632352CD2B3C8000CDF34 /* ServicesViewController.swift in Sources */,

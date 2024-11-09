@@ -84,7 +84,7 @@ final class UserProfileViewController: UIViewController {
         view.addSubview(usernameLabel)
         view.addSubview(contactsLabel)
         view.addSubview(separator1View)
-        navBarView.setup(delegate: self, leftImage: UIImage(systemName: "chevron.backward"), leftCenterImage: nil, rightCenterImage: nil, rightImage: nil)
+        navBarView.setup(delegate: self, leftImage: nil, leftCenterImage: nil, rightCenterImage: nil, rightImage: nil)
         view.addSubview(testLabel)
         view.addSubview(toServicesButtonView)
         toServicesButtonView.addSubview(toServicesButtonLabel)
@@ -103,8 +103,8 @@ final class UserProfileViewController: UIViewController {
         view.addSubview(collectionView)
         view.addSubview(separator2View)
         setupConstraints()
-        getUser()
         getPets()
+        setupUser()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -119,17 +119,6 @@ final class UserProfileViewController: UIViewController {
                 self.userPhotoImageView.image = UIImage(data: userImage)
             } else {
                 self.userPhotoImageView.image = nil
-            }
-        }
-    }
-    private func getUser() {
-        DataManager.shared.networkServiceProtocol.getUserProfile(userId: 1) { result in
-            switch result {
-            case .success(let success):
-                self.userModel = UserProfileModel(json: success)
-                self.setupUser()
-            case .failure(let failure):
-                print("[ERROR]: \(failure.message())")
             }
         }
     }
@@ -171,19 +160,6 @@ final class UserProfileViewController: UIViewController {
                 self.toServicesButtonView.layer.opacity = 1
                 self.toServicesButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                /*DataManager.shared.networkServiceProtocol.getPetProfile(petId: 1) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let success):
-                            let petModel = PetProfileModel(json: success)
-                            self.toPetProfileViewController(petModel: petModel)
-                        case .failure(let failure):
-                            self.testLabel.text = failure.message()
-                            self.toPetProfileViewController(petModel: PetProfileModel(typeOfAnimal: "Злой кот", petAvatar: "Быстрый зверь", petName: "Барсик"))
-                        }
-                        self.toServicesestButtonView.isUserInteractionEnabled = true
-                    }
-                }*/
                 DataManager.shared.networkServiceProtocol.getServices { result in
                     DispatchQueue.main.async {
                         switch result {
