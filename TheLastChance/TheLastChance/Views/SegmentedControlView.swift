@@ -8,18 +8,14 @@
 import UIKit
 
 protocol SegmentedControlDelegate: AnyObject {
-    func segmentedControleSet(mode: SegmentedControlView.Mode)
+    func segmentedControleSet(mode: ServiceModel.Mode)
 }
 
 final class SegmentedControlView: UIView {
 
     private weak var delegate: SegmentedControlDelegate?
 
-    enum Mode {
-        case master
-        case slave
-    }
-    var mode: Mode = .slave
+    var mode: ServiceModel.Mode = .master
     private lazy var leftSegmentedControlButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 10.0
@@ -42,13 +38,13 @@ final class SegmentedControlView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    public func setup(delegate: SegmentedControlDelegate) {
+    func setup(delegate: SegmentedControlDelegate) {
         self.delegate = delegate
         layer.cornerRadius = 10.0
         layer.borderWidth = 1
-        layer.borderColor = UIColor.gray.cgColor
+        layer.borderColor = UIColor.systemTeal.cgColor
         layer.masksToBounds = true
-        backgroundColor = .purple
+        backgroundColor = .systemBackground
         addSubview(leftSegmentedControlButton)
         addSubview(rightSegmentedControlButton)
         leftSegmentedControlButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.tapped(_:))))
@@ -60,14 +56,14 @@ final class SegmentedControlView: UIView {
         switch mode {
         case .master:
             leftSegmentedControlButton.setTitleColor(.white, for: .normal)
-            rightSegmentedControlButton.setTitleColor(.yellow, for: .normal)
-            leftSegmentedControlButton.layer.backgroundColor = UIColor.green.cgColor
-            rightSegmentedControlButton.layer.backgroundColor = UIColor.purple.cgColor
+            rightSegmentedControlButton.setTitleColor(.secondarySystemBackground, for: .normal)
+            leftSegmentedControlButton.layer.backgroundColor = UIColor.systemTeal.cgColor
+            rightSegmentedControlButton.layer.backgroundColor = UIColor.systemBackground.cgColor
         case .slave:
-            leftSegmentedControlButton.setTitleColor(.yellow, for: .normal)
+            leftSegmentedControlButton.setTitleColor(.secondarySystemBackground, for: .normal)
             rightSegmentedControlButton.setTitleColor(.white, for: .normal)
-            leftSegmentedControlButton.layer.backgroundColor = UIColor.purple.cgColor
-            rightSegmentedControlButton.layer.backgroundColor = UIColor.green.cgColor
+            leftSegmentedControlButton.layer.backgroundColor = UIColor.systemBackground.cgColor
+            rightSegmentedControlButton.layer.backgroundColor = UIColor.systemTeal.cgColor
         }
     }
     @objc
@@ -83,7 +79,7 @@ final class SegmentedControlView: UIView {
             })
         case .slave:
             UIView.animate(withDuration: 0.1, delay: 0.0, options: .layoutSubviews, animations: {
-                self.mode = .slave
+                self.mode = .master
                 self.setupByMode()
                 delegate.segmentedControleSet(mode: self.mode)
             })

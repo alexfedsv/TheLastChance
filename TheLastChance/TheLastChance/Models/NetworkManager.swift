@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class NetworkManager: NetworkService, NetworkProtocol {
+final class NetworkManager: NetworkProtocol {
 
     enum HTTPMethod: String {
         case POST

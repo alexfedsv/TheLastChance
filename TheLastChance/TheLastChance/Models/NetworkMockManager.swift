@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class NetworkMockManager: NetworkService, NetworkProtocol {
+final class NetworkMockManager: NetworkProtocol {
     
     func getUserProfile(userId: Int, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {

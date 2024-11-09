@@ -13,7 +13,6 @@
 		D00C14292CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D00C14272CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld */; };
 		D00C142B2CBA7DD000AF2BD9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D00C142A2CBA7DD000AF2BD9 /* Assets.xcassets */; };
 		D00C142E2CBA7DD000AF2BD9 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = D00C142D2CBA7DD000AF2BD9 /* Base */; };
-		D00C14392CBA88B300AF2BD9 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C14382CBA88B300AF2BD9 /* NetworkService.swift */; };
 		D00C143B2CBA88D900AF2BD9 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C143A2CBA88D900AF2BD9 /* CoreDataManager.swift */; };
 		D00C143D2CBA88E900AF2BD9 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C143C2CBA88E900AF2BD9 /* DataManager.swift */; };
 		D00C143F2CBA89E800AF2BD9 /* NetworkProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C143E2CBA89E800AF2BD9 /* NetworkProtocol.swift */; };
@@ -38,6 +37,9 @@
 		D0CDA8A32CDB85C000B67DC2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CDA8A22CDB85C000B67DC2 /* LoginViewController.swift */; };
 		D0CDA8A52CDB8F1B00B67DC2 /* AddServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CDA8A42CDB8F1B00B67DC2 /* AddServiceViewController.swift */; };
 		D0CDA8A72CDBA37500B67DC2 /* SegmentedControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CDA8A62CDBA37500B67DC2 /* SegmentedControlView.swift */; };
+		D0E0EA092CDF793500C70C62 /* TabBarControllerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E0EA082CDF793500C70C62 /* TabBarControllerFactory.swift */; };
+		D0E0EA0D2CDF91F900C70C62 /* UserBackgroundPhotoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E0EA0C2CDF91F900C70C62 /* UserBackgroundPhotoImageView.swift */; };
+		D0E0EA112CDFB09E00C70C62 /* UserOwnerProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E0EA102CDFB09E00C70C62 /* UserOwnerProfileModel.swift */; };
 		D0F632312CD2512B000CDF34 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D0F632302CD2512B000CDF34 /* Colors.xcassets */; };
 		D0F632352CD2B3C8000CDF34 /* ServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */; };
 		D0F632372CD2B445000CDF34 /* ServiceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F632362CD2B445000CDF34 /* ServiceModel.swift */; };
@@ -53,7 +55,6 @@
 		D00C142A2CBA7DD000AF2BD9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D00C142D2CBA7DD000AF2BD9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D00C142F2CBA7DD000AF2BD9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D00C14382CBA88B300AF2BD9 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
 		D00C143A2CBA88D900AF2BD9 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		D00C143C2CBA88E900AF2BD9 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		D00C143E2CBA89E800AF2BD9 /* NetworkProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProtocol.swift; sourceTree = "<group>"; };
@@ -78,6 +79,9 @@
 		D0CDA8A22CDB85C000B67DC2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		D0CDA8A42CDB8F1B00B67DC2 /* AddServiceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddServiceViewController.swift; sourceTree = "<group>"; };
 		D0CDA8A62CDBA37500B67DC2 /* SegmentedControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlView.swift; sourceTree = "<group>"; };
+		D0E0EA082CDF793500C70C62 /* TabBarControllerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarControllerFactory.swift; sourceTree = "<group>"; };
+		D0E0EA0C2CDF91F900C70C62 /* UserBackgroundPhotoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBackgroundPhotoImageView.swift; sourceTree = "<group>"; };
+		D0E0EA102CDFB09E00C70C62 /* UserOwnerProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserOwnerProfileModel.swift; sourceTree = "<group>"; };
 		D0F632302CD2512B000CDF34 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesViewController.swift; sourceTree = "<group>"; };
 		D0F632362CD2B445000CDF34 /* ServiceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceModel.swift; sourceTree = "<group>"; };
@@ -119,6 +123,7 @@
 				D00C14352CBA82A900AF2BD9 /* ViewControllers */,
 				D00C141E2CBA7DCE00AF2BD9 /* AppDelegate.swift */,
 				D00C14202CBA7DCE00AF2BD9 /* SceneDelegate.swift */,
+				D0E0EA082CDF793500C70C62 /* TabBarControllerFactory.swift */,
 				D00C142A2CBA7DD000AF2BD9 /* Assets.xcassets */,
 				D0F632302CD2512B000CDF34 /* Colors.xcassets */,
 				D00C142C2CBA7DD000AF2BD9 /* LaunchScreen.storyboard */,
@@ -131,12 +136,12 @@
 		D00C14352CBA82A900AF2BD9 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */,
+				D0CDA8A42CDB8F1B00B67DC2 /* AddServiceViewController.swift */,
 				D00C14222CBA7DCE00AF2BD9 /* UserProfileViewController.swift */,
 				D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */,
-				D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */,
 				D0413EA12CD3EDCB00E8F4D9 /* AddEditPetViewController.swift */,
 				D0CDA8A22CDB85C000B67DC2 /* LoginViewController.swift */,
-				D0CDA8A42CDB8F1B00B67DC2 /* AddServiceViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -149,6 +154,7 @@
 				D0BAC0B82CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift */,
 				D0F632382CD2B626000CDF34 /* ServicesCollectionViewCell.swift */,
 				D0CDA8A62CDBA37500B67DC2 /* SegmentedControlView.swift */,
+				D0E0EA0C2CDF91F900C70C62 /* UserBackgroundPhotoImageView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -159,7 +165,6 @@
 				D0BAC0B32CD10B9F00ACEFE6 /* Mock */,
 				D00C143C2CBA88E900AF2BD9 /* DataManager.swift */,
 				D00C143E2CBA89E800AF2BD9 /* NetworkProtocol.swift */,
-				D00C14382CBA88B300AF2BD9 /* NetworkService.swift */,
 				D00C14422CBA8D4B00AF2BD9 /* NetworkManager.swift */,
 				D00C14442CBA8D6100AF2BD9 /* NetworkMockManager.swift */,
 				D00C14462CBA8F0300AF2BD9 /* NetworkError.swift */,
@@ -168,6 +173,7 @@
 				D00C14482CBA8FD800AF2BD9 /* APIfunc.swift */,
 				D00C144E2CBAC84E00AF2BD9 /* PetProfileModel.swift */,
 				D0BAC0AD2CD0E94200ACEFE6 /* UserProfileModel.swift */,
+				D0E0EA102CDFB09E00C70C62 /* UserOwnerProfileModel.swift */,
 				D0BAC0AF2CD0F24600ACEFE6 /* PetsModel.swift */,
 				D0F632362CD2B445000CDF34 /* ServiceModel.swift */,
 				D0413E9F2CD3CA7100E8F4D9 /* ServicesModel.swift */,
@@ -270,11 +276,13 @@
 				D00C143D2CBA88E900AF2BD9 /* DataManager.swift in Sources */,
 				D00C143F2CBA89E800AF2BD9 /* NetworkProtocol.swift in Sources */,
 				D0413EA02CD3CA7100E8F4D9 /* ServicesModel.swift in Sources */,
+				D0E0EA092CDF793500C70C62 /* TabBarControllerFactory.swift in Sources */,
+				D0E0EA0D2CDF91F900C70C62 /* UserBackgroundPhotoImageView.swift in Sources */,
 				D0CDA8A72CDBA37500B67DC2 /* SegmentedControlView.swift in Sources */,
 				D0BAC0AE2CD0E94200ACEFE6 /* UserProfileModel.swift in Sources */,
 				D0BAC0B22CD0F5F100ACEFE6 /* PetCollectionViewCell.swift in Sources */,
+				D0E0EA112CDFB09E00C70C62 /* UserOwnerProfileModel.swift in Sources */,
 				D0BAC0B92CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift in Sources */,
-				D00C14392CBA88B300AF2BD9 /* NetworkService.swift in Sources */,
 				D0BAC0BB2CD1225700ACEFE6 /* MockImageHelper.swift in Sources */,
 				D0CDA8A32CDB85C000B67DC2 /* LoginViewController.swift in Sources */,
 				D00C144B2CBAC4F800AF2BD9 /* PetProfileViewController.swift in Sources */,

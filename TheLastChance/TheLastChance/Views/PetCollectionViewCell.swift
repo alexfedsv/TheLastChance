@@ -12,7 +12,7 @@ final class PetCollectionViewCell: UICollectionViewCell {
     static let identifier = "PetCollectionViewCellCell"
     private var avatarImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = .systemTeal
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
@@ -34,7 +34,7 @@ final class PetCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         clipsToBounds = true
         layer.cornerRadius = 10
-        backgroundColor = .green
+        backgroundColor = .systemTeal
         addSubview(avatarImageView)
         addSubview(titleLabel)
         addSubview(nameLabel)

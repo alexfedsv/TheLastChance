@@ -11,91 +11,70 @@ final class UserProfileViewController: UIViewController {
 
     var userModel: UserProfileModel?
     var petsModel: PetsModel = PetsModel()
-    private var navBarView = NavBarView()
+    private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {
+        let imageView = UserBackgroundPhotoImageView()
+        imageView.backgroundColor = .systemTeal
+        imageView.image = UIImage(named: "Mock/animals")
+        return imageView
+    }()
     private var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = .systemTeal
         return imageView
     }()
     private var separator0View: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 12
-        view.backgroundColor = .white
+        view.backgroundColor = .separator
         return view
     }()
     private var separator1View: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 12
-        view.backgroundColor = .white
+        view.backgroundColor = .separator
         return view
     }()
     private var separator2View: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 12
-        view.backgroundColor = .white
+        view.backgroundColor = .separator
         return view
     }()
     private var usernameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 22)
-        label.textColor = .white
+        label.font = .systemFont(ofSize: 21)
         label.numberOfLines = 0
         return label
     }()
     private var contactsLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 22)
-        label.textColor = .white
+        label.font = .systemFont(ofSize: 21)
         label.numberOfLines = 0
         return label
     }()
     var collectionView: UICollectionView!
-    private var testLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        return label
-    }()
-    private var toServicesButtonView: UIView = {
-        let view = UIView()
-        view.layer.masksToBounds = true
-        view.layer.cornerRadius = 12
-        view.backgroundColor = .blue
-        return view
-    }()
-    private var toServicesButtonLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.text = "К услугам"
-        label.textColor = .white
-        return label
-    }()
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(navBarView)
+        setupNavBar()
+        view.addSubview(userBackgroundPhotoImageView)
         view.addSubview(userPhotoImageView)
         view.addSubview(separator0View)
         view.addSubview(usernameLabel)
         view.addSubview(contactsLabel)
         view.addSubview(separator1View)
-        navBarView.setup(delegate: self, leftImage: nil, leftCenterImage: nil, rightCenterImage: nil, rightImage: nil)
-        view.addSubview(testLabel)
-        view.addSubview(toServicesButtonView)
-        toServicesButtonView.addSubview(toServicesButtonLabel)
-        toServicesButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toServices)))
-        view.backgroundColor = .purple
+        view.backgroundColor = .systemBackground
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 10
         collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
-        collectionView.backgroundColor = .purple
+        collectionView.backgroundColor = .systemBackground
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(PetCollectionViewCell.self, forCellWithReuseIdentifier: PetCollectionViewCell.identifier)
@@ -110,26 +89,47 @@ final class UserProfileViewController: UIViewController {
         super.viewDidLayoutSubviews()
         userPhotoImageView.layer.cornerRadius = userPhotoImageView.bounds.width / 2
     }
+    private func setupNavBar() {
+        self.navigationController?.navigationBar.tintColor = UIColor.systemTeal
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        self.navigationItem.hidesBackButton = false
+        let backButton = UIBarButtonItem()
+        backButton.title = ""
+        self.navigationItem.backBarButtonItem = backButton
+        let rightButtonImage = UIImage(systemName: "gearshape")
+        let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(toSettings))
+        self.navigationItem.rightBarButtonItem = rightBarButtonItem
+    }
     private func setupUser() {
-        guard let userModel = userModel else { return }
-        DispatchQueue.main.async {
-            self.usernameLabel.text = userModel.username
-            self.contactsLabel.text = userModel.contacts
-            if let userImage = userModel.userImage {
-                self.userPhotoImageView.image = UIImage(data: userImage)
-            } else {
-                self.userPhotoImageView.image = nil
+        DataManager.shared.getUserProfile(userId: 1) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let success):
+                    DispatchQueue.main.async {
+                        let userModel = UserProfileModel(json: success)
+                        self.userModel = userModel
+                        self.usernameLabel.text = userModel.username
+                        self.contactsLabel.text = userModel.contacts
+                        if let userImage = userModel.userImage {
+                            self.userPhotoImageView.image = UIImage(data: userImage)
+                        } else {
+                            self.userPhotoImageView.image = nil
+                        }
+                    }
+                case .failure(let failure):
+                    break
+                }
             }
         }
     }
     private func getPets() {
         let dispatchGroup = DispatchGroup()
-        DataManager.shared.networkServiceProtocol.getPets(userId: 1) { resultPetIds in
+        DataManager.shared.getPets(userId: 1) { resultPetIds in
             switch resultPetIds {
             case .success(let successPetIds):
                 for petId in successPetIds.petIds {
                     dispatchGroup.enter()
-                    DataManager.shared.networkServiceProtocol.getPetProfile(petId: petId) { resultPetProfile in
+                    DataManager.shared.getPetProfile(petId: petId) { resultPetProfile in
                         switch resultPetProfile {
                         case .success(let successPetProfile):
                             self.petsModel.pets.append(PetProfileModel(json: successPetProfile))
@@ -149,52 +149,26 @@ final class UserProfileViewController: UIViewController {
             }
         }
     }
-    @objc
-    private func toServices() {
-        toServicesButtonView.isUserInteractionEnabled = false
-        UIView.animate(withDuration: 0.5) {
-            self.toServicesButtonView.layer.opacity = 0.9
-            self.toServicesButtonView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-        } completion: { _ in
-            UIView.animate(withDuration: 0.5) {
-                self.toServicesButtonView.layer.opacity = 1
-                self.toServicesButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-            } completion: { _ in
-                DataManager.shared.networkServiceProtocol.getServices { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let success):
-                            let servicesModel: ServicesModel = ServicesModel()
-                            for elem in success.services {
-                                servicesModel.services.append(ServiceModel(json: elem))
-                            }
-                            self.toServicesViewController(servicesModel: servicesModel)
-                        case .failure(let failure):
-                            break
-                        }
-                        self.toServicesButtonView.isUserInteractionEnabled = true
-                    }
-                }
-            }
-        }
-    }
     private func toPetProfileViewController(petModel: PetProfileModel) {
         let viewController = PetProfileViewController()
         viewController.petModel = petModel
         viewController.userModel = userModel
-        self.navigationController?.pushViewController(viewController, animated: false)
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
-    private func toServicesViewController(servicesModel: ServicesModel) {
-        let viewController = ServicesViewController()
-        viewController.servicesModel = servicesModel
-        self.navigationController?.pushViewController(viewController, animated: false)
-    }
-    private func toAddEditPetViewController() {
+    private func toAddEditPetViewController(petModel: PetProfileModel) {
         let viewController = AddEditPetViewController()
+        viewController.petModel = petModel
         viewController.userModel = userModel
-        self.navigationController?.pushViewController(viewController, animated: false)
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
-    
+    @objc
+    private func toSettings() {
+        print(#function)
+    }
+    @objc
+    private func backPressed() {
+        print(#function)
+    }
 }
 
 extension UserProfileViewController: NavBarViewDelegate {
@@ -213,7 +187,7 @@ extension UserProfileViewController: NavBarViewDelegate {
 }
 extension UserProfileViewController {
     private func setupConstraints() {
-        navBarView.translatesAutoresizingMaskIntoConstraints = false
+        userBackgroundPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
         userPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
         separator0View.translatesAutoresizingMaskIntoConstraints = false
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -221,24 +195,21 @@ extension UserProfileViewController {
         separator1View.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         separator2View.translatesAutoresizingMaskIntoConstraints = false
-        testLabel.translatesAutoresizingMaskIntoConstraints = false
-        toServicesButtonView.translatesAutoresizingMaskIntoConstraints = false
-        toServicesButtonLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        navBarView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        navBarView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
-        navBarView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
-        navBarView.heightAnchor.constraint(equalToConstant: NavBarView.viewHeight).isActive = true
+        userBackgroundPhotoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        userBackgroundPhotoImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
+        userBackgroundPhotoImageView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
+        userBackgroundPhotoImageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
         
-        userPhotoImageView.topAnchor.constraint(equalTo: navBarView.bottomAnchor, constant: 30).isActive = true
+        userPhotoImageView.bottomAnchor.constraint(equalTo: userBackgroundPhotoImageView.bottomAnchor, constant: -10).isActive = true
         userPhotoImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        userPhotoImageView.widthAnchor.constraint(equalToConstant: 180).isActive = true
+        userPhotoImageView.widthAnchor.constraint(equalToConstant: 140).isActive = true
         userPhotoImageView.heightAnchor.constraint(equalTo: userPhotoImageView.widthAnchor).isActive = true
         
-        separator0View.topAnchor.constraint(equalTo: userPhotoImageView.bottomAnchor, constant: 30).isActive = true
+        separator0View.topAnchor.constraint(equalTo: userBackgroundPhotoImageView.bottomAnchor, constant: 10).isActive = true
         separator0View.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
         separator0View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
-        separator0View.heightAnchor.constraint(equalToConstant: 3).isActive = true
+        separator0View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
         usernameLabel.topAnchor.constraint(equalTo: separator0View.bottomAnchor, constant: 15).isActive = true
         usernameLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 35).isActive = true
@@ -251,7 +222,7 @@ extension UserProfileViewController {
         separator1View.topAnchor.constraint(equalTo: contactsLabel.bottomAnchor, constant: 15).isActive = true
         separator1View.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
         separator1View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
-        separator1View.heightAnchor.constraint(equalToConstant: 3).isActive = true
+        separator1View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
         collectionView.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 10).isActive = true
         collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
@@ -261,19 +232,7 @@ extension UserProfileViewController {
         separator2View.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 10).isActive = true
         separator2View.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
         separator2View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
-        separator2View.heightAnchor.constraint(equalToConstant: 3).isActive = true
-        
-        testLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        testLabel.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.8).isActive = true
-        testLabel.bottomAnchor.constraint(equalTo: toServicesButtonView.topAnchor, constant: -40).isActive = true
-        
-        toServicesButtonView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 25).isActive = true
-        toServicesButtonView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -25).isActive = true
-        toServicesButtonView.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        toServicesButtonView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30).isActive = true
-        
-        toServicesButtonLabel.centerYAnchor.constraint(equalTo: toServicesButtonView.centerYAnchor).isActive = true
-        toServicesButtonLabel.centerXAnchor.constraint(equalTo: toServicesButtonView.centerXAnchor).isActive = true
+        separator2View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
     }
 }
 extension UserProfileViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -303,7 +262,8 @@ extension UserProfileViewController: UICollectionViewDataSource, UICollectionVie
             toPetProfileViewController(petModel: petModel)
         }
         if indexPath.row == petsModel.pets.count {
-            toAddEditPetViewController()
+            let petModel = PetProfileModel(typeOfAnimal: "", petName: "", info: "", petAvatar: "")
+            toAddEditPetViewController(petModel: petModel)
         }
     }
 }

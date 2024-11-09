@@ -8,6 +8,11 @@
 import Foundation
 
 final class ServiceModel {
+    enum Mode {
+        case master
+        case slave
+    }
+    var mode: Mode = .master
     var userId: Int
     var title: String
     var description: String

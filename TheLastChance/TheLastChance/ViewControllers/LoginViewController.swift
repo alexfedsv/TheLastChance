@@ -39,18 +39,22 @@ final class LoginViewController: UIViewController {
         UIView.animate(withDuration: 0.5) {
             self.loginButtonView.layer.opacity = 0.9
             self.loginButtonView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.loginButtonLabel.layer.opacity = 0.9
+            self.loginButtonLabel.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         } completion: { _ in
             UIView.animate(withDuration: 0.5) {
                 self.loginButtonView.layer.opacity = 1
                 self.loginButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                self.loginButtonLabel.layer.opacity = 1
+                self.loginButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                DataManager.shared.networkServiceProtocol.getUserProfile(userId: 1) { result in
+                DataManager.shared.getUserProfile(userId: 1) { result in
                     DispatchQueue.main.async {
                         switch result {
                         case .success(let success):
                             let viewController = UserProfileViewController()
                             viewController.userModel = UserProfileModel(json: success)
-                            self.navigationController?.pushViewController(viewController, animated: false)
+                            self.navigationController?.pushViewController(viewController, animated: true)
                             break
                         case .failure(let failure):
                             break
