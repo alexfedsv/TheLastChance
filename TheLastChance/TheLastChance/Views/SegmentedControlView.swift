@@ -8,14 +8,14 @@
 import UIKit
 
 protocol SegmentedControlDelegate: AnyObject {
-    func segmentedControleSet(mode: ServiceModel.Mode)
+    func segmentedControleSet(role: ServiceModel.Mode)
 }
 
 final class SegmentedControlView: UIView {
 
     private weak var delegate: SegmentedControlDelegate?
 
-    var mode: ServiceModel.Mode = .master
+    var role: ServiceModel.Mode = .slave
     private lazy var leftSegmentedControlButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 10.0
@@ -53,15 +53,15 @@ final class SegmentedControlView: UIView {
         setupConstraints()
     }
     private func setupByMode() {
-        switch mode {
+        switch role {
         case .master:
-            leftSegmentedControlButton.setTitleColor(.white, for: .normal)
-            rightSegmentedControlButton.setTitleColor(.secondarySystemBackground, for: .normal)
+            leftSegmentedControlButton.setTitleColor(.systemBackground, for: .normal)
+            rightSegmentedControlButton.setTitleColor(UIColor.systemTeal, for: .normal)
             leftSegmentedControlButton.layer.backgroundColor = UIColor.systemTeal.cgColor
             rightSegmentedControlButton.layer.backgroundColor = UIColor.systemBackground.cgColor
         case .slave:
-            leftSegmentedControlButton.setTitleColor(.secondarySystemBackground, for: .normal)
-            rightSegmentedControlButton.setTitleColor(.white, for: .normal)
+            leftSegmentedControlButton.setTitleColor(UIColor.systemTeal, for: .normal)
+            rightSegmentedControlButton.setTitleColor(.systemBackground, for: .normal)
             leftSegmentedControlButton.layer.backgroundColor = UIColor.systemBackground.cgColor
             rightSegmentedControlButton.layer.backgroundColor = UIColor.systemTeal.cgColor
         }
@@ -69,19 +69,18 @@ final class SegmentedControlView: UIView {
     @objc
     private func tapped(_: UITapGestureRecognizer) {
         guard let delegate = delegate else { return }
-        delegate.segmentedControleSet(mode: mode)
-        switch mode {
+        switch role {
         case .master:
             UIView.animate(withDuration: 0.1, delay: 0.0, options: .layoutSubviews, animations: {
-                self.mode = .slave
+                self.role = .slave
                 self.setupByMode()
-                delegate.segmentedControleSet(mode: self.mode)
+                delegate.segmentedControleSet(role: self.role)
             })
         case .slave:
             UIView.animate(withDuration: 0.1, delay: 0.0, options: .layoutSubviews, animations: {
-                self.mode = .master
+                self.role = .master
                 self.setupByMode()
-                delegate.segmentedControleSet(mode: self.mode)
+                delegate.segmentedControleSet(role: self.role)
             })
         }
     }

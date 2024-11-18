@@ -28,7 +28,6 @@ final class ServicesViewController: UIViewController {
         view.addSubview(collectionView)
         setupConstraints()
         getServices()
-        setupUser()
     }
     private func setupNavBar() {
         self.navigationController?.navigationBar.tintColor = UIColor.systemTeal
@@ -48,23 +47,9 @@ final class ServicesViewController: UIViewController {
                 switch result {
                 case .success(let success):
                     for elem in success.services {
-                        self.servicesModel.services.append(ServiceModel(json: elem))
+                        self.servicesModel.services.append(ServiceModel(serviceId: 0, json: elem))
                     }
                     self.collectionView.reloadData()
-                case .failure(let failure):
-                    break
-                }
-            }
-        }
-    }
-    private func setupUser() {
-        DataManager.shared.getUserProfile(userId: 1) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let success):
-                    DispatchQueue.main.async {
-                        UserOwnerProfileModel.shared.setup(json: success)
-                    }
                 case .failure(let failure):
                     break
                 }
@@ -92,12 +77,17 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ServicesCollectionViewCell.identifier, for: indexPath) as? ServicesCollectionViewCell {
-            cell.setup(title: servicesModel.services[indexPath.row].title, description: servicesModel.services[indexPath.row].description, imageData: servicesModel.services[indexPath.row].petImageData)
+            cell.setup(title: servicesModel.services[indexPath.row].title, description: servicesModel.services[indexPath.row].description, imageData: servicesModel.services[indexPath.row].userImageData)
             return cell
         }
         return UICollectionViewCell()
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: 70)
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let viewController = ServiceViewController()
+        viewController.serviceModel = servicesModel.services[indexPath.row]
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
 }

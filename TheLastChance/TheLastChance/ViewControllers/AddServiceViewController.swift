@@ -10,8 +10,10 @@ import UIKit
 final class AddServiceViewController: UIViewController {
 
     var userModel: UserProfileModel?
-    var serviceModel = ServiceModel(userId: 1, title: "", description: "", userImageData: "", petImageData: "")
-    
+    var petsModel: PetsModel = PetsModel()
+    var serviceModel = ServiceModel(role: .slave, serviceId: 0, userId: 1, title: "", description: "", userImageData: "", petIds: [])
+    private var collectionHeight0Constraint = NSLayoutConstraint()
+    private var collectionHeight1Constraint = NSLayoutConstraint()
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
     private var segmentedControlView: SegmentedControlView = SegmentedControlView()
@@ -25,6 +27,7 @@ final class AddServiceViewController: UIViewController {
         imageView.tintColor = .systemTeal
         return imageView
     }()
+    private var collectionView: UICollectionView!
     private lazy var separator0View: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
@@ -119,6 +122,16 @@ final class AddServiceViewController: UIViewController {
         contentView.addSubview(segmentedControlView)
         segmentedControlView.setup(delegate: self)
         contentView.addSubview(photoImageView)
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
+        collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
+        collectionView.backgroundColor = .systemBackground
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(PetCollectionViewCell.self, forCellWithReuseIdentifier: PetCollectionViewCell.identifier)
+        contentView.addSubview(collectionView)
         contentView.addSubview(separator0View)
         contentView.addSubview(titleLabel)
         contentView.addSubview(titleTextView)
@@ -132,7 +145,7 @@ final class AddServiceViewController: UIViewController {
         titleTextView.delegate = self
         descriptionTextView.delegate = self
         setupConstraints()
-        setupData()
+        getUser()
         setupKeyboardObservers()
     }
     deinit {
@@ -164,14 +177,59 @@ final class AddServiceViewController: UIViewController {
         scrollView.contentInset = contentInsets
         scrollView.scrollIndicatorInsets = contentInsets
     }
-    private func setupData() {
-        guard let userModel = userModel else { return }
-        DispatchQueue.main.async {
-            if let icon = userModel.userImage  {
-                self.photoImageView.image = UIImage(data: icon)
-            } else {
-                self.photoImageView.image = nil
+    private func getUser() {
+        DataManager.shared.getUserProfile(userId: 1) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let success):
+                    DispatchQueue.main.async {
+                        let userModel = UserProfileModel(json: success)
+                        self.userModel = userModel
+                        if let icon = userModel.userImage  {
+                            self.photoImageView.image = UIImage(data: icon)
+                        } else {
+                            self.photoImageView.image = nil
+                        }
+                    }
+                case .failure(let failure):
+                    break
+                }
             }
+        }
+    }
+    private func getPets(completion: @escaping ()-> Void) {
+        print("getPets")
+        if self.petsModel.pets.isEmpty {
+            let dispatchGroup = DispatchGroup()
+            DataManager.shared.getPets(userId: 1) { resultPetIds in
+                print("resultPetIds = \(resultPetIds)")
+                switch resultPetIds {
+                case .success(let successPetIds):
+                    for petId in successPetIds.petIds {
+                        print("petId = \(petId)")
+                        if !self.petsModel.pets.contains(where: { $0.petId == petId}) {
+                            dispatchGroup.enter()
+                            DataManager.shared.getPetProfile(petId: petId) { resultPetProfile in
+                                switch resultPetProfile {
+                                case .success(let successPetProfile):
+                                    self.petsModel.pets.append(successPetProfile)
+                                case .failure(let failurePetProfile):
+                                    print("[ERROR]: \(failurePetProfile.message())")
+                                }
+                                dispatchGroup.leave()
+                            }
+                        }
+                    }
+                    dispatchGroup.notify(queue: .main) {
+                        completion()
+                    }
+                case .failure(let failurePetIds):
+                    print("[ERROR]: \(failurePetIds.message())")
+                    completion()
+                }
+            }
+        } else {
+            completion()
         }
     }
     @objc
@@ -206,9 +264,19 @@ final class AddServiceViewController: UIViewController {
     }
 }
 extension AddServiceViewController: SegmentedControlDelegate {
-    func segmentedControleSet(mode: ServiceModel.Mode) {
+    func segmentedControleSet(role: ServiceModel.Mode) {
         print(#function)
-        serviceModel.mode = mode
+        print("role.rawValue = \(role.rawValue)")
+        serviceModel.role = role
+        getPets {
+            self.collectionHeight0Constraint.priority = UILayoutPriority(self.serviceModel.role == .master ? 750 : 950)
+            self.collectionHeight1Constraint.priority = UILayoutPriority(self.serviceModel.role == .master ? 950 : 750)
+            UIView.animate(withDuration: 0.5) {
+                self.view.layoutIfNeeded()
+            } completion: { _ in
+                self.collectionView.reloadData()
+            }
+        }
     }
 }
 extension AddServiceViewController: UITextViewDelegate {
@@ -237,6 +305,7 @@ extension AddServiceViewController {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         segmentedControlView.translatesAutoresizingMaskIntoConstraints = false
         photoImageView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         separator0View.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleTextView.translatesAutoresizingMaskIntoConstraints = false
@@ -267,8 +336,19 @@ extension AddServiceViewController {
         photoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         photoImageView.widthAnchor.constraint(equalToConstant: 180).isActive = true
         photoImageView.heightAnchor.constraint(equalTo: photoImageView.widthAnchor).isActive = true
+        
+        collectionView.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 10).isActive = true
+        collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
+        collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
 
-        separator0View.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 30).isActive = true
+        collectionHeight0Constraint = NSLayoutConstraint(item: collectionView as Any, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 0.0)
+        collectionHeight1Constraint = NSLayoutConstraint(item: collectionView as Any, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 160.0)
+        collectionHeight0Constraint.priority = UILayoutPriority(serviceModel.role == .master ? 750 : 950)
+        collectionHeight1Constraint.priority = UILayoutPriority(serviceModel.role == .master ? 950 : 750)
+        collectionHeight0Constraint.isActive = true
+        collectionHeight1Constraint.isActive = true
+
+        separator0View.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 10).isActive = true
         separator0View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
         separator0View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator0View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
@@ -306,5 +386,33 @@ extension AddServiceViewController {
         saveButtonLabel.centerXAnchor.constraint(equalTo: saveButtonView.centerXAnchor).isActive = true
     }
 }
-
-
+extension AddServiceViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return petsModel.pets.count
+    }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PetCollectionViewCell.identifier, for: indexPath) as? PetCollectionViewCell {
+            cell.setup(title: petsModel.pets[indexPath.row].typeOfAnimal, name: petsModel.pets[indexPath.row].petName, imageData: petsModel.pets[indexPath.row].petAvatar)
+            return cell
+        }
+        return UICollectionViewCell()
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return serviceModel.role == .master ? CGSize(width: 100, height: 150) : CGSize(width: 0, height: 0)
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let petModel = petsModel.pets[indexPath.row]
+        print("Выбрано животное: \(petModel.petName) из типа: \(petModel.typeOfAnimal) petId: \(String(describing: petModel.petId))")
+        if let cell = collectionView.cellForItem(at: indexPath) as? PetCollectionViewCell {
+            if let index = serviceModel.petIds.firstIndex(where: { petModel.petId == $0 }) {
+                cell.setup(isMarked: false)
+                serviceModel.petIds.remove(at: index)
+            } else {
+                cell.setup(isMarked: true)
+                serviceModel.petIds.append(petModel.petId)
+            }
+            print("serviceModel.petIds: \(serviceModel.petIds)")
+        }
+    }
+    
+}

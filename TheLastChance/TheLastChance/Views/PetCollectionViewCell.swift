@@ -18,6 +18,15 @@ final class PetCollectionViewCell: UICollectionViewCell {
         imageView.layer.masksToBounds = true
         return imageView
     }()
+    private var markImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.isHidden = true
+        imageView.isUserInteractionEnabled = true
+        imageView.layer.masksToBounds = true
+        imageView.image = UIImage(systemName: "checkmark.circle.fill")
+        imageView.tintColor = .systemBackground
+        return imageView
+    }()
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
@@ -38,6 +47,7 @@ final class PetCollectionViewCell: UICollectionViewCell {
         addSubview(avatarImageView)
         addSubview(titleLabel)
         addSubview(nameLabel)
+        addSubview(markImageView)
         setupConstraints()
     }
     required init?(coder aDecoder: NSCoder) {
@@ -55,15 +65,20 @@ final class PetCollectionViewCell: UICollectionViewCell {
             }
         }
     }
+    func setup(isMarked: Bool) {
+        markImageView.isHidden = !isMarked
+    }
     override func layoutSubviews() {
         super.layoutSubviews()
         avatarImageView.layer.cornerRadius = avatarImageView.bounds.width / 2
+        markImageView.layer.cornerRadius = markImageView.bounds.width / 2
     }
 }
 extension PetCollectionViewCell {
     private func setupConstraints() {
         self.translatesAutoresizingMaskIntoConstraints = true
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
+        markImageView.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
 
@@ -71,6 +86,11 @@ extension PetCollectionViewCell {
         avatarImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 8).isActive = true
         avatarImageView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.8).isActive = true
         avatarImageView.heightAnchor.constraint(equalTo: avatarImageView.widthAnchor).isActive = true
+        
+        markImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 4).isActive = true
+        markImageView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -4).isActive = true
+        markImageView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.25).isActive = true
+        markImageView.heightAnchor.constraint(equalTo: markImageView.widthAnchor).isActive = true
 
         titleLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 10).isActive = true
         titleLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 5).isActive = true

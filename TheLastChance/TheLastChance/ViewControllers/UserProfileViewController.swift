@@ -132,7 +132,7 @@ final class UserProfileViewController: UIViewController {
                     DataManager.shared.getPetProfile(petId: petId) { resultPetProfile in
                         switch resultPetProfile {
                         case .success(let successPetProfile):
-                            self.petsModel.pets.append(PetProfileModel(json: successPetProfile))
+                            self.petsModel.pets.append(successPetProfile)
                         case .failure(let failurePetProfile):
                             print("[ERROR]: \(failurePetProfile.message())")
                         }
@@ -262,7 +262,7 @@ extension UserProfileViewController: UICollectionViewDataSource, UICollectionVie
             toPetProfileViewController(petModel: petModel)
         }
         if indexPath.row == petsModel.pets.count {
-            let petModel = PetProfileModel(typeOfAnimal: "", petName: "", info: "", petAvatar: "")
+            let petModel = PetProfileModel(petId: 0, typeOfAnimal: "", petName: "", info: "", petAvatar: "")
             toAddEditPetViewController(petModel: petModel)
         }
     }

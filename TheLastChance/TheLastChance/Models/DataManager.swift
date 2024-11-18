@@ -10,8 +10,9 @@ import Foundation
 protocol DataManagerProtocol: AnyObject {
     func getUserProfile(userId: Int, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void)
     func getPets(userId: Int, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void)
-    func getPetProfile(petId: Int, completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void)
+    func getPetProfile(petId: Int, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
     func getServices(completion: @escaping (Result<JSON.Services, NetworkError>) -> Void)
+    func addService(serviceModel: ServiceModel, completion: @escaping (Result<ServiceModel, NetworkError>) -> Void)
 }
 
 class DataManager: DataManagerProtocol {
@@ -41,14 +42,23 @@ class DataManager: DataManagerProtocol {
             completion(result)
         }
     }
-    func getPetProfile(petId: Int, completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void) {
+    func getPetProfile(petId: Int, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void) {
         networkServiceProtocol.getPetProfile(petId: petId) { result in
-            completion(result)
+            switch result {
+            case .success(let success):
+                let petProfileModel = PetProfileModel(petId: petId, json: success)
+                completion(.success(petProfileModel))
+            case .failure(let failure):
+                completion(.failure(failure))
+            }
         }
     }
     func getServices(completion: @escaping (Result<JSON.Services, NetworkError>) -> Void) {
         networkServiceProtocol.getServices { result in
             completion(result)
         }
+    }
+    func addService(serviceModel: ServiceModel, completion: @escaping (Result<ServiceModel, NetworkError>) -> Void) {
+        
     }
 }

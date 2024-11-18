@@ -204,8 +204,10 @@ final class AddEditPetViewController: UIViewController {
     private func setupData() {
         if let petModel = petModel {
             DispatchQueue.main.async {
-                if let icon = petModel.petAvatar  {
-                    self.petPhotoImageView.image = UIImage(data: icon)
+                if let data = petModel.petAvatar, let icon = UIImage(data: data) {
+                    self.petPhotoImageView.image = icon
+                } else {
+                    self.petPhotoImageView.image = UIImage(systemName: "plus.circle")
                 }
                 self.typeOfAnimalTextView.text = petModel.typeOfAnimal
                 self.petnameTextView.text = petModel.petName

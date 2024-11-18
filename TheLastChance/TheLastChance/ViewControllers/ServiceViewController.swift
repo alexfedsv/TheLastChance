@@ -1,27 +1,28 @@
 //
-//  PetProfileViewController.swift
+//  ServiceViewController.swift
 //  TheLastChance
 //
-//  Created by  Alexander Fedoseev on 12.10.2024.
+//  Created by  Alexander Fedoseev on 13.11.2024.
 //
 
 import UIKit
 
-final class PetProfileViewController: UIViewController {
+class ServiceViewController: UIViewController {
 
-    var userModel: UserProfileModel?
-    var petModel: PetProfileModel?
+    var serviceModel: ServiceModel?
+    private var userModel: UserProfileModel?
     private lazy var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
         imageView.backgroundColor = .white
         return imageView
     }()
-    private lazy var petPhotoImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.layer.masksToBounds = true
-        imageView.backgroundColor = .white
-        return imageView
+    private lazy var userRole: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 24)
+        label.numberOfLines = 1
+        return label
     }()
     private lazy var separator0View: UIView = {
         let view = UIView()
@@ -68,8 +69,8 @@ final class PetProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
-        view.addSubview(petPhotoImageView)
         view.addSubview(userPhotoImageView)
+        view.addSubview(userRole)
         view.addSubview(separator0View)
         view.addSubview(typeOfAnimalLabel)
         view.addSubview(petnameLabel)
@@ -83,7 +84,6 @@ final class PetProfileViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         userPhotoImageView.layer.cornerRadius = userPhotoImageView.bounds.width / 2
-        petPhotoImageView.layer.cornerRadius = petPhotoImageView.bounds.width / 2
     }
     private func setupNavBar() {
         self.navigationController?.navigationBar.tintColor = UIColor.systemTeal
@@ -92,41 +92,44 @@ final class PetProfileViewController: UIViewController {
         let backButton = UIBarButtonItem()
         backButton.title = ""
         self.navigationItem.backBarButtonItem = backButton
-        let rightButtonImage = UIImage(systemName: "pencil")
+        /*let rightButtonImage = UIImage(systemName: "pencil")
         let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(toAddEditPetViewController))
-        self.navigationItem.rightBarButtonItem = rightBarButtonItem
+        self.navigationItem.rightBarButtonItem = rightBarButtonItem*/
     }
     private func setupData() {
-        guard let petModel = petModel else { return }
-        guard let userModel = userModel else { return }
-        DispatchQueue.main.async {
-            if let icon = userModel.userImage  {
-                self.userPhotoImageView.image = UIImage(data: icon)
-            } else {
-                self.userPhotoImageView.image = nil
+        guard let serviceModel = serviceModel else { return }
+        DataManager.shared.getUserProfile(userId: serviceModel.userId) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let success):
+                    DispatchQueue.main.async {
+                        let userModel = UserProfileModel(json: success)
+                        self.userModel = userModel
+                        switch serviceModel.role {
+                        case .master:
+                            self.userRole.text = "ЗАКАЗЧИК"
+                        case .slave:
+                            self.userRole.text = "ИСПОЛНИТЕЛЬ"
+                        }
+                        //self.usernameLabel.text = userModel.username
+                        //self.contactsLabel.text = userModel.contacts
+                        if let userImage = userModel.userImage {
+                            self.userPhotoImageView.image = UIImage(data: userImage)
+                        } else {
+                            self.userPhotoImageView.image = nil
+                        }
+                    }
+                case .failure(let failure):
+                    break
+                }
             }
-            if let icon = petModel.petAvatar  {
-                self.petPhotoImageView.image = UIImage(data: icon)
-            } else {
-                self.petPhotoImageView.image = nil
-            }
-            self.typeOfAnimalLabel.text = petModel.typeOfAnimal
-            self.petnameLabel.text = petModel.petName
-            self.infoLabel.text = petModel.info
         }
     }
-    @objc
-    private func toAddEditPetViewController() {
-        let viewController = AddEditPetViewController()
-        viewController.userModel = userModel
-        viewController.petModel = petModel
-        self.navigationController?.pushViewController(viewController, animated: true)
-    }
 }
-extension PetProfileViewController {
+extension ServiceViewController {
     private func setupConstraints() {
         userPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
-        petPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
+        userRole.translatesAutoresizingMaskIntoConstraints = false
         separator0View.translatesAutoresizingMaskIntoConstraints = false
         typeOfAnimalLabel.translatesAutoresizingMaskIntoConstraints = false
         petnameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -134,17 +137,15 @@ extension PetProfileViewController {
         infoLabel.translatesAutoresizingMaskIntoConstraints = false
         separator2View.translatesAutoresizingMaskIntoConstraints = false
         
-        petPhotoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30).isActive = true
-        petPhotoImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        petPhotoImageView.widthAnchor.constraint(equalToConstant: 180).isActive = true
-        petPhotoImageView.heightAnchor.constraint(equalTo: petPhotoImageView.widthAnchor).isActive = true
-        
-        userPhotoImageView.bottomAnchor.constraint(equalTo: petPhotoImageView.bottomAnchor).isActive = true
-        userPhotoImageView.leadingAnchor.constraint(equalTo: petPhotoImageView.trailingAnchor, constant: -30).isActive = true
-        userPhotoImageView.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        userPhotoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30).isActive = true
+        userPhotoImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        userPhotoImageView.widthAnchor.constraint(equalToConstant: 180).isActive = true
         userPhotoImageView.heightAnchor.constraint(equalTo: userPhotoImageView.widthAnchor).isActive = true
         
-        separator0View.topAnchor.constraint(equalTo: petPhotoImageView.bottomAnchor, constant: 30).isActive = true
+        userRole.topAnchor.constraint(equalTo: userPhotoImageView.bottomAnchor, constant: 10).isActive = true
+        userRole.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        
+        separator0View.topAnchor.constraint(equalTo: userRole.bottomAnchor, constant: 30).isActive = true
         separator0View.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
         separator0View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
         separator0View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true

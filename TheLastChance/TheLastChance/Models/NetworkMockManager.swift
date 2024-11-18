@@ -21,17 +21,21 @@ final class NetworkMockManager: NetworkProtocol {
     }
     func getPetProfile(petId: Int, completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
-            if let pet = MockPets.shared.pets.first(where: { $0.petId == petId }) {
-                completion(.success(pet))
-            } else {
-                completion(.failure(.notFoundMock(atFunc: #function)))
-            }
+            let pet = MockPets.shared.pets[petId - 1]
+            completion(.success(pet))
         })
     }
     func getServices(completion: @escaping (Result<JSON.Services, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
             let services = MockServices.shared.services
             completion(.success(JSON.Services(services: services)))
+        })
+    }
+    func addService(serviceModel: ServiceModel, completion: @escaping (Result<Int, NetworkError>) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
+            let json = JSON.Services.Service(role: serviceModel.role.rawValue, serviceId: MockServices.shared.services.count, userId: serviceModel.userId, title: serviceModel.title, description: serviceModel.description, userImage: "", petIds: serviceModel.petIds)
+            MockServices.shared.services.append(json)
+            completion(.success(MockServices.shared.services.count))
         })
     }
 }
