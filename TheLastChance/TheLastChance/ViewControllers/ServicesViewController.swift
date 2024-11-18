@@ -36,9 +36,11 @@ final class ServicesViewController: UIViewController {
         let backButton = UIBarButtonItem()
         backButton.title = ""
         self.navigationItem.backBarButtonItem = backButton
-        let rightButtonImage = UIImage(systemName: "slider.vertical.3")
-        let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(filterButtonTapped))
-        self.navigationItem.rightBarButtonItem = rightBarButtonItem
+        let rightButtonImageFilter = UIImage(systemName: "slider.vertical.3")
+        let rightBarButtonItemFilter = UIBarButtonItem(image: rightButtonImageFilter, style: .plain, target: self, action: #selector(filterButtonTapped))
+        let rightButtonImageAdd = UIImage(systemName: "plus")
+        let rightBarButtonItemAdd = UIBarButtonItem(image: rightButtonImageAdd, style: .plain, target: self, action: #selector(addButtonTapped))
+        self.navigationItem.rightBarButtonItems = [rightBarButtonItemAdd, rightBarButtonItemFilter]
         
     }
     private func getServices() {
@@ -59,6 +61,17 @@ final class ServicesViewController: UIViewController {
     @objc
     private func filterButtonTapped() {
         print(#function)
+    }
+    @objc
+    private func addButtonTapped() {
+        let viewController = AddServiceViewController()
+        viewController.servicesViewController = self
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
+    func reloadCollection() {
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
 }
 extension ServicesViewController {

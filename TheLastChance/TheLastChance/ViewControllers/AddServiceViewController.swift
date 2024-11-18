@@ -12,6 +12,7 @@ final class AddServiceViewController: UIViewController {
     var userModel: UserProfileModel?
     var petsModel: PetsModel = PetsModel()
     var serviceModel = ServiceModel(role: .slave, serviceId: 0, userId: 1, title: "", description: "", userImageData: "", petIds: [])
+    weak var servicesViewController: ServicesViewController?
     private var collectionHeight0Constraint = NSLayoutConstraint()
     private var collectionHeight1Constraint = NSLayoutConstraint()
     private var scrollView: UIScrollView = UIScrollView()
@@ -234,6 +235,7 @@ final class AddServiceViewController: UIViewController {
     }
     @objc
     private func save() {
+        guard let servicesViewController = servicesViewController else { return }
         saveButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             self.saveButtonView.layer.opacity = 0.9
@@ -247,17 +249,18 @@ final class AddServiceViewController: UIViewController {
                 self.saveButtonLabel.layer.opacity = 1
                 self.saveButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                DataManager.shared.getUserProfile(userId: 1) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let success):
-                            print(#function)
-                            break
-                        case .failure(let failure):
-                            break
-                        }
-                        self.saveButtonView.isUserInteractionEnabled = true
+                DataManager.shared.addService(serviceModel: self.serviceModel) { result in
+                    switch result {
+                    case .success(let success):
+                        print(#function)
+                        servicesViewController.servicesModel.services.append(success)
+                        servicesViewController.reloadCollection()
+                        self.navigationController?.popViewController(animated: true)
+                        print(success.serviceId)
+                    case .failure(let failure):
+                        break
                     }
+                    self.saveButtonView.isUserInteractionEnabled = true
                 }
             }
         }

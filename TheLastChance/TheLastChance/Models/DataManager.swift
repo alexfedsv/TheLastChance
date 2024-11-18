@@ -59,6 +59,15 @@ class DataManager: DataManagerProtocol {
         }
     }
     func addService(serviceModel: ServiceModel, completion: @escaping (Result<ServiceModel, NetworkError>) -> Void) {
-        
+        networkServiceProtocol.addService(serviceModel: serviceModel) { result in
+            switch result {
+            case .success(let success):
+                var serviceModelCreated: ServiceModel = serviceModel
+                serviceModelCreated.serviceId = success
+                completion(.success(serviceModelCreated))
+            case .failure(let failure):
+                completion(.failure(failure))
+            }
+        }
     }
 }

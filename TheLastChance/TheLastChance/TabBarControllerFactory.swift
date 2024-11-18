@@ -12,9 +12,8 @@ final class TabBarControllerFactory {
         let tabBarController = UITabBarController()
         tabBarController.tabBar.tintColor = .systemTeal
         let firstViewController = createNavController(for: ServicesViewController(), title: "Домой", imageName: "house")
-        let secondViewController = createNavController(for: AddServiceViewController(), title: "Заявка", imageName: "plus")
-        let thirdViewController = createNavController(for: UserProfileViewController(), title: "Профиль", imageName: "person")
-        tabBarController.viewControllers = [firstViewController, secondViewController, thirdViewController]
+        let secondViewController = createNavController(for: UserProfileViewController(), title: "Профиль", imageName: "person")
+        tabBarController.viewControllers = [firstViewController, secondViewController]
         return tabBarController
     }
     
