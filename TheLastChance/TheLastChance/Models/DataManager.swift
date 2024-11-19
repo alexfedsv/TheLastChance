@@ -13,6 +13,8 @@ protocol DataManagerProtocol: AnyObject {
     func getPetProfile(petId: Int, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
     func getServices(completion: @escaping (Result<JSON.Services, NetworkError>) -> Void)
     func addService(serviceModel: ServiceModel, completion: @escaping (Result<ServiceModel, NetworkError>) -> Void)
+    func addPet(petProfileModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
+    func editPet(petProfileModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
 }
 
 class DataManager: DataManagerProtocol {
@@ -69,5 +71,9 @@ class DataManager: DataManagerProtocol {
                 completion(.failure(failure))
             }
         }
+    }
+    func addPet(petProfileModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void) {
+    }
+    func editPet(petProfileModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void) {
     }
 }

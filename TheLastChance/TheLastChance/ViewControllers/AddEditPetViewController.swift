@@ -14,6 +14,7 @@ final class AddEditPetViewController: UIViewController {
     
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
+    private let imagePicker = UIImagePickerController()
 
     private lazy var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
@@ -144,9 +145,13 @@ final class AddEditPetViewController: UIViewController {
     private var keyboardUpDownConstraints: NSLayoutConstraint = NSLayoutConstraint()
     override func viewDidLoad() {
         super.viewDidLoad()
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = true
+        imagePicker.sourceType = .photoLibrary
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         view.addSubview(petPhotoImageView)
+        petPhotoImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(addPetImage)))
         view.addSubview(userPhotoImageView)
         view.addSubview(separator0View)
         view.addSubview(typeOfAnimalLabel)
@@ -222,6 +227,11 @@ final class AddEditPetViewController: UIViewController {
                 self.userPhotoImageView.image = nil
             }
         }
+    }
+    @objc
+    private func addPetImage() {
+        print(#function)
+        present(imagePicker, animated: true, completion: nil)
     }
     @objc
     private func save() {
@@ -368,4 +378,38 @@ extension AddEditPetViewController {
         saveButtonLabel.centerXAnchor.constraint(equalTo: saveButtonView.centerXAnchor).isActive = true
     }
 }
+extension AddEditPetViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    private func getAvatarIcon(pickedImageEdited: UIImage) -> Data? {
+        if let imageData = pickedImageEdited.jpegData(compressionQuality: 0.3) {
+            let imageSize = imageData.count
+            print("Размер изображения в байтах[compressionQuality: \(0.3)] = \(imageSize)")
+            return imageData
+        } else {
+            return nil
+        }
+    }
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let userModel = userModel else { return }
+        
+        var iconData: Data?
+        if let pickedImageEdited = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+            if let data = getAvatarIcon(pickedImageEdited: pickedImageEdited) {
+                iconData = data
+            }
+        }
+        guard let iconData = iconData else { return }
 
+        DispatchQueue.main.async {
+            if let image = UIImage(data: iconData) {
+                self.petPhotoImageView.image = image
+                self.petModel?.petAvatar = iconData
+            } else {
+                print("ERROR[\(#function)]: Cannot converte Data to UIImage")
+            }
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+}

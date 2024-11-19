@@ -27,10 +27,12 @@ struct JSON {
         }
     }
     struct UserProfile: Codable {
+        var userId: Int
         var username: String
         var contacts: String
         var userImage: String
         private enum CodingKeys: String, CodingKey {
+            case userId = "user_id"
             case username = "username"
             case contacts = "contacts"
             case userImage = "user_image"

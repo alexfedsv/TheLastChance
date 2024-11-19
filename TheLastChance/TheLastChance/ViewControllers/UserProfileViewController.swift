@@ -170,21 +170,6 @@ final class UserProfileViewController: UIViewController {
         print(#function)
     }
 }
-
-extension UserProfileViewController: NavBarViewDelegate {
-    func navBarLeftButtonTapped() {
-        print(#function)
-    }
-    func navBarLeftCenterButtonTapped() {
-        print(#function)
-    }
-    func navBarRightCenterButtonTapped() {
-        print(#function)
-    }
-    func navBarRightButtonTapped() {
-        print(#function)
-    }
-}
 extension UserProfileViewController {
     private func setupConstraints() {
         userBackgroundPhotoImageView.translatesAutoresizingMaskIntoConstraints = false

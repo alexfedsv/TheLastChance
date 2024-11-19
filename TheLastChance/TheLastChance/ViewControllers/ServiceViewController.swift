@@ -11,6 +11,14 @@ class ServiceViewController: UIViewController {
 
     var serviceModel: ServiceModel?
     private var userModel: UserProfileModel?
+    private var scrollView: UIScrollView = UIScrollView()
+    private var contentView: UIView = UIView()
+    private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {
+        let imageView = UserBackgroundPhotoImageView()
+        imageView.backgroundColor = .systemTeal
+        imageView.image = UIImage(named: "Mock/animals")
+        return imageView
+    }()
     private lazy var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
@@ -20,7 +28,10 @@ class ServiceViewController: UIViewController {
     private lazy var userRole: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 24)
+        label.font = .systemFont(ofSize: 18)
+        label.textColor = .systemBackground
+        label.shadowColor = .secondarySystemBackground
+        label.shadowOffset = .init(width: 1, height: 1)
         label.numberOfLines = 1
         return label
     }()
@@ -45,39 +56,58 @@ class ServiceViewController: UIViewController {
         view.backgroundColor = .separator
         return view
     }()
-    private lazy var typeOfAnimalLabel: UILabel = {
+    private lazy var usernameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 20)
         label.numberOfLines = 0
         return label
     }()
-    private lazy var petnameLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.font = .systemFont(ofSize: 20)
-        label.numberOfLines = 0
-        return label
-    }()
-    private lazy var infoLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 18)
         label.numberOfLines = 0
         return label
     }()
-    
+    private lazy var descriptionLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 18)
+        label.numberOfLines = 0
+        return label
+    }()
+    private lazy var toContactsButtonView: UIView = {
+        let view = UIView()
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 12
+        view.backgroundColor = .systemTeal
+        return view
+    }()
+    private lazy var toContactsButtonLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.text = "Контанты"
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .white
+        return label
+    }()
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
-        view.addSubview(userPhotoImageView)
-        view.addSubview(userRole)
-        view.addSubview(separator0View)
-        view.addSubview(typeOfAnimalLabel)
-        view.addSubview(petnameLabel)
-        view.addSubview(separator1View)
+        view.addSubview(scrollView)
         view.backgroundColor = .systemBackground
-        view.addSubview(infoLabel)
-        view.addSubview(separator2View)
+        scrollView.addSubview(contentView)
+        contentView.addSubview(userBackgroundPhotoImageView)
+        contentView.addSubview(userPhotoImageView)
+        contentView.addSubview(userRole)
+        contentView.addSubview(separator0View)
+        contentView.addSubview(usernameLabel)
+        contentView.addSubview(separator1View)
+        contentView.backgroundColor = .systemBackground
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(descriptionLabel)
+        contentView.addSubview(separator2View)
+        contentView.addSubview(toContactsButtonView)
+        toContactsButtonView.addSubview(toContactsButtonLabel)
         setupConstraints()
         setupData()
     }
@@ -111,8 +141,13 @@ class ServiceViewController: UIViewController {
                         case .slave:
                             self.userRole.text = "ИСПОЛНИТЕЛЬ"
                         }
-                        //self.usernameLabel.text = userModel.username
-                        //self.contactsLabel.text = userModel.contacts
+                        self.usernameLabel.text = userModel.username
+                        self.titleLabel.text = serviceModel.title
+                        var test = ""
+                        for i in 0...1000 {
+                            test.append("x ")
+                        }
+                        self.descriptionLabel.text = serviceModel.description + test
                         if let userImage = userModel.userImage {
                             self.userPhotoImageView.image = UIImage(data: userImage)
                         } else {
@@ -125,52 +160,111 @@ class ServiceViewController: UIViewController {
             }
         }
     }
+    @objc
+    private func toContacts() {
+        toContactsButtonView.isUserInteractionEnabled = false
+        UIView.animate(withDuration: 0.3) {
+            self.toContactsButtonView.layer.opacity = 0.9
+            self.toContactsButtonView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.toContactsButtonLabel.layer.opacity = 0.9
+            self.toContactsButtonLabel.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        } completion: { _ in
+            UIView.animate(withDuration: 0.3) {
+                self.toContactsButtonView.layer.opacity = 1
+                self.toContactsButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                self.toContactsButtonLabel.layer.opacity = 1
+                self.toContactsButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+            } completion: { _ in
+                DataManager.shared.getUserProfile(userId: 1) { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let success):
+                            print(#function)
+                            break
+                        case .failure(let failure):
+                            break
+                        }
+                        self.toContactsButtonView.isUserInteractionEnabled = true
+                    }
+                }
+            }
+        }
+    }
 }
 extension ServiceViewController {
     private func setupConstraints() {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        userBackgroundPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
         userPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
         userRole.translatesAutoresizingMaskIntoConstraints = false
         separator0View.translatesAutoresizingMaskIntoConstraints = false
-        typeOfAnimalLabel.translatesAutoresizingMaskIntoConstraints = false
-        petnameLabel.translatesAutoresizingMaskIntoConstraints = false
         separator1View.translatesAutoresizingMaskIntoConstraints = false
-        infoLabel.translatesAutoresizingMaskIntoConstraints = false
         separator2View.translatesAutoresizingMaskIntoConstraints = false
+        usernameLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        toContactsButtonView.translatesAutoresizingMaskIntoConstraints = false
+        toContactsButtonLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        userPhotoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30).isActive = true
-        userPhotoImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        userPhotoImageView.widthAnchor.constraint(equalToConstant: 180).isActive = true
+        scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        
+        contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
+        contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
+        contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
+        contentView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
+
+        userBackgroundPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
+        userBackgroundPhotoImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        userBackgroundPhotoImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
+        userBackgroundPhotoImageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        
+        userPhotoImageView.bottomAnchor.constraint(equalTo: userBackgroundPhotoImageView.bottomAnchor, constant: -10).isActive = true
+        userPhotoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+        userPhotoImageView.widthAnchor.constraint(equalToConstant: 140).isActive = true
         userPhotoImageView.heightAnchor.constraint(equalTo: userPhotoImageView.widthAnchor).isActive = true
         
-        userRole.topAnchor.constraint(equalTo: userPhotoImageView.bottomAnchor, constant: 10).isActive = true
-        userRole.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        userRole.centerXAnchor.constraint(equalTo: userPhotoImageView.centerXAnchor).isActive = true
+        userRole.centerYAnchor.constraint(equalTo: userPhotoImageView.centerYAnchor, constant: 40).isActive = true
         
-        separator0View.topAnchor.constraint(equalTo: userRole.bottomAnchor, constant: 30).isActive = true
-        separator0View.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
-        separator0View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
+        separator0View.topAnchor.constraint(equalTo: userBackgroundPhotoImageView.bottomAnchor, constant: 10).isActive = true
+        separator0View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        separator0View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator0View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
-        typeOfAnimalLabel.topAnchor.constraint(equalTo: separator0View.bottomAnchor, constant: 15).isActive = true
-        typeOfAnimalLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 35).isActive = true
-        typeOfAnimalLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -35).isActive = true
+        usernameLabel.topAnchor.constraint(equalTo: separator0View.bottomAnchor, constant: 10).isActive = true
+        usernameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 35).isActive = true
+        usernameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -35).isActive = true
         
-        petnameLabel.topAnchor.constraint(equalTo: typeOfAnimalLabel.bottomAnchor, constant: 5).isActive = true
-        petnameLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 35).isActive = true
-        petnameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -35).isActive = true
+        toContactsButtonView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 60).isActive = true
+        toContactsButtonView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -60).isActive = true
+        toContactsButtonView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        toContactsButtonView.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 5).isActive = true
+        
+        toContactsButtonLabel.centerYAnchor.constraint(equalTo: toContactsButtonView.centerYAnchor).isActive = true
+        toContactsButtonLabel.centerXAnchor.constraint(equalTo: toContactsButtonView.centerXAnchor).isActive = true
        
-        separator1View.topAnchor.constraint(equalTo: petnameLabel.bottomAnchor, constant: 15).isActive = true
-        separator1View.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
-        separator1View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
+        separator1View.topAnchor.constraint(equalTo: toContactsButtonLabel.bottomAnchor, constant: 15).isActive = true
+        separator1View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        separator1View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator1View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
-        infoLabel.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 10).isActive = true
-        infoLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
-        infoLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 10).isActive = true
+        titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
-        separator2View.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15).isActive = true
-        separator2View.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
-        separator2View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
+        descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
+        descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
+        
+        separator2View.topAnchor.constraint(greaterThanOrEqualTo: descriptionLabel.bottomAnchor, constant: 15).isActive = true
+        separator2View.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -15).isActive = true
+        separator2View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        separator2View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator2View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
-        
     }
 }

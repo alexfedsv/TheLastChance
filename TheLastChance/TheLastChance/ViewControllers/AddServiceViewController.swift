@@ -411,6 +411,8 @@ extension AddServiceViewController: UICollectionViewDataSource, UICollectionView
                 cell.setup(isMarked: false)
                 serviceModel.petIds.remove(at: index)
             } else {
+                let sep: String = descriptionTextView.text.isEmpty ? "" : " "
+                descriptionTextView.text = descriptionTextView.text + sep + petModel.typeOfAnimal + " " + petModel.petName + " "
                 cell.setup(isMarked: true)
                 serviceModel.petIds.append(petModel.petId)
             }
