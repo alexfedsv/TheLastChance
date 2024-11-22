@@ -8,12 +8,12 @@
 import Foundation
 
 protocol DataManagerProtocol: AnyObject {
-    func getUserProfile(userId: Int, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void)
-    func getPets(userId: Int, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void)
-    func getPetProfile(petId: Int, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
+    func getUserProfile(userId: String, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void)
+    func getPets(userId: String, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void)
+    func getPetProfile(petId: String, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
     func getServices(completion: @escaping (Result<JSON.Services, NetworkError>) -> Void)
     func addService(serviceModel: ServiceModel, completion: @escaping (Result<ServiceModel, NetworkError>) -> Void)
-    func addPet(petProfileModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
+    func addPet(petModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
     func editPet(petProfileModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
 }
 
@@ -34,17 +34,17 @@ class DataManager: DataManagerProtocol {
             self.networkServiceProtocol = NetworkMockManager()
         }
     }
-    func getUserProfile(userId: Int, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void) {
+    func getUserProfile(userId: String, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void) {
         networkServiceProtocol.getUserProfile(userId: userId) { result in
             completion(result)
         }
     }
-    func getPets(userId: Int, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void) {
+    func getPets(userId: String, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void) {
         networkServiceProtocol.getPets(userId: userId) { result in
             completion(result)
         }
     }
-    func getPetProfile(petId: Int, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void) {
+    func getPetProfile(petId: String, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void) {
         networkServiceProtocol.getPetProfile(petId: petId) { result in
             switch result {
             case .success(let success):
@@ -72,7 +72,17 @@ class DataManager: DataManagerProtocol {
             }
         }
     }
-    func addPet(petProfileModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void) {
+    func addPet(petModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void) {
+        networkServiceProtocol.addPet(petModel: petModel) { result in
+            switch result {
+            case .success(let success):
+                var petModelCreated: PetProfileModel = petModel
+                petModelCreated.petId = success
+                completion(.success(petModelCreated))
+            case .failure(let failure):
+                completion(.failure(failure))
+            }
+        }
     }
     func editPet(petProfileModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void) {
     }

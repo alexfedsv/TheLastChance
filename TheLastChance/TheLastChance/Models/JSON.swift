@@ -9,7 +9,7 @@ import Foundation
 
 struct JSON {
     struct PetIds: Codable {
-        var petIds: [Int]
+        var petIds: [String]
         private enum CodingKeys: String, CodingKey {
             case petIds = "pet_ids"
         }
@@ -27,26 +27,28 @@ struct JSON {
         }
     }
     struct UserProfile: Codable {
-        var userId: Int
+        var userId: String
         var username: String
         var contacts: String
         var userImage: String
+        var backgroundImage: String
         private enum CodingKeys: String, CodingKey {
             case userId = "user_id"
             case username = "username"
             case contacts = "contacts"
             case userImage = "user_image"
+            case backgroundImage = "background_image"
         }
     }
     struct Services: Codable {
         struct Service: Codable {
             var role: String
-            var serviceId: Int
-            var userId: Int
+            var serviceId: String
+            var userId: String
             var title: String
             var description: String
             var userImage: String
-            var petIds: [Int]
+            var petIds: [String]
             private enum CodingKeys: String, CodingKey {
                 case role = "role"
                 case serviceId = "service_id"

@@ -24,6 +24,9 @@
 		D00C144B2CBAC4F800AF2BD9 /* PetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */; };
 		D00C144D2CBAC54A00AF2BD9 /* NavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144C2CBAC54A00AF2BD9 /* NavBarView.swift */; };
 		D00C144F2CBAC84F00AF2BD9 /* PetProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144E2CBAC84E00AF2BD9 /* PetProfileModel.swift */; };
+		D0352A0A2CF0F5EC0047D613 /* PhotoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0352A092CF0F5EC0047D613 /* PhotoHelper.swift */; };
+		D0352A0C2CF1040B0047D613 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0352A0B2CF1040B0047D613 /* Settings.swift */; };
+		D0352A0E2CF106A30047D613 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0352A0D2CF106A30047D613 /* MainViewController.swift */; };
 		D0413E9E2CD3C65400E8F4D9 /* MockServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0413E9D2CD3C65400E8F4D9 /* MockServices.swift */; };
 		D0413EA02CD3CA7100E8F4D9 /* ServicesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0413E9F2CD3CA7100E8F4D9 /* ServicesModel.swift */; };
 		D0413EA22CD3EDCB00E8F4D9 /* AddEditPetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0413EA12CD3EDCB00E8F4D9 /* AddEditPetViewController.swift */; };
@@ -66,6 +69,9 @@
 		D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetProfileViewController.swift; sourceTree = "<group>"; };
 		D00C144C2CBAC54A00AF2BD9 /* NavBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarView.swift; sourceTree = "<group>"; };
 		D00C144E2CBAC84E00AF2BD9 /* PetProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetProfileModel.swift; sourceTree = "<group>"; };
+		D0352A092CF0F5EC0047D613 /* PhotoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoHelper.swift; sourceTree = "<group>"; };
+		D0352A0B2CF1040B0047D613 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		D0352A0D2CF106A30047D613 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		D0413E9D2CD3C65400E8F4D9 /* MockServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServices.swift; sourceTree = "<group>"; };
 		D0413E9F2CD3CA7100E8F4D9 /* ServicesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesModel.swift; sourceTree = "<group>"; };
 		D0413EA12CD3EDCB00E8F4D9 /* AddEditPetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditPetViewController.swift; sourceTree = "<group>"; };
@@ -136,6 +142,7 @@
 		D00C14352CBA82A900AF2BD9 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				D0352A0D2CF106A30047D613 /* MainViewController.swift */,
 				D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */,
 				D0C804F52CE4FB7B002EC51F /* ServiceViewController.swift */,
 				D0CDA8A42CDB8F1B00B67DC2 /* AddServiceViewController.swift */,
@@ -177,6 +184,8 @@
 				D0BAC0AF2CD0F24600ACEFE6 /* PetsModel.swift */,
 				D0F632362CD2B445000CDF34 /* ServiceModel.swift */,
 				D0413E9F2CD3CA7100E8F4D9 /* ServicesModel.swift */,
+				D0352A092CF0F5EC0047D613 /* PhotoHelper.swift */,
+				D0352A0B2CF1040B0047D613 /* Settings.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -269,6 +278,7 @@
 				D0BAC0B72CD10BD200ACEFE6 /* MockUser.swift in Sources */,
 				D00C144D2CBAC54A00AF2BD9 /* NavBarView.swift in Sources */,
 				D00C144F2CBAC84F00AF2BD9 /* PetProfileModel.swift in Sources */,
+				D0352A0C2CF1040B0047D613 /* Settings.swift in Sources */,
 				D0413EA22CD3EDCB00E8F4D9 /* AddEditPetViewController.swift in Sources */,
 				D00C14432CBA8D4B00AF2BD9 /* NetworkManager.swift in Sources */,
 				D00C14292CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld in Sources */,
@@ -280,8 +290,10 @@
 				D0E0EA0D2CDF91F900C70C62 /* UserBackgroundPhotoImageView.swift in Sources */,
 				D0CDA8A72CDBA37500B67DC2 /* SegmentedControlView.swift in Sources */,
 				D0BAC0AE2CD0E94200ACEFE6 /* UserProfileModel.swift in Sources */,
+				D0352A0A2CF0F5EC0047D613 /* PhotoHelper.swift in Sources */,
 				D0BAC0B22CD0F5F100ACEFE6 /* PetCollectionViewCell.swift in Sources */,
 				D0C804F62CE4FB7B002EC51F /* ServiceViewController.swift in Sources */,
+				D0352A0E2CF106A30047D613 /* MainViewController.swift in Sources */,
 				D0BAC0B92CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift in Sources */,
 				D0BAC0BB2CD1225700ACEFE6 /* MockImageHelper.swift in Sources */,
 				D0CDA8A32CDB85C000B67DC2 /* LoginViewController.swift in Sources */,

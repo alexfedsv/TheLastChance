@@ -49,7 +49,7 @@ final class ServicesViewController: UIViewController {
                 switch result {
                 case .success(let success):
                     for elem in success.services {
-                        self.servicesModel.services.append(ServiceModel(serviceId: 0, json: elem))
+                        self.servicesModel.services.append(ServiceModel(serviceId: "0", json: elem))
                     }
                     self.collectionView.reloadData()
                 case .failure(let failure):

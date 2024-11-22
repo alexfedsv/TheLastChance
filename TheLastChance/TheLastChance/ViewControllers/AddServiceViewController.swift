@@ -11,10 +11,12 @@ final class AddServiceViewController: UIViewController {
 
     var userModel: UserProfileModel?
     var petsModel: PetsModel = PetsModel()
-    var serviceModel = ServiceModel(role: .slave, serviceId: 0, userId: 1, title: "", description: "", userImageData: "", petIds: [])
+    var serviceModel = ServiceModel(role: .slave, serviceId: "0", userId: "1", title: "", description: "", userImageData: "", petIds: [])
     weak var servicesViewController: ServicesViewController?
     private var collectionHeight0Constraint = NSLayoutConstraint()
     private var collectionHeight1Constraint = NSLayoutConstraint()
+    private var addHeight0Constraint = NSLayoutConstraint()
+    private var addHeight1Constraint = NSLayoutConstraint()
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
     private var segmentedControlView: SegmentedControlView = SegmentedControlView()
@@ -27,6 +29,14 @@ final class AddServiceViewController: UIViewController {
         imageView.image = UIImage(systemName: "plus.circle")
         imageView.tintColor = .systemTeal
         return imageView
+    }()
+    private lazy var addLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.isHidden = true
+        label.text = "Вы можете поделиться здесь профилями питомцев с исполнителем:"
+        label.numberOfLines = 0
+        return label
     }()
     private var collectionView: UICollectionView!
     private lazy var separator0View: UIView = {
@@ -132,6 +142,7 @@ final class AddServiceViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(PetCollectionViewCell.self, forCellWithReuseIdentifier: PetCollectionViewCell.identifier)
+        contentView.addSubview(addLabel)
         contentView.addSubview(collectionView)
         contentView.addSubview(separator0View)
         contentView.addSubview(titleLabel)
@@ -179,7 +190,7 @@ final class AddServiceViewController: UIViewController {
         scrollView.scrollIndicatorInsets = contentInsets
     }
     private func getUser() {
-        DataManager.shared.getUserProfile(userId: 1) { result in
+        DataManager.shared.getUserProfile(userId: "1") { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let success):
@@ -202,7 +213,7 @@ final class AddServiceViewController: UIViewController {
         print("getPets")
         if self.petsModel.pets.isEmpty {
             let dispatchGroup = DispatchGroup()
-            DataManager.shared.getPets(userId: 1) { resultPetIds in
+            DataManager.shared.getPets(userId: "1") { resultPetIds in
                 print("resultPetIds = \(resultPetIds)")
                 switch resultPetIds {
                 case .success(let successPetIds):
@@ -236,6 +247,7 @@ final class AddServiceViewController: UIViewController {
     @objc
     private func save() {
         guard let servicesViewController = servicesViewController else { return }
+        guard let userModel = userModel else { return }
         saveButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             self.saveButtonView.layer.opacity = 0.9
@@ -253,10 +265,11 @@ final class AddServiceViewController: UIViewController {
                     switch result {
                     case .success(let success):
                         print(#function)
+                        success.userImageData = userModel.userImage
                         servicesViewController.servicesModel.services.append(success)
                         servicesViewController.reloadCollection()
                         self.navigationController?.popViewController(animated: true)
-                        print(success.serviceId)
+
                     case .failure(let failure):
                         break
                     }
@@ -274,6 +287,9 @@ extension AddServiceViewController: SegmentedControlDelegate {
         getPets {
             self.collectionHeight0Constraint.priority = UILayoutPriority(self.serviceModel.role == .master ? 750 : 950)
             self.collectionHeight1Constraint.priority = UILayoutPriority(self.serviceModel.role == .master ? 950 : 750)
+            self.addHeight0Constraint.priority = UILayoutPriority(self.serviceModel.role == .master ? 750 : 950)
+            self.addHeight1Constraint.priority = UILayoutPriority(self.serviceModel.role == .master ? 950 : 750)
+            self.addLabel.isHidden = self.serviceModel.role == .slave
             UIView.animate(withDuration: 0.5) {
                 self.view.layoutIfNeeded()
             } completion: { _ in
@@ -308,6 +324,7 @@ extension AddServiceViewController {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         segmentedControlView.translatesAutoresizingMaskIntoConstraints = false
         photoImageView.translatesAutoresizingMaskIntoConstraints = false
+        addLabel.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         separator0View.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -340,7 +357,18 @@ extension AddServiceViewController {
         photoImageView.widthAnchor.constraint(equalToConstant: 180).isActive = true
         photoImageView.heightAnchor.constraint(equalTo: photoImageView.widthAnchor).isActive = true
         
-        collectionView.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 10).isActive = true
+        addLabel.topAnchor.constraint(equalTo: photoImageView.bottomAnchor, constant: 10).isActive = true
+        addLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
+        addLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        
+        addHeight0Constraint = NSLayoutConstraint(item: addLabel as Any, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 0.0)
+        addHeight1Constraint = NSLayoutConstraint(item: addLabel as Any, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 34.0)
+        addHeight0Constraint.priority = UILayoutPriority(serviceModel.role == .master ? 750 : 950)
+        addHeight1Constraint.priority = UILayoutPriority(serviceModel.role == .master ? 950 : 750)
+        addHeight0Constraint.isActive = true
+        addHeight1Constraint.isActive = true
+        
+        collectionView.topAnchor.constraint(equalTo: addLabel.bottomAnchor, constant: 10).isActive = true
         collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
         collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
 

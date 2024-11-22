@@ -16,7 +16,7 @@ class ServiceViewController: UIViewController {
     private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {
         let imageView = UserBackgroundPhotoImageView()
         imageView.backgroundColor = .systemTeal
-        imageView.image = UIImage(named: "Mock/animals")
+        imageView.image = UIImage(named: "Mock/Users/animals")
         return imageView
     }()
     private lazy var userPhotoImageView: UIImageView = {
@@ -85,7 +85,7 @@ class ServiceViewController: UIViewController {
     private lazy var toContactsButtonLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.text = "Контанты"
+        label.text = "Контакты"
         label.font = .systemFont(ofSize: 14)
         label.textColor = .white
         return label
@@ -108,6 +108,7 @@ class ServiceViewController: UIViewController {
         contentView.addSubview(separator2View)
         contentView.addSubview(toContactsButtonView)
         toContactsButtonView.addSubview(toContactsButtonLabel)
+        toContactsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toContacts)))
         setupConstraints()
         setupData()
     }
@@ -143,11 +144,11 @@ class ServiceViewController: UIViewController {
                         }
                         self.usernameLabel.text = userModel.username
                         self.titleLabel.text = serviceModel.title
-                        var test = ""
+                        /*var test = ""
                         for i in 0...1000 {
                             test.append("x ")
                         }
-                        self.descriptionLabel.text = serviceModel.description + test
+                        self.descriptionLabel.text = serviceModel.description + test*/
                         if let userImage = userModel.userImage {
                             self.userPhotoImageView.image = UIImage(data: userImage)
                         } else {
@@ -175,7 +176,7 @@ class ServiceViewController: UIViewController {
                 self.toContactsButtonLabel.layer.opacity = 1
                 self.toContactsButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                DataManager.shared.getUserProfile(userId: 1) { result in
+                DataManager.shared.getUserProfile(userId: "1") { result in
                     DispatchQueue.main.async {
                         switch result {
                         case .success(let success):

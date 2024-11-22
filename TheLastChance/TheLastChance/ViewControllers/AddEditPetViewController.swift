@@ -11,7 +11,7 @@ final class AddEditPetViewController: UIViewController {
 
     var userModel: UserProfileModel?
     var petModel: PetProfileModel?
-    
+    weak var userViewController: UserProfileViewController?
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
     private let imagePicker = UIImagePickerController()
@@ -235,6 +235,8 @@ final class AddEditPetViewController: UIViewController {
     }
     @objc
     private func save() {
+        guard let userViewController = userViewController else { return }
+        guard let petModel = petModel else { return }
         saveButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             self.saveButtonView.layer.opacity = 0.9
@@ -248,12 +250,15 @@ final class AddEditPetViewController: UIViewController {
                 self.saveButtonLabel.layer.opacity = 1
                 self.saveButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                DataManager.shared.getUserProfile(userId: 1) { result in
+                DataManager.shared.addPet(petModel: petModel) { result in
                     DispatchQueue.main.async {
                         switch result {
                         case .success(let success):
                             print(#function)
-                            break
+                            success.petAvatar = petModel.petAvatar
+                            userViewController.petsModel.pets.append(success)
+                            userViewController.reloadCollection()
+                            self.navigationController?.popViewController(animated: true)
                         case .failure(let failure):
                             break
                         }

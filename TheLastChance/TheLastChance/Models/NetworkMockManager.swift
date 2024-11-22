@@ -8,21 +8,29 @@
 import Foundation
 
 final class NetworkMockManager: NetworkProtocol {
-    
-    func getUserProfile(userId: Int, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void) {
+
+    func getUserProfile(userId: String, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
-            completion(.success(MockUser.shared.user))
+            if let user = MockUser.shared.users.first(where: { $0.userId == userId }) {
+                completion(.success(user))
+            } else {
+                completion(.failure(.notFoundMock(atFunc: #function)))
+            }
         })
     }
-    func getPets(userId: Int, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void) {
+    func getPets(userId: String, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
             completion(.success(MockPets.shared.petIds))
         })
     }
-    func getPetProfile(petId: Int, completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void) {
+    func getPetProfile(petId: String, completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
-            let pet = MockPets.shared.pets[petId - 1]
-            completion(.success(pet))
+            if let petId = Int(petId) {
+                let pet = MockPets.shared.pets[petId - 1]
+                completion(.success(pet))
+            } else {
+                completion(.failure(.notFoundMock(atFunc: #function)))
+            }
         })
     }
     func getServices(completion: @escaping (Result<JSON.Services, NetworkError>) -> Void) {
@@ -31,11 +39,28 @@ final class NetworkMockManager: NetworkProtocol {
             completion(.success(JSON.Services(services: services)))
         })
     }
-    func addService(serviceModel: ServiceModel, completion: @escaping (Result<Int, NetworkError>) -> Void) {
+    func addService(serviceModel: ServiceModel, completion: @escaping (Result<String, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
-            let json = JSON.Services.Service(role: serviceModel.role.rawValue, serviceId: MockServices.shared.services.count, userId: serviceModel.userId, title: serviceModel.title, description: serviceModel.description, userImage: MockImageHelper.getImageBase64String(imageName: "Mock/user"), petIds: serviceModel.petIds)
-            MockServices.shared.services.append(json)
-            completion(.success(MockServices.shared.services.count))
+            if let userIdIndex = Int(serviceModel.userId) {
+                let json = JSON.Services.Service(role: serviceModel.role.rawValue, serviceId: String(MockServices.shared.services.count), userId: serviceModel.userId, title: serviceModel.title, description: serviceModel.description, userImage: MockImageHelper.getImageBase64String(imageName: "Mock/Users/user"), petIds: serviceModel.petIds)
+                MockServices.shared.services.append(json)
+                completion(.success(String(MockServices.shared.services.count)))
+            } else {
+                completion(.failure(.notFoundMock(atFunc: #function)))
+            }
+        })
+    }
+    func addPet(petModel: PetProfileModel, completion: @escaping (Result<String, NetworkError>) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
+            if let petIdIndex = Int(petModel.petId) {
+                let string = PhotoHelper.getImageBase64String(imageData: petModel.petAvatar)
+                let json = JSON.PetProfile(typeOfAnimal: petModel.typeOfAnimal, petName: petModel.petName, info: petModel.info, petAvatar: string)
+                MockPets.shared.petIds.petIds.append(String(MockPets.shared.petIds.petIds.count))
+                MockPets.shared.pets.append(json)
+                completion(.success(String(MockPets.shared.petIds.petIds.count)))
+            } else {
+                completion(.failure(.notFoundMock(atFunc: #function)))
+            }
         })
     }
 }

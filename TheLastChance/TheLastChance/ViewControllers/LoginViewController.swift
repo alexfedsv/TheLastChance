@@ -48,7 +48,7 @@ final class LoginViewController: UIViewController {
                 self.loginButtonLabel.layer.opacity = 1
                 self.loginButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                DataManager.shared.getUserProfile(userId: 1) { result in
+                DataManager.shared.getUserProfile(userId: "1") { result in
                     DispatchQueue.main.async {
                         switch result {
                         case .success(let success):

@@ -12,14 +12,14 @@ final class ServiceModel {
         case master = "master"
         case slave = "slave"
     }
-    var serviceId: Int
+    var serviceId: String
     var role: Mode = .slave
-    var userId: Int
+    var userId: String
     var title: String
     var description: String
     var userImageData: Data?
-    var petIds: [Int] = []
-    init(role: Mode, serviceId: Int, userId: Int, title: String, description: String, userImageData: String, petIds: [Int]) {
+    var petIds: [String] = []
+    init(role: Mode, serviceId: String, userId: String, title: String, description: String, userImageData: String, petIds: [String]) {
         self.role = role
         self.serviceId = serviceId
         self.userId = userId
@@ -28,7 +28,7 @@ final class ServiceModel {
         self.userImageData = Data(base64Encoded: userImageData, options: .ignoreUnknownCharacters)
         self.petIds = petIds.map({ $0 })
     }
-    init(serviceId: Int, json: JSON.Services.Service) {
+    init(serviceId: String, json: JSON.Services.Service) {
         self.role = Mode(rawValue: json.role) ?? .master
         self.serviceId = serviceId
         self.userId = json.userId

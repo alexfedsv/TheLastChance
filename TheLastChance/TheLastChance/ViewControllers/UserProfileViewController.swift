@@ -14,7 +14,7 @@ final class UserProfileViewController: UIViewController {
     private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {
         let imageView = UserBackgroundPhotoImageView()
         imageView.backgroundColor = .systemTeal
-        imageView.image = UIImage(named: "Mock/animals")
+        imageView.image = UIImage(named: "Mock/Users/animals")
         return imageView
     }()
     private var userPhotoImageView: UIImageView = {
@@ -101,7 +101,7 @@ final class UserProfileViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = rightBarButtonItem
     }
     private func setupUser() {
-        DataManager.shared.getUserProfile(userId: 1) { result in
+        DataManager.shared.getUserProfile(userId: "1") { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let success):
@@ -124,7 +124,7 @@ final class UserProfileViewController: UIViewController {
     }
     private func getPets() {
         let dispatchGroup = DispatchGroup()
-        DataManager.shared.getPets(userId: 1) { resultPetIds in
+        DataManager.shared.getPets(userId: "1") { resultPetIds in
             switch resultPetIds {
             case .success(let successPetIds):
                 for petId in successPetIds.petIds {
@@ -157,6 +157,7 @@ final class UserProfileViewController: UIViewController {
     }
     private func toAddEditPetViewController(petModel: PetProfileModel) {
         let viewController = AddEditPetViewController()
+        viewController.userViewController = self
         viewController.petModel = petModel
         viewController.userModel = userModel
         self.navigationController?.pushViewController(viewController, animated: true)
@@ -168,6 +169,11 @@ final class UserProfileViewController: UIViewController {
     @objc
     private func backPressed() {
         print(#function)
+    }
+    func reloadCollection() {
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
     }
 }
 extension UserProfileViewController {
@@ -247,7 +253,7 @@ extension UserProfileViewController: UICollectionViewDataSource, UICollectionVie
             toPetProfileViewController(petModel: petModel)
         }
         if indexPath.row == petsModel.pets.count {
-            let petModel = PetProfileModel(petId: 0, typeOfAnimal: "", petName: "", info: "", petAvatar: "")
+            let petModel = PetProfileModel(petId: "0", typeOfAnimal: "", petName: "", info: "", petAvatar: "")
             toAddEditPetViewController(petModel: petModel)
         }
     }
