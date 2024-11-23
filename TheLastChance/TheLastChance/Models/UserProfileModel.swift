@@ -8,17 +8,23 @@
 import Foundation
 
 final class UserProfileModel {
+    var userId: String
     var username: String
     var contacts: String
     var userImage: Data?
-    init(username: String, contacts: String, userImage: String) {
+    var backgroundImage: Data?
+    init(userId: String, username: String, contacts: String, userImage: String, backgroundImage: String) {
+        self.userId = userId
         self.username = username
         self.contacts = contacts
         self.userImage = Data(base64Encoded: userImage, options: .ignoreUnknownCharacters)
+        self.backgroundImage = Data(base64Encoded: backgroundImage, options: .ignoreUnknownCharacters)
     }
-    init(json: JSON.UserProfile) {
+    init(userId: String, json: JSON.UserProfile) {
+        self.userId = json.userId
         self.username = json.username
         self.contacts = json.contacts
         self.userImage = Data(base64Encoded: json.userImage, options: .ignoreUnknownCharacters)
+        self.backgroundImage = Data(base64Encoded: json.backgroundImage, options: .ignoreUnknownCharacters)
     }
 }

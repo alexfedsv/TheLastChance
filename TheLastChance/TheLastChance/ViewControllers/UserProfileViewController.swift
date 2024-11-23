@@ -101,12 +101,15 @@ final class UserProfileViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = rightBarButtonItem
     }
     private func setupUser() {
-        DataManager.shared.getUserProfile(userId: "1") { result in
+        let mockUser = MockUser.shared.users[0]
+        userModel = UserProfileModel(userId: mockUser.userId, username: mockUser.username, contacts: mockUser.contacts, userImage: mockUser.userImage, backgroundImage: MockImageHelper.getImageBase64String(imageName: "Mock/Animals/animals"))// tmp
+        guard let userModel = userModel else { return }
+        DataManager.shared.getUserProfile(userId: userModel.userId) { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let success):
                     DispatchQueue.main.async {
-                        let userModel = UserProfileModel(json: success)
+                        let userModel = UserProfileModel(userId: userModel.userId, json: success)
                         self.userModel = userModel
                         self.usernameLabel.text = userModel.username
                         self.contactsLabel.text = userModel.contacts

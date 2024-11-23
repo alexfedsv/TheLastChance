@@ -190,12 +190,12 @@ final class AddServiceViewController: UIViewController {
         scrollView.scrollIndicatorInsets = contentInsets
     }
     private func getUser() {
-        DataManager.shared.getUserProfile(userId: "1") { result in
+        DataManager.shared.getUserProfile(userId: Settings.shared.userId) { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let success):
                     DispatchQueue.main.async {
-                        let userModel = UserProfileModel(json: success)
+                        let userModel = UserProfileModel(userId: Settings.shared.userId, json: success)
                         self.userModel = userModel
                         if let icon = userModel.userImage  {
                             self.photoImageView.image = UIImage(data: icon)
@@ -210,15 +210,12 @@ final class AddServiceViewController: UIViewController {
         }
     }
     private func getPets(completion: @escaping ()-> Void) {
-        print("getPets")
         if self.petsModel.pets.isEmpty {
             let dispatchGroup = DispatchGroup()
-            DataManager.shared.getPets(userId: "1") { resultPetIds in
-                print("resultPetIds = \(resultPetIds)")
+            DataManager.shared.getPets(userId: Settings.shared.userId) { resultPetIds in
                 switch resultPetIds {
                 case .success(let successPetIds):
                     for petId in successPetIds.petIds {
-                        print("petId = \(petId)")
                         if !self.petsModel.pets.contains(where: { $0.petId == petId}) {
                             dispatchGroup.enter()
                             DataManager.shared.getPetProfile(petId: petId) { resultPetProfile in
@@ -266,7 +263,7 @@ final class AddServiceViewController: UIViewController {
                     case .success(let success):
                         print(#function)
                         success.userImageData = userModel.userImage
-                        servicesViewController.servicesModel.services.append(success)
+                        ServicesModel.shared.services.append(success)
                         servicesViewController.reloadCollection()
                         self.navigationController?.popViewController(animated: true)
 

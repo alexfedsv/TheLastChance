@@ -9,8 +9,8 @@ import UIKit
 
 final class ServicesViewController: UIViewController {
 
-    var servicesModel: ServicesModel = ServicesModel()
     private var collectionView: UICollectionView!
+    var modeSlaveMaster: ServiceModel.Mode?
    
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +27,7 @@ final class ServicesViewController: UIViewController {
         collectionView.register(ServicesCollectionViewCell.self, forCellWithReuseIdentifier: ServicesCollectionViewCell.identifier)
         view.addSubview(collectionView)
         setupConstraints()
-        getServices()
+        collectionView.reloadData()
     }
     private func setupNavBar() {
         self.navigationController?.navigationBar.tintColor = UIColor.systemTeal
@@ -42,21 +42,6 @@ final class ServicesViewController: UIViewController {
         let rightBarButtonItemAdd = UIBarButtonItem(image: rightButtonImageAdd, style: .plain, target: self, action: #selector(addButtonTapped))
         self.navigationItem.rightBarButtonItems = [rightBarButtonItemAdd, rightBarButtonItemFilter]
         
-    }
-    private func getServices() {
-        DataManager.shared.getServices { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let success):
-                    for elem in success.services {
-                        self.servicesModel.services.append(ServiceModel(serviceId: "0", json: elem))
-                    }
-                    self.collectionView.reloadData()
-                case .failure(let failure):
-                    break
-                }
-            }
-        }
     }
     @objc
     private func filterButtonTapped() {
@@ -86,11 +71,13 @@ extension ServicesViewController {
 }
 extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return servicesModel.services.count
+        return ServicesModel.shared.services.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ServicesCollectionViewCell.identifier, for: indexPath) as? ServicesCollectionViewCell {
-            cell.setup(title: servicesModel.services[indexPath.row].title, description: servicesModel.services[indexPath.row].description, imageData: servicesModel.services[indexPath.row].userImageData)
+            cell.setup(title: ServicesModel.shared.services[indexPath.row].title,
+                       description: ServicesModel.shared.services[indexPath.row].description,
+                       imageData: ServicesModel.shared.services[indexPath.row].userImageData)
             return cell
         }
         return UICollectionViewCell()
@@ -100,7 +87,7 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let viewController = ServiceViewController()
-        viewController.serviceModel = servicesModel.services[indexPath.row]
+        viewController.serviceModel = ServicesModel.shared.services[indexPath.row]
         self.navigationController?.pushViewController(viewController, animated: true)
     }
 }

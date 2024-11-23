@@ -8,5 +8,7 @@
 import Foundation
 
 final class ServicesModel {
+    static let shared = ServicesModel()
+    private init() {}
     var services: [ServiceModel] = []
 }

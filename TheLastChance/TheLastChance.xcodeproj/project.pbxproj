@@ -27,6 +27,7 @@
 		D0352A0A2CF0F5EC0047D613 /* PhotoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0352A092CF0F5EC0047D613 /* PhotoHelper.swift */; };
 		D0352A0C2CF1040B0047D613 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0352A0B2CF1040B0047D613 /* Settings.swift */; };
 		D0352A0E2CF106A30047D613 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0352A0D2CF106A30047D613 /* MainViewController.swift */; };
+		D0352A102CF12C8D0047D613 /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0352A0F2CF12C8D0047D613 /* RegistrationViewController.swift */; };
 		D0413E9E2CD3C65400E8F4D9 /* MockServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0413E9D2CD3C65400E8F4D9 /* MockServices.swift */; };
 		D0413EA02CD3CA7100E8F4D9 /* ServicesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0413E9F2CD3CA7100E8F4D9 /* ServicesModel.swift */; };
 		D0413EA22CD3EDCB00E8F4D9 /* AddEditPetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0413EA12CD3EDCB00E8F4D9 /* AddEditPetViewController.swift */; };
@@ -72,6 +73,7 @@
 		D0352A092CF0F5EC0047D613 /* PhotoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoHelper.swift; sourceTree = "<group>"; };
 		D0352A0B2CF1040B0047D613 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		D0352A0D2CF106A30047D613 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		D0352A0F2CF12C8D0047D613 /* RegistrationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
 		D0413E9D2CD3C65400E8F4D9 /* MockServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServices.swift; sourceTree = "<group>"; };
 		D0413E9F2CD3CA7100E8F4D9 /* ServicesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesModel.swift; sourceTree = "<group>"; };
 		D0413EA12CD3EDCB00E8F4D9 /* AddEditPetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditPetViewController.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 				D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */,
 				D0413EA12CD3EDCB00E8F4D9 /* AddEditPetViewController.swift */,
 				D0CDA8A22CDB85C000B67DC2 /* LoginViewController.swift */,
+				D0352A0F2CF12C8D0047D613 /* RegistrationViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -274,6 +277,7 @@
 			files = (
 				D00C143B2CBA88D900AF2BD9 /* CoreDataManager.swift in Sources */,
 				D0F632372CD2B445000CDF34 /* ServiceModel.swift in Sources */,
+				D0352A102CF12C8D0047D613 /* RegistrationViewController.swift in Sources */,
 				D00C14232CBA7DCE00AF2BD9 /* UserProfileViewController.swift in Sources */,
 				D0BAC0B72CD10BD200ACEFE6 /* MockUser.swift in Sources */,
 				D00C144D2CBAC54A00AF2BD9 /* NavBarView.swift in Sources */,

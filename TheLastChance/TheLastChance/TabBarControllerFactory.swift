@@ -11,9 +11,14 @@ final class TabBarControllerFactory {
     static func createTabBarController() -> UITabBarController {
         let tabBarController = UITabBarController()
         tabBarController.tabBar.tintColor = .systemTeal
-        let firstViewController = createNavController(for: ServicesViewController(), title: "Домой", imageName: "house")
-        let secondViewController = createNavController(for: UserProfileViewController(), title: "Профиль", imageName: "person")
-        tabBarController.viewControllers = [firstViewController, secondViewController]
+        let firstViewController = createNavController(for: MainViewController(), title: "Домой", imageName: "house")
+        if Settings.shared.userId == "" {
+            let secondViewController = createNavController(for: LoginViewController(), title: "Профиль", imageName: "person")
+            tabBarController.viewControllers = [firstViewController, secondViewController]
+        } else {
+            let secondViewController = createNavController(for: UserProfileViewController(), title: "Профиль", imageName: "person")
+            tabBarController.viewControllers = [firstViewController, secondViewController]
+        }
         return tabBarController
     }
     

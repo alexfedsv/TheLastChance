@@ -134,7 +134,7 @@ class ServiceViewController: UIViewController {
                 switch result {
                 case .success(let success):
                     DispatchQueue.main.async {
-                        let userModel = UserProfileModel(json: success)
+                        let userModel = UserProfileModel(userId: serviceModel.userId, json: success)
                         self.userModel = userModel
                         switch serviceModel.role {
                         case .master:
