@@ -7,23 +7,395 @@
 
 import UIKit
 
-class RegistrationViewController: UIViewController {
+final class RegistrationViewController: UIViewController {
 
+    private var scrollView: UIScrollView = UIScrollView()
+    private var contentView: UIView = UIView()
+    private let imagePicker = UIImagePickerController()
+
+    private lazy var userPhotoImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.backgroundColor = .secondarySystemBackground
+        imageView.isUserInteractionEnabled = true
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.masksToBounds = true
+        imageView.image = UIImage(systemName: "plus.circle")
+        imageView.tintColor = .systemTeal
+        return imageView
+    }()
+    private lazy var separator0View: UIView = {
+        let view = UIView()
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 12
+        view.backgroundColor = .separator
+        return view
+    }()
+    private lazy var separator1View: UIView = {
+        let view = UIView()
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 12
+        view.backgroundColor = .separator
+        return view
+    }()
+    private lazy var loginLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.text = "Логин:"
+        label.numberOfLines = 1
+        label.textColor = .systemTeal
+        return label
+    }()
+    private lazy var contactsLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.text = "Контакт:"
+        label.numberOfLines = 1
+        label.textColor = .systemTeal
+        return label
+    }()
+    private lazy var passwordLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.text = "Пароль:"
+        label.numberOfLines = 1
+        label.textColor = .systemTeal
+        return label
+    }()
+    private lazy var confirmPasswordLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.text = "Повтор пароля:"
+        label.numberOfLines = 1
+        label.textColor = .systemTeal
+        return label
+    }()
+    private lazy var loginTextView: UITextView = {
+        let textView = UITextView()
+        textView.layer.borderColor = UIColor.systemTeal.cgColor
+        textView.layer.borderWidth = 1.0
+        textView.font = .italicSystemFont(ofSize: 16)
+        textView.setContentHuggingPriority(.required, for: .vertical)
+        textView.setContentCompressionResistancePriority(.required, for: .vertical)
+        textView.backgroundColor = .secondarySystemBackground
+        textView.layer.cornerRadius = 10
+        textView.layer.masksToBounds = true
+        textView.textContainerInset = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
+        textView.tintColor = .systemTeal
+        textView.autocapitalizationType = .none
+        textView.autocorrectionType = .no
+        textView.spellCheckingType = .no
+        textView.returnKeyType = .go
+        return textView
+    }()
+    private lazy var contactsTextView: UITextView = {
+        let textView = UITextView()
+        textView.layer.borderColor = UIColor.systemTeal.cgColor
+        textView.layer.borderWidth = 1.0
+        textView.font = .italicSystemFont(ofSize: 16)
+        textView.setContentHuggingPriority(.required, for: .vertical)
+        textView.setContentCompressionResistancePriority(.required, for: .vertical)
+        textView.backgroundColor = .secondarySystemBackground
+        textView.layer.cornerRadius = 10
+        textView.layer.masksToBounds = true
+        textView.textContainerInset = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
+        textView.tintColor = .systemTeal
+        textView.autocapitalizationType = .none
+        textView.autocorrectionType = .no
+        textView.spellCheckingType = .no
+        textView.returnKeyType = .go
+        return textView
+    }()
+    private lazy var passwordTextView: UITextView = {
+        let textView = UITextView()
+        textView.layer.borderColor = UIColor.systemTeal.cgColor
+        textView.layer.borderWidth = 1.0
+        textView.font = .italicSystemFont(ofSize: 16)
+        textView.setContentHuggingPriority(.required, for: .vertical)
+        textView.setContentCompressionResistancePriority(.required, for: .vertical)
+        textView.backgroundColor = .secondarySystemBackground
+        textView.layer.cornerRadius = 10
+        textView.layer.masksToBounds = true
+        textView.textContainerInset = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
+        textView.tintColor = .systemTeal
+        textView.autocapitalizationType = .none
+        textView.autocorrectionType = .no
+        textView.spellCheckingType = .no
+        textView.returnKeyType = .go
+        return textView
+    }()
+    private lazy var confirmPasswordTextView: UITextView = {
+        let textView = UITextView()
+        textView.layer.borderColor = UIColor.systemTeal.cgColor
+        textView.layer.borderWidth = 1.0
+        textView.font = .italicSystemFont(ofSize: 16)
+        textView.setContentHuggingPriority(.required, for: .vertical)
+        textView.setContentCompressionResistancePriority(.required, for: .vertical)
+        textView.backgroundColor = .secondarySystemBackground
+        textView.layer.cornerRadius = 10
+        textView.layer.masksToBounds = true
+        textView.textContainerInset = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
+        textView.tintColor = .systemTeal
+        textView.autocapitalizationType = .none
+        textView.autocorrectionType = .no
+        textView.spellCheckingType = .no
+        textView.returnKeyType = .go
+        return textView
+    }()
+    private lazy var saveButtonView: UIView = {
+        let view = UIView()
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 12
+        view.backgroundColor = .systemTeal
+        return view
+    }()
+    private lazy var saveButtonLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.text = "Зарегистрироваться"
+        label.textColor = .white
+        return label
+    }()
+    private var keyboardUpDownConstraints: NSLayoutConstraint = NSLayoutConstraint()
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = true
+        imagePicker.sourceType = .photoLibrary
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        userPhotoImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(addUserImage)))
+        view.addSubview(userPhotoImageView)
+        view.addSubview(separator0View)
+        view.addSubview(loginLabel)
+        view.addSubview(loginTextView)
+        view.addSubview(contactsLabel)
+        view.addSubview(contactsTextView)
+        view.addSubview(saveButtonView)
+        saveButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(save)))
+        saveButtonView.addSubview(saveButtonLabel)
+        view.backgroundColor = .systemBackground
+        view.addSubview(passwordLabel)
+        view.addSubview(passwordTextView)
+        view.addSubview(confirmPasswordLabel)
+        view.addSubview(confirmPasswordTextView)
+        view.addSubview(separator1View)
+        loginTextView.delegate = self
+        contactsTextView.delegate = self
+        passwordTextView.delegate = self
+        setupNavBar()
+        setupConstraints()
+        setupKeyboardObservers()
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
-    */
-
+    private func setupNavBar() {
+        self.navigationController?.navigationBar.tintColor = UIColor.systemTeal
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        self.navigationItem.hidesBackButton = false
+        let backButton = UIBarButtonItem()
+        backButton.title = ""
+        self.navigationItem.backBarButtonItem = backButton
+    }
+    private func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        userPhotoImageView.layer.cornerRadius = userPhotoImageView.bounds.width / 2
+    }
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardFrame = keyboardSize.cgRectValue
+            let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardFrame.height, right: 0)
+            scrollView.contentInset = contentInsets
+            scrollView.scrollIndicatorInsets = contentInsets
+            if loginTextView.isFirstResponder {
+                scrollView.scrollRectToVisible(loginTextView.frame, animated: true)
+            } else if contactsTextView.isFirstResponder {
+                scrollView.scrollRectToVisible(contactsTextView.frame, animated: true)
+            }
+            else if passwordTextView.isFirstResponder {
+               scrollView.scrollRectToVisible(passwordTextView.frame, animated: true)
+           }
+        }
+    }
+    @objc func keyboardWillHide(notification: NSNotification) {
+        let contentInsets = UIEdgeInsets.zero
+        scrollView.contentInset = contentInsets
+        scrollView.scrollIndicatorInsets = contentInsets
+    }
+    @objc
+    private func addUserImage() {
+        print(#function)
+        present(imagePicker, animated: true, completion: nil)
+    }
+    @objc
+    private func save() {
+        saveButtonView.isUserInteractionEnabled = false
+        UIView.animate(withDuration: 0.3) {
+            self.saveButtonView.layer.opacity = 0.9
+            self.saveButtonView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.saveButtonLabel.layer.opacity = 0.9
+            self.saveButtonLabel.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        } completion: { _ in
+            UIView.animate(withDuration: 0.3) {
+                self.saveButtonView.layer.opacity = 1
+                self.saveButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                self.saveButtonLabel.layer.opacity = 1
+                self.saveButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+            } completion: { _ in
+                self.saveButtonView.isUserInteractionEnabled = true
+            }
+        }
+    }
 }
+extension RegistrationViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        /*guard let text = textView.text else { return }
+        if textView == typeOfAnimalTextView {
+            petModel?.typeOfAnimal = text
+        }
+        if textView == petnameTextView {
+            print(text)
+            petModel?.petName = text
+        }
+        if textView == infoTextView {
+            print(text)
+            petModel?.info = text
+        }*/
+    }
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
+    }
+}
+extension RegistrationViewController {
+    private func setupConstraints() {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        userPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
+        separator0View.translatesAutoresizingMaskIntoConstraints = false
+        loginLabel.translatesAutoresizingMaskIntoConstraints = false
+        loginTextView.translatesAutoresizingMaskIntoConstraints = false
+        contactsLabel.translatesAutoresizingMaskIntoConstraints = false
+        contactsTextView.translatesAutoresizingMaskIntoConstraints = false
+        passwordLabel.translatesAutoresizingMaskIntoConstraints = false
+        passwordTextView.translatesAutoresizingMaskIntoConstraints = false
+        confirmPasswordLabel.translatesAutoresizingMaskIntoConstraints = false
+        confirmPasswordTextView.translatesAutoresizingMaskIntoConstraints = false
+        separator1View.translatesAutoresizingMaskIntoConstraints = false
+        saveButtonView.translatesAutoresizingMaskIntoConstraints = false
+        saveButtonLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        
+        contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
+        contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
+        contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
+        contentView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
+        
+        userPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30).isActive = true
+        userPhotoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+        userPhotoImageView.widthAnchor.constraint(equalToConstant: 180).isActive = true
+        userPhotoImageView.heightAnchor.constraint(equalTo: userPhotoImageView.widthAnchor).isActive = true
+
+        separator0View.topAnchor.constraint(equalTo: userPhotoImageView.bottomAnchor, constant: 30).isActive = true
+        separator0View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        separator0View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
+        separator0View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        
+        loginLabel.topAnchor.constraint(equalTo: separator0View.bottomAnchor, constant: 15).isActive = true
+        loginLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
+        loginLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        
+        loginTextView.topAnchor.constraint(equalTo: loginLabel.bottomAnchor, constant: 3).isActive = true
+        loginTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
+        loginTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        loginTextView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        contactsLabel.topAnchor.constraint(equalTo: loginTextView.bottomAnchor, constant: 10).isActive = true
+        contactsLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
+        contactsLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        
+        contactsTextView.topAnchor.constraint(equalTo: contactsLabel.bottomAnchor, constant: 3).isActive = true
+        contactsTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
+        contactsTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        contactsTextView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+
+        passwordLabel.topAnchor.constraint(equalTo: contactsTextView.bottomAnchor, constant: 10).isActive = true
+        passwordLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
+        passwordLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        
+        passwordTextView.topAnchor.constraint(equalTo: passwordLabel.bottomAnchor, constant: 3).isActive = true
+        passwordTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
+        passwordTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        passwordTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 40).isActive = true
+        
+        confirmPasswordLabel.topAnchor.constraint(equalTo: passwordTextView.bottomAnchor, constant: 10).isActive = true
+        confirmPasswordLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
+        confirmPasswordLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        
+        confirmPasswordTextView.topAnchor.constraint(equalTo: confirmPasswordLabel.bottomAnchor, constant: 3).isActive = true
+        confirmPasswordTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
+        confirmPasswordTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        confirmPasswordTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 40).isActive = true
+        
+        separator1View.topAnchor.constraint(equalTo: confirmPasswordTextView.bottomAnchor, constant: 25).isActive = true
+        separator1View.bottomAnchor.constraint(equalTo: saveButtonView.topAnchor, constant: -15).isActive = true
+        separator1View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        separator1View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
+        separator1View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        
+        saveButtonView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
+        saveButtonView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -25).isActive = true
+        saveButtonView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        saveButtonView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30).isActive = true
+        
+        saveButtonLabel.centerYAnchor.constraint(equalTo: saveButtonView.centerYAnchor).isActive = true
+        saveButtonLabel.centerXAnchor.constraint(equalTo: saveButtonView.centerXAnchor).isActive = true
+    }
+}
+extension RegistrationViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    private func getAvatarIcon(pickedImageEdited: UIImage) -> Data? {
+        if let imageData = pickedImageEdited.jpegData(compressionQuality: 0.3) {
+            let imageSize = imageData.count
+            print("Размер изображения в байтах[compressionQuality: \(0.3)] = \(imageSize)")
+            return imageData
+        } else {
+            return nil
+        }
+    }
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        var iconData: Data?
+        if let pickedImageEdited = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+            if let data = getAvatarIcon(pickedImageEdited: pickedImageEdited) {
+                iconData = data
+            }
+        }
+        guard let iconData = iconData else { return }
+
+        DispatchQueue.main.async {
+            if let image = UIImage(data: iconData) {
+                self.userPhotoImageView.image = image
+                UserHostProfileModel.shared.userImage = iconData
+            } else {
+                print("ERROR[\(#function)]: Cannot converte Data to UIImage")
+            }
+        }
+        dismiss(animated: true, completion: nil)
+    }
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+}
+

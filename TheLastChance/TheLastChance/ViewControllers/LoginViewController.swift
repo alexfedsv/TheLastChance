@@ -61,6 +61,25 @@ final class LoginViewController: UIViewController {
         textView.returnKeyType = .go
         return textView
     }()
+    private lazy var registrationLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.numberOfLines = 1
+        label.text = "Зарегистрироваться"
+        label.isUserInteractionEnabled = true
+        label.textColor = .systemTeal
+        label.font = .italicSystemFont(ofSize: 14)
+        return label
+    }()
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.numberOfLines = 1
+        label.text = "PetLink"
+        label.textColor = .systemTeal
+        label.font = .italicSystemFont(ofSize: 30)
+        return label
+    }()
     private var loginButtonView: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
@@ -81,14 +100,36 @@ final class LoginViewController: UIViewController {
         view.backgroundColor = .systemBackground
         view.addSubview(loginLabel)
         view.addSubview(loginTextView)
+        loginTextView.delegate = self
         view.addSubview(passwordLabel)
         view.addSubview(passwordTextView)
+        passwordTextView.delegate = self
+        view.addSubview(registrationLabel)
+        registrationLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toRegistrationView)))
+        view.addSubview(titleLabel)
         view.addSubview(loginButtonView)
         view.addSubview(loginButtonLabel)
         loginButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(login)))
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(removeKeyboard)))
         setupConstraints()
     }
-
+    @objc
+    private func removeKeyboard() {
+        if loginTextView.isFirstResponder {
+            loginTextView.resignFirstResponder()
+        }
+        if passwordTextView.isFirstResponder {
+            passwordTextView.resignFirstResponder()
+        }
+    }
+    @objc
+    private func toRegistrationView() {
+        print(#function)
+        DispatchQueue.main.async {
+            let viewController = RegistrationViewController()
+            self.navigationController?.pushViewController(viewController, animated: true)
+        }
+    }
     @objc
     private func login() {
         loginButtonView.isUserInteractionEnabled = false
@@ -104,26 +145,34 @@ final class LoginViewController: UIViewController {
                 self.loginButtonLabel.layer.opacity = 1
                 self.loginButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                DataManager.shared.getUserProfile(userId: "1") { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let success):
-                            print(#function)
-                            let viewController = UserProfileViewController()
-                            var viewControllers = self.navigationController?.viewControllers ?? []
-                            viewControllers.removeLast()
-                            viewControllers.append(viewController)
-                            self.navigationController?.setViewControllers(viewControllers, animated: true)
-                        case .failure(let failure):
-                            break
+                if let loginText = self.loginTextView.text, let passwordText = self.passwordTextView.text {
+                    DataManager.shared.login(login: loginText, password: passwordText) { err in
+                        DispatchQueue.main.async {
+                            if err == nil {
+                                let viewController = UserHostProfileViewController()
+                                var viewControllers = self.navigationController?.viewControllers ?? []
+                                viewControllers.removeLast()
+                                viewControllers.append(viewController)
+                                self.navigationController?.setViewControllers(viewControllers, animated: true)
+                            }
+                            self.loginButtonView.isUserInteractionEnabled = true
                         }
-                        self.loginButtonView.isUserInteractionEnabled = true
                     }
                 }
             }
         }
     }
-
+}
+extension LoginViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+    }
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
+    }
 }
 extension LoginViewController {
     private func setupConstraints() {
@@ -131,6 +180,8 @@ extension LoginViewController {
         loginTextView.translatesAutoresizingMaskIntoConstraints = false
         passwordLabel.translatesAutoresizingMaskIntoConstraints = false
         passwordTextView.translatesAutoresizingMaskIntoConstraints = false
+        registrationLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         loginButtonView.translatesAutoresizingMaskIntoConstraints = false
         loginButtonLabel.translatesAutoresizingMaskIntoConstraints = false
         
@@ -151,6 +202,12 @@ extension LoginViewController {
         passwordTextView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15).isActive = true
         passwordTextView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15).isActive = true
         passwordTextView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        registrationLabel.centerYAnchor.constraint(equalTo: passwordTextView.bottomAnchor, constant: 35).isActive = true
+        registrationLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        
+        titleLabel.centerYAnchor.constraint(equalTo: registrationLabel.bottomAnchor, constant: 90).isActive = true
+        titleLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
         
         loginButtonView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 25).isActive = true
         loginButtonView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -25).isActive = true

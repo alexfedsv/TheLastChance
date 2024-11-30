@@ -15,6 +15,8 @@ enum NetworkError: Error {
     case errorStatusCode(statusCode: Int, atFunc: String)
     case mockServiceUnrealized(atFunc: String)
     case notFoundMock(atFunc: String)
+    case notFound(atFunc: String)
+    case wrongPassword(atFunc: String)
 
     func message() -> String {
         switch self {
@@ -32,6 +34,10 @@ enum NetworkError: Error {
             return "[Network Error][Mock Layer][at \(atFunc)]: Request to an unrealized mock service"
         case .notFoundMock(let atFunc):
             return "[Network Error][Mock Layer][at \(atFunc)]: Not found"
+        case .notFound(let atFunc):
+            return "[Network Error][Mock Layer][at \(atFunc)]: User not found"
+        case .wrongPassword(let atFunc):
+            return "[Network Error][Mock Layer][at \(atFunc)]: Password is wrong"
         }
     }
 }

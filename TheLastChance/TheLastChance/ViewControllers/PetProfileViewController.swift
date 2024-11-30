@@ -14,13 +14,13 @@ final class PetProfileViewController: UIViewController {
     private lazy var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = .systemTeal
         return imageView
     }()
     private lazy var petPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = .systemTeal
         return imageView
     }()
     private lazy var separator0View: UIView = {
@@ -140,8 +140,9 @@ final class PetProfileViewController: UIViewController {
     @objc
     private func toAddEditPetViewController() {
         let viewController = AddEditPetViewController()
-        viewController.userModel = userModel
+        viewController.userModel = UserHostProfileModel.shared
         viewController.petModel = petModel
+        viewController.addEdit = .editPet
         self.navigationController?.pushViewController(viewController, animated: true)
     }
 }

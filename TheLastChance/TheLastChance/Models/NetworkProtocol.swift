@@ -8,6 +8,7 @@
 import Foundation
 
 protocol NetworkProtocol {
+    func login(login: String, password: String, completion: @escaping (Result<String, NetworkError>) -> Void)
     func getUserProfile(userId: String, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void)
     func getPets(userId: String, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void)
     func getPetProfile(petId: String, completion: @escaping (Result<JSON.PetProfile, NetworkError>) -> Void)

@@ -8,7 +8,20 @@
 import Foundation
 
 final class NetworkMockManager: NetworkProtocol {
-
+    
+    func login(login: String, password: String, completion: @escaping (Result<String, NetworkError>) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
+            if let user = MockAuth.shared.auth.first(where: { $0.login == login }) {
+                if password == user.password {
+                    completion(.success(user.userId))
+                } else {
+                    completion(.failure(.wrongPassword(atFunc: #function)))
+                }
+            } else {
+                completion(.failure(.notFound(atFunc: #function)))
+            }
+        })
+    }
     func getUserProfile(userId: String, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
             if let user = MockUser.shared.users.first(where: { $0.userId == userId }) {

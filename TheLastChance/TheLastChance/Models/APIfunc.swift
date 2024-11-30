@@ -10,6 +10,7 @@ import Foundation
 enum APIfunc: String {
     case test = "pet_info/5"
     case login = "login"
+    case registrate = "registrate"
     case getUserInfo = "get_user_info"
     case getPetInfo = "pet_info"
     case getPets = "get_pet_list"

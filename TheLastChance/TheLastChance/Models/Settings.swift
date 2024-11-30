@@ -9,8 +9,8 @@ import Foundation
 
 final class Settings {
     static let shared = Settings()
-    var userId: String {
+    var userId: String = ""/* {
         get { return UserDefaults.standard.string(forKey: "userId") ?? "" }
         set { UserDefaults.standard.set(newValue, forKey: "userId") }
-    }
+    }*/
 }

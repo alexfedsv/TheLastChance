@@ -81,12 +81,13 @@ final class MainViewController: UIViewController {
             targetButtonLabel = self.slaveButtonLabel
             
         }
-        targetButtonView.isUserInteractionEnabled = false
+        self.masterButtonView.isUserInteractionEnabled = false
+        self.slaveButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             targetButtonView.layer.opacity = 0.9
             targetButtonView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-            targetButtonLabel.layer.opacity = 0.9
-            targetButtonLabel.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            targetButtonLabel.layer.opacity = 0.95
+            targetButtonLabel.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
         } completion: { _ in
             UIView.animate(withDuration: 0.3) {
                 targetButtonView.layer.opacity = 1
@@ -105,16 +106,20 @@ final class MainViewController: UIViewController {
                                 }
                                 viewController.modeSlaveMaster = modeSlaveMaster
                                 self.navigationController?.pushViewController(viewController, animated: true)
+                                self.masterButtonView.isUserInteractionEnabled = true
+                                self.slaveButtonView.isUserInteractionEnabled = true
                             case .failure(let failure):
-                                break
+                                self.masterButtonView.isUserInteractionEnabled = true
+                                self.slaveButtonView.isUserInteractionEnabled = true
                             }
-                            targetButtonView.isUserInteractionEnabled = true
                         }
                     }
                 } else {
                     let viewController = ServicesViewController()
                     viewController.modeSlaveMaster = modeSlaveMaster
                     self.navigationController?.pushViewController(viewController, animated: true)
+                    self.masterButtonView.isUserInteractionEnabled = true
+                    self.slaveButtonView.isUserInteractionEnabled = true
                 }
             }
         }
@@ -132,12 +137,12 @@ extension MainViewController {
         slaveButtonView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10).isActive = true
         slaveButtonView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
         slaveButtonView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.5, constant: -20).isActive = true
-        slaveButtonView.heightAnchor.constraint(equalTo: slaveButtonView.widthAnchor).isActive = true
+        slaveButtonView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.7).isActive = true
         
         masterButtonView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10).isActive = true
         masterButtonView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
         masterButtonView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.5, constant: -20).isActive = true
-        masterButtonView.heightAnchor.constraint(equalTo: masterButtonView.widthAnchor).isActive = true
+        masterButtonView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.7).isActive = true
         
         slaveButtonLabel.topAnchor.constraint(equalTo: slaveButtonView.topAnchor, constant: 5).isActive = true
         slaveButtonLabel.bottomAnchor.constraint(equalTo: slaveButtonView.bottomAnchor, constant: -5).isActive = true
@@ -149,7 +154,7 @@ extension MainViewController {
         masterButtonLabel.leadingAnchor.constraint(equalTo: masterButtonView.leadingAnchor, constant: 5).isActive = true
         masterButtonLabel.trailingAnchor.constraint(equalTo: masterButtonView.trailingAnchor, constant: -5).isActive = true
         
-        titleLabel.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: 60).isActive = true
+        titleLabel.centerYAnchor.constraint(equalTo: masterButtonLabel.bottomAnchor, constant: 110).isActive = true
         titleLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
     }
 }

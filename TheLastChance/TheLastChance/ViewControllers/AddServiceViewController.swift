@@ -9,7 +9,6 @@ import UIKit
 
 final class AddServiceViewController: UIViewController {
 
-    var userModel: UserProfileModel?
     var petsModel: PetsModel = PetsModel()
     var serviceModel = ServiceModel(role: .slave, serviceId: "0", userId: "1", title: "", description: "", userImageData: "", petIds: [])
     weak var servicesViewController: ServicesViewController?
@@ -64,14 +63,14 @@ final class AddServiceViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.text = "Заголовок:"
-        label.numberOfLines = 0
+        label.numberOfLines = 1
         return label
     }()
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.text = "Описание:"
-        label.numberOfLines = 0
+        label.numberOfLines = 1
         return label
     }()
     private lazy var titleTextView: UITextView = {
@@ -190,22 +189,11 @@ final class AddServiceViewController: UIViewController {
         scrollView.scrollIndicatorInsets = contentInsets
     }
     private func getUser() {
-        DataManager.shared.getUserProfile(userId: Settings.shared.userId) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let success):
-                    DispatchQueue.main.async {
-                        let userModel = UserProfileModel(userId: Settings.shared.userId, json: success)
-                        self.userModel = userModel
-                        if let icon = userModel.userImage  {
-                            self.photoImageView.image = UIImage(data: icon)
-                        } else {
-                            self.photoImageView.image = nil
-                        }
-                    }
-                case .failure(let failure):
-                    break
-                }
+        DispatchQueue.main.async {
+            if let icon = UserHostProfileModel.shared.userImage  {
+                self.photoImageView.image = UIImage(data: icon)
+            } else {
+                self.photoImageView.image = nil
             }
         }
     }
@@ -244,7 +232,6 @@ final class AddServiceViewController: UIViewController {
     @objc
     private func save() {
         guard let servicesViewController = servicesViewController else { return }
-        guard let userModel = userModel else { return }
         saveButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             self.saveButtonView.layer.opacity = 0.9
@@ -262,11 +249,9 @@ final class AddServiceViewController: UIViewController {
                     switch result {
                     case .success(let success):
                         print(#function)
-                        success.userImageData = userModel.userImage
                         ServicesModel.shared.services.append(success)
                         servicesViewController.reloadCollection()
                         self.navigationController?.popViewController(animated: true)
-
                     case .failure(let failure):
                         break
                     }
@@ -436,8 +421,8 @@ extension AddServiceViewController: UICollectionViewDataSource, UICollectionView
                 cell.setup(isMarked: false)
                 serviceModel.petIds.remove(at: index)
             } else {
-                let sep: String = descriptionTextView.text.isEmpty ? "" : " "
-                descriptionTextView.text = descriptionTextView.text + sep + petModel.typeOfAnimal + " " + petModel.petName + " "
+                //let sep: String = descriptionTextView.text.isEmpty ? "" : " "
+                //descriptionTextView.text = descriptionTextView.text + sep + petModel.typeOfAnimal + " " + petModel.petName + " "
                 cell.setup(isMarked: true)
                 serviceModel.petIds.append(petModel.petId)
             }

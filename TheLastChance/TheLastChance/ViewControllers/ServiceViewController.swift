@@ -10,7 +10,7 @@ import UIKit
 class ServiceViewController: UIViewController {
 
     var serviceModel: ServiceModel?
-    private var userModel: UserProfileModel?
+    var userModel: UserOtherProfileModel?
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
     private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {
@@ -22,7 +22,7 @@ class ServiceViewController: UIViewController {
     private lazy var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = .systemTeal
         return imageView
     }()
     private lazy var userRole: UILabel = {
@@ -61,6 +61,20 @@ class ServiceViewController: UIViewController {
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 20)
         label.numberOfLines = 0
+        return label
+    }()
+    private lazy var titleTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.text = "Заголовок:"
+        label.numberOfLines = 1
+        return label
+    }()
+    private lazy var descriptionTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.text = "Описание:"
+        label.numberOfLines = 1
         return label
     }()
     private lazy var titleLabel: UILabel = {
@@ -103,7 +117,9 @@ class ServiceViewController: UIViewController {
         contentView.addSubview(usernameLabel)
         contentView.addSubview(separator1View)
         contentView.backgroundColor = .systemBackground
+        contentView.addSubview(titleTitleLabel)
         contentView.addSubview(titleLabel)
+        contentView.addSubview(descriptionTitleLabel)
         contentView.addSubview(descriptionLabel)
         contentView.addSubview(separator2View)
         contentView.addSubview(toContactsButtonView)
@@ -128,41 +144,29 @@ class ServiceViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = rightBarButtonItem*/
     }
     private func setupData() {
+        guard let userModel = userModel else { return }
         guard let serviceModel = serviceModel else { return }
-        DataManager.shared.getUserProfile(userId: serviceModel.userId) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let success):
-                    DispatchQueue.main.async {
-                        let userModel = UserProfileModel(userId: serviceModel.userId, json: success)
-                        self.userModel = userModel
-                        switch serviceModel.role {
-                        case .master:
-                            self.userRole.text = "ЗАКАЗЧИК"
-                        case .slave:
-                            self.userRole.text = "ИСПОЛНИТЕЛЬ"
-                        }
-                        self.usernameLabel.text = userModel.username
-                        self.titleLabel.text = serviceModel.title
-                        /*var test = ""
-                        for i in 0...1000 {
-                            test.append("x ")
-                        }
-                        self.descriptionLabel.text = serviceModel.description + test*/
-                        if let userImage = userModel.userImage {
-                            self.userPhotoImageView.image = UIImage(data: userImage)
-                        } else {
-                            self.userPhotoImageView.image = nil
-                        }
-                    }
-                case .failure(let failure):
-                    break
-                }
+        DispatchQueue.main.async {
+            self.userModel = userModel
+            switch serviceModel.role {
+            case .master:
+                self.userRole.text = "ЗАКАЗЧИК"
+            case .slave:
+                self.userRole.text = "ИСПОЛНИТЕЛЬ"
+            }
+            self.usernameLabel.text = userModel.username
+            self.titleLabel.text = serviceModel.title
+            self.descriptionLabel.text = serviceModel.description
+            if let userImage = userModel.userImage {
+                self.userPhotoImageView.image = UIImage(data: userImage)
+            } else {
+                self.userPhotoImageView.image = nil
             }
         }
     }
     @objc
     private func toContacts() {
+        guard let serviceModel = serviceModel else { return }
         toContactsButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             self.toContactsButtonView.layer.opacity = 0.9
@@ -176,12 +180,15 @@ class ServiceViewController: UIViewController {
                 self.toContactsButtonLabel.layer.opacity = 1
                 self.toContactsButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                DataManager.shared.getUserProfile(userId: "1") { result in
+                DataManager.shared.getUserProfile(userId: serviceModel.userId) { userProfileResult in
                     DispatchQueue.main.async {
-                        switch result {
-                        case .success(let success):
-                            print(#function)
-                            break
+                        switch userProfileResult {
+                        case .success(let userProfile):
+                            let viewController = UserOtherProfileViewController()
+                            let otherProfileModel = UserOtherProfileModel()
+                            otherProfileModel.setup(userId: serviceModel.userId, json: userProfile)
+                            viewController.userModel = otherProfileModel
+                            self.navigationController?.pushViewController(viewController, animated: true)
                         case .failure(let failure):
                             break
                         }
@@ -205,6 +212,8 @@ extension ServiceViewController {
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        descriptionTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         toContactsButtonView.translatesAutoresizingMaskIntoConstraints = false
         toContactsButtonLabel.translatesAutoresizingMaskIntoConstraints = false
         
@@ -254,11 +263,19 @@ extension ServiceViewController {
         separator1View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator1View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
-        titleLabel.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 10).isActive = true
+        titleTitleLabel.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 10).isActive = true
+        titleTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
+        titleTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
+        
+        titleLabel.topAnchor.constraint(equalTo: titleTitleLabel.bottomAnchor, constant: 5).isActive = true
         titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
         titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
-        descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
+        descriptionTitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
+        descriptionTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
+        descriptionTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
+        
+        descriptionLabel.topAnchor.constraint(equalTo: descriptionTitleLabel.bottomAnchor, constant: 5).isActive = true
         descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
         descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         

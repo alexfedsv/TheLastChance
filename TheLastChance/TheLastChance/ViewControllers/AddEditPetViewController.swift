@@ -9,9 +9,14 @@ import UIKit
 
 final class AddEditPetViewController: UIViewController {
 
+    enum AddEdit {
+        case addPet
+        case editPet
+    }
     var userModel: UserProfileModel?
     var petModel: PetProfileModel?
-    weak var userViewController: UserProfileViewController?
+    var addEdit: AddEdit?
+    weak var userViewController: UserHostProfileViewController?
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
     private let imagePicker = UIImagePickerController()
@@ -237,6 +242,7 @@ final class AddEditPetViewController: UIViewController {
     private func save() {
         guard let userViewController = userViewController else { return }
         guard let petModel = petModel else { return }
+        guard let addEdit = addEdit else { return }
         saveButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             self.saveButtonView.layer.opacity = 0.9
@@ -250,21 +256,27 @@ final class AddEditPetViewController: UIViewController {
                 self.saveButtonLabel.layer.opacity = 1
                 self.saveButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                DataManager.shared.addPet(petModel: petModel) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let success):
-                            print(#function)
-                            success.petAvatar = petModel.petAvatar
-                            userViewController.petsModel.pets.append(success)
-                            userViewController.reloadCollection()
-                            self.navigationController?.popViewController(animated: true)
-                        case .failure(let failure):
-                            break
+                switch addEdit {
+                case .addPet:
+                    DataManager.shared.addPet(petModel: petModel) { result in
+                        DispatchQueue.main.async {
+                            switch result {
+                            case .success(let success):
+                                print(#function)
+                                success.petAvatar = petModel.petAvatar
+                                userViewController.petsModel.pets.append(success)
+                                userViewController.reloadCollection()
+                                self.navigationController?.popViewController(animated: true)
+                            case .failure(let failure):
+                                break
+                            }
+                            self.saveButtonView.isUserInteractionEnabled = true
                         }
-                        self.saveButtonView.isUserInteractionEnabled = true
                     }
+                case .editPet:
+                    print(".editPet")
                 }
+                
             }
         }
     }

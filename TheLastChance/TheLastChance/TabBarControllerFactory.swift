@@ -16,7 +16,7 @@ final class TabBarControllerFactory {
             let secondViewController = createNavController(for: LoginViewController(), title: "Профиль", imageName: "person")
             tabBarController.viewControllers = [firstViewController, secondViewController]
         } else {
-            let secondViewController = createNavController(for: UserProfileViewController(), title: "Профиль", imageName: "person")
+            let secondViewController = createNavController(for: UserHostProfileViewController(), title: "Профиль", imageName: "person")
             tabBarController.viewControllers = [firstViewController, secondViewController]
         }
         return tabBarController

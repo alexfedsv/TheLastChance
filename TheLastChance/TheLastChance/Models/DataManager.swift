@@ -8,6 +8,7 @@
 import Foundation
 
 protocol DataManagerProtocol: AnyObject {
+    func login(login: String, password: String, completion: @escaping (NetworkError?) -> Void)
     func getUserProfile(userId: String, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void)
     func getPets(userId: String, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void)
     func getPetProfile(petId: String, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
@@ -32,6 +33,25 @@ class DataManager: DataManagerProtocol {
             self.networkServiceProtocol = NetworkManager()
         case .mock:
             self.networkServiceProtocol = NetworkMockManager()
+        }
+    }
+    func login(login: String, password: String, completion: @escaping (NetworkError?) -> Void) {
+        self.networkServiceProtocol.login(login: login, password: password) { userIdResult in
+            switch userIdResult {
+            case .success(let userId):
+                self.networkServiceProtocol.getUserProfile(userId: userId) { userProfileResult in
+                    switch userProfileResult {
+                    case .success(let userProfile):
+                        Settings.shared.userId = userId
+                        UserHostProfileModel.shared.setup(userId: userId, json: userProfile)
+                        completion(nil)
+                    case .failure(let failure):
+                        completion(failure)
+                    }
+                }
+            case .failure(let failure):
+                completion(failure)
+            }
         }
     }
     func getUserProfile(userId: String, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void) {

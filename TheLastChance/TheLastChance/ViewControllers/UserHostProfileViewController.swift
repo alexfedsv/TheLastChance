@@ -7,9 +7,8 @@
 
 import UIKit
 
-final class UserProfileViewController: UIViewController {
+final class UserHostProfileViewController: UIViewController {
 
-    var userModel: UserProfileModel?
     var petsModel: PetsModel = PetsModel()
     private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {
         let imageView = UserBackgroundPhotoImageView()
@@ -82,8 +81,8 @@ final class UserProfileViewController: UIViewController {
         view.addSubview(collectionView)
         view.addSubview(separator2View)
         setupConstraints()
-        getPets()
         setupUser()
+        getPets()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -101,33 +100,17 @@ final class UserProfileViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = rightBarButtonItem
     }
     private func setupUser() {
-        let mockUser = MockUser.shared.users[0]
-        userModel = UserProfileModel(userId: mockUser.userId, username: mockUser.username, contacts: mockUser.contacts, userImage: mockUser.userImage, backgroundImage: MockImageHelper.getImageBase64String(imageName: "Mock/Animals/animals"))// tmp
-        guard let userModel = userModel else { return }
-        DataManager.shared.getUserProfile(userId: userModel.userId) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let success):
-                    DispatchQueue.main.async {
-                        let userModel = UserProfileModel(userId: userModel.userId, json: success)
-                        self.userModel = userModel
-                        self.usernameLabel.text = userModel.username
-                        self.contactsLabel.text = userModel.contacts
-                        if let userImage = userModel.userImage {
-                            self.userPhotoImageView.image = UIImage(data: userImage)
-                        } else {
-                            self.userPhotoImageView.image = nil
-                        }
-                    }
-                case .failure(let failure):
-                    break
-                }
-            }
+        self.usernameLabel.text = UserHostProfileModel.shared.username
+        self.contactsLabel.text = UserHostProfileModel.shared.contacts
+        if let userImage = UserHostProfileModel.shared.userImage {
+            self.userPhotoImageView.image = UIImage(data: userImage)
+        } else {
+            self.userPhotoImageView.image = nil
         }
     }
     private func getPets() {
         let dispatchGroup = DispatchGroup()
-        DataManager.shared.getPets(userId: "1") { resultPetIds in
+        DataManager.shared.getPets(userId: UserHostProfileModel.shared.userId) { resultPetIds in
             switch resultPetIds {
             case .success(let successPetIds):
                 for petId in successPetIds.petIds {
@@ -155,14 +138,15 @@ final class UserProfileViewController: UIViewController {
     private func toPetProfileViewController(petModel: PetProfileModel) {
         let viewController = PetProfileViewController()
         viewController.petModel = petModel
-        viewController.userModel = userModel
+        viewController.userModel = UserHostProfileModel.shared
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     private func toAddEditPetViewController(petModel: PetProfileModel) {
         let viewController = AddEditPetViewController()
         viewController.userViewController = self
         viewController.petModel = petModel
-        viewController.userModel = userModel
+        viewController.userModel = UserHostProfileModel.shared
+        viewController.addEdit = .addPet
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     @objc
@@ -179,7 +163,7 @@ final class UserProfileViewController: UIViewController {
         }
     }
 }
-extension UserProfileViewController {
+extension UserHostProfileViewController {
     private func setupConstraints() {
         userBackgroundPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
         userPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -229,7 +213,7 @@ extension UserProfileViewController {
         separator2View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
     }
 }
-extension UserProfileViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension UserHostProfileViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return petsModel.pets.count + 1
     }

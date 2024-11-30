@@ -49,9 +49,14 @@ final class ServicesViewController: UIViewController {
     }
     @objc
     private func addButtonTapped() {
-        let viewController = AddServiceViewController()
-        viewController.servicesViewController = self
-        self.navigationController?.pushViewController(viewController, animated: true)
+        if Settings.shared.userId == "" {
+            let viewController = LoginViewController()
+            self.navigationController?.pushViewController(viewController, animated: true)
+        } else {
+            let viewController = AddServiceViewController()
+            viewController.servicesViewController = self
+            self.navigationController?.pushViewController(viewController, animated: true)
+        }
     }
     func reloadCollection() {
         DispatchQueue.main.async {
@@ -87,7 +92,22 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let viewController = ServiceViewController()
-        viewController.serviceModel = ServicesModel.shared.services[indexPath.row]
-        self.navigationController?.pushViewController(viewController, animated: true)
+        let userId = ServicesModel.shared.services[indexPath.row].userId
+        DataManager.shared.getUserProfile(userId: userId) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let success):
+                    DispatchQueue.main.async {
+                        let userModel = UserOtherProfileModel()
+                        userModel.setup(userId: userId, json: success)
+                        viewController.userModel = userModel
+                        viewController.serviceModel = ServicesModel.shared.services[indexPath.row]
+                        self.navigationController?.pushViewController(viewController, animated: true)
+                    }
+                case .failure(let failure):
+                    break
+                }
+            }
+        }
     }
 }
