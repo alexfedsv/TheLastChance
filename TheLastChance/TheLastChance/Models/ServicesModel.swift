@@ -10,5 +10,7 @@ import Foundation
 final class ServicesModel {
     static let shared = ServicesModel()
     private init() {}
-    var services: [ServiceModel] = []
+    var servicesMaster: [ServiceModel] = []
+    var servicesSlave: [ServiceModel] = []
+    var isLoaded: Bool = false
 }

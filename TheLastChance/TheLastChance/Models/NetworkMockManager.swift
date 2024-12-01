@@ -22,6 +22,14 @@ final class NetworkMockManager: NetworkProtocol {
             }
         })
     }
+    func registrate(login: String, username: String, contacts: String, password: String, userImageString: String, backgroundImageString: String, completion: @escaping (Result<String, NetworkError>) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
+            let userId = String(MockAuth.shared.auth.count)
+            MockAuth.shared.auth.append(MockAuth.Auth(userId: userId, login: login, password: password))
+            MockUser.shared.users.append(JSON.UserProfile(userId: userId, username: username, contacts: contacts, userImage: userImageString, backgroundImage: backgroundImageString))
+            completion(.success(userId))
+        })
+    }
     func getUserProfile(userId: String, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
             if let user = MockUser.shared.users.first(where: { $0.userId == userId }) {
@@ -54,8 +62,8 @@ final class NetworkMockManager: NetworkProtocol {
     }
     func addService(serviceModel: ServiceModel, completion: @escaping (Result<String, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
-            if let userIdIndex = Int(serviceModel.userId) {
-                let json = JSON.Services.Service(role: serviceModel.role.rawValue, serviceId: String(MockServices.shared.services.count), userId: serviceModel.userId, title: serviceModel.title, description: serviceModel.description, userImage: MockImageHelper.getImageBase64String(imageName: "Mock/Users/user"), petIds: serviceModel.petIds)
+            if let user = MockUser.shared.users.first(where: { $0.userId == serviceModel.userId }) {
+                let json = JSON.Services.Service(role: serviceModel.role.rawValue, serviceId: String(MockServices.shared.services.count), userId: serviceModel.userId, title: serviceModel.title, description: serviceModel.description, userImage: user.userImage, petIds: serviceModel.petIds)
                 MockServices.shared.services.append(json)
                 completion(.success(String(MockServices.shared.services.count)))
             } else {

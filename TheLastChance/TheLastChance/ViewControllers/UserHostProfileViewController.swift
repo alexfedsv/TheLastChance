@@ -139,6 +139,7 @@ final class UserHostProfileViewController: UIViewController {
         let viewController = PetProfileViewController()
         viewController.petModel = petModel
         viewController.userModel = UserHostProfileModel.shared
+        viewController.isHost = true
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     private func toAddEditPetViewController(petModel: PetProfileModel) {

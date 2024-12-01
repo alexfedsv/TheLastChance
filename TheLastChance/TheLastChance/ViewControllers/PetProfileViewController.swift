@@ -11,6 +11,7 @@ final class PetProfileViewController: UIViewController {
 
     var userModel: UserProfileModel?
     var petModel: PetProfileModel?
+    var isHost: Bool = false
     private lazy var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
@@ -113,10 +114,12 @@ final class PetProfileViewController: UIViewController {
         self.navigationItem.hidesBackButton = false
         let backButton = UIBarButtonItem()
         backButton.title = ""
-        self.navigationItem.backBarButtonItem = backButton
-        let rightButtonImage = UIImage(systemName: "pencil")
-        let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(toAddEditPetViewController))
-        self.navigationItem.rightBarButtonItem = rightBarButtonItem
+        if isHost {
+            self.navigationItem.backBarButtonItem = backButton
+            let rightButtonImage = UIImage(systemName: "pencil")
+            let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(toAddEditPetViewController))
+            self.navigationItem.rightBarButtonItem = rightBarButtonItem
+        }
     }
     private func setupData() {
         guard let petModel = petModel else { return }

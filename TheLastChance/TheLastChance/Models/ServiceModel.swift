@@ -28,9 +28,9 @@ final class ServiceModel {
         self.userImageData = Data(base64Encoded: userImageData, options: .ignoreUnknownCharacters)
         self.petIds = petIds.map({ $0 })
     }
-    init(serviceId: String, json: JSON.Services.Service) {
+    init(json: JSON.Services.Service) {
         self.role = Mode(rawValue: json.role) ?? .master
-        self.serviceId = serviceId
+        self.serviceId = json.serviceId
         self.userId = json.userId
         self.title = json.title
         self.description = json.description

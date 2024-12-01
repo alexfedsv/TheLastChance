@@ -9,6 +9,7 @@ import Foundation
 
 protocol DataManagerProtocol: AnyObject {
     func login(login: String, password: String, completion: @escaping (NetworkError?) -> Void)
+    func registrate(registrationModel: RegistrationModel, completion: @escaping (NetworkError?) -> Void)
     func getUserProfile(userId: String, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void)
     func getPets(userId: String, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void)
     func getPetProfile(petId: String, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
@@ -53,6 +54,27 @@ class DataManager: DataManagerProtocol {
                 completion(failure)
             }
         }
+    }
+    func registrate(registrationModel: RegistrationModel, completion: @escaping (NetworkError?) -> Void) {
+        self.networkServiceProtocol.registrate(
+            login: registrationModel.login,
+            username: registrationModel.username,
+            contacts: registrationModel.contacts,
+            password: registrationModel.password,
+            userImageString: PhotoHelper.getImageBase64String(imageData: registrationModel.userImage),
+            backgroundImageString: PhotoHelper.getImageBase64String(imageData: registrationModel.backgroundImage)) { result in
+                switch result {
+                case .success(let userId):
+                    UserHostProfileModel.shared.userId = userId
+                    UserHostProfileModel.shared.username = registrationModel.username
+                    UserHostProfileModel.shared.contacts = registrationModel.contacts
+                    UserHostProfileModel.shared.userImage = registrationModel.userImage
+                    UserHostProfileModel.shared.backgroundImage = registrationModel.backgroundImage
+                    completion(nil)
+                case .failure(let failure):
+                    completion(failure)
+                }
+            }
     }
     func getUserProfile(userId: String, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void) {
         networkServiceProtocol.getUserProfile(userId: userId) { result in

@@ -10,7 +10,7 @@ import UIKit
 final class AddServiceViewController: UIViewController {
 
     var petsModel: PetsModel = PetsModel()
-    var serviceModel = ServiceModel(role: .slave, serviceId: "0", userId: "1", title: "", description: "", userImageData: "", petIds: [])
+    var serviceAddModel = ServiceAddModel()
     weak var servicesViewController: ServicesViewController?
     private var collectionHeight0Constraint = NSLayoutConstraint()
     private var collectionHeight1Constraint = NSLayoutConstraint()
@@ -245,11 +245,24 @@ final class AddServiceViewController: UIViewController {
                 self.saveButtonLabel.layer.opacity = 1
                 self.saveButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                DataManager.shared.addService(serviceModel: self.serviceModel) { result in
+                let serviceModel = ServiceModel(
+                    role: self.serviceAddModel.role,
+                    serviceId: "",
+                    userId: UserHostProfileModel.shared.userId,
+                    title: self.serviceAddModel.title,
+                    description: self.serviceAddModel.description,
+                    userImageData: PhotoHelper.getImageBase64String(imageData: UserHostProfileModel.shared.userImage),
+                    petIds: self.serviceAddModel.petIds)
+                DataManager.shared.addService(serviceModel: serviceModel) { result in
                     switch result {
                     case .success(let success):
                         print(#function)
-                        ServicesModel.shared.services.append(success)
+                        switch success.role {
+                        case .master:
+                            ServicesModel.shared.servicesMaster.append(success)
+                        case .slave:
+                            ServicesModel.shared.servicesSlave.append(success)
+                        }
                         servicesViewController.reloadCollection()
                         self.navigationController?.popViewController(animated: true)
                     case .failure(let failure):
@@ -265,13 +278,13 @@ extension AddServiceViewController: SegmentedControlDelegate {
     func segmentedControleSet(role: ServiceModel.Mode) {
         print(#function)
         print("role.rawValue = \(role.rawValue)")
-        serviceModel.role = role
+        serviceAddModel.role = role
         getPets {
-            self.collectionHeight0Constraint.priority = UILayoutPriority(self.serviceModel.role == .master ? 750 : 950)
-            self.collectionHeight1Constraint.priority = UILayoutPriority(self.serviceModel.role == .master ? 950 : 750)
-            self.addHeight0Constraint.priority = UILayoutPriority(self.serviceModel.role == .master ? 750 : 950)
-            self.addHeight1Constraint.priority = UILayoutPriority(self.serviceModel.role == .master ? 950 : 750)
-            self.addLabel.isHidden = self.serviceModel.role == .slave
+            self.collectionHeight0Constraint.priority = UILayoutPriority(self.serviceAddModel.role == .master ? 750 : 950)
+            self.collectionHeight1Constraint.priority = UILayoutPriority(self.serviceAddModel.role == .master ? 950 : 750)
+            self.addHeight0Constraint.priority = UILayoutPriority(self.serviceAddModel.role == .master ? 750 : 950)
+            self.addHeight1Constraint.priority = UILayoutPriority(self.serviceAddModel.role == .master ? 950 : 750)
+            self.addLabel.isHidden = self.serviceAddModel.role == .slave
             UIView.animate(withDuration: 0.5) {
                 self.view.layoutIfNeeded()
             } completion: { _ in
@@ -285,11 +298,11 @@ extension AddServiceViewController: UITextViewDelegate {
         guard let text = textView.text else { return }
         if textView == titleTextView {
             print(text)
-            serviceModel.title = text
+            serviceAddModel.title = text
         }
         if textView == descriptionTextView {
             print(text)
-            serviceModel.description = text
+            serviceAddModel.description = text
         }
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -345,8 +358,8 @@ extension AddServiceViewController {
         
         addHeight0Constraint = NSLayoutConstraint(item: addLabel as Any, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 0.0)
         addHeight1Constraint = NSLayoutConstraint(item: addLabel as Any, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 34.0)
-        addHeight0Constraint.priority = UILayoutPriority(serviceModel.role == .master ? 750 : 950)
-        addHeight1Constraint.priority = UILayoutPriority(serviceModel.role == .master ? 950 : 750)
+        addHeight0Constraint.priority = UILayoutPriority(serviceAddModel.role == .master ? 750 : 950)
+        addHeight1Constraint.priority = UILayoutPriority(serviceAddModel.role == .master ? 950 : 750)
         addHeight0Constraint.isActive = true
         addHeight1Constraint.isActive = true
         
@@ -356,8 +369,8 @@ extension AddServiceViewController {
 
         collectionHeight0Constraint = NSLayoutConstraint(item: collectionView as Any, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 0.0)
         collectionHeight1Constraint = NSLayoutConstraint(item: collectionView as Any, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 160.0)
-        collectionHeight0Constraint.priority = UILayoutPriority(serviceModel.role == .master ? 750 : 950)
-        collectionHeight1Constraint.priority = UILayoutPriority(serviceModel.role == .master ? 950 : 750)
+        collectionHeight0Constraint.priority = UILayoutPriority(serviceAddModel.role == .master ? 750 : 950)
+        collectionHeight1Constraint.priority = UILayoutPriority(serviceAddModel.role == .master ? 950 : 750)
         collectionHeight0Constraint.isActive = true
         collectionHeight1Constraint.isActive = true
 
@@ -411,22 +424,22 @@ extension AddServiceViewController: UICollectionViewDataSource, UICollectionView
         return UICollectionViewCell()
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return serviceModel.role == .master ? CGSize(width: 100, height: 150) : CGSize(width: 0, height: 0)
+        return serviceAddModel.role == .master ? CGSize(width: 100, height: 150) : CGSize(width: 0, height: 0)
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let petModel = petsModel.pets[indexPath.row]
         print("Выбрано животное: \(petModel.petName) из типа: \(petModel.typeOfAnimal) petId: \(String(describing: petModel.petId))")
         if let cell = collectionView.cellForItem(at: indexPath) as? PetCollectionViewCell {
-            if let index = serviceModel.petIds.firstIndex(where: { petModel.petId == $0 }) {
+            if let index = serviceAddModel.petIds.firstIndex(where: { petModel.petId == $0 }) {
                 cell.setup(isMarked: false)
-                serviceModel.petIds.remove(at: index)
+                serviceAddModel.petIds.remove(at: index)
             } else {
                 //let sep: String = descriptionTextView.text.isEmpty ? "" : " "
                 //descriptionTextView.text = descriptionTextView.text + sep + petModel.typeOfAnimal + " " + petModel.petName + " "
                 cell.setup(isMarked: true)
-                serviceModel.petIds.append(petModel.petId)
+                serviceAddModel.petIds.append(petModel.petId)
             }
-            print("serviceModel.petIds: \(serviceModel.petIds)")
+            print("serviceModel.petIds: \(serviceAddModel.petIds)")
         }
     }
     

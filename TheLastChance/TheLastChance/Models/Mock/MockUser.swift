@@ -10,7 +10,7 @@ import Foundation
 final class MockUser {
     static let shared = MockUser()
     let user: JSON.UserProfile = JSON.UserProfile(userId: "0", username: "Пользователь Пользовович", contacts: "+79455678909", userImage: MockImageHelper.getImageBase64String(imageName: "Mock/Users/user"), backgroundImage: MockImageHelper.getImageBase64String(imageName: "Mock/Users/animals"))
-    let users: [JSON.UserProfile] = [
+    var users: [JSON.UserProfile] = [
         JSON.UserProfile(userId: "1", username: "Роберт Эдвард Ли", contacts: "+79995550001", userImage: MockImageHelper.getImageBase64String(imageName: avatars[0]), backgroundImage: MockImageHelper.getImageBase64String(imageName: "Mock/Users/animals")),
         JSON.UserProfile(userId: "2", username: "Томас Джонатан Джексон", contacts: "+79995550002", userImage: MockImageHelper.getImageBase64String(imageName: avatars[1]), backgroundImage: MockImageHelper.getImageBase64String(imageName: "Mock/Users/animals")),
         JSON.UserProfile(userId: "3", username: "Джеб Стюарт", contacts: "+79995550003", userImage: MockImageHelper.getImageBase64String(imageName: avatars[2]), backgroundImage: MockImageHelper.getImageBase64String(imageName: "Mock/Users/animals")),

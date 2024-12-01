@@ -76,13 +76,27 @@ extension ServicesViewController {
 }
 extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return ServicesModel.shared.services.count
+        guard let modeSlaveMaster = modeSlaveMaster else { return 0 }
+        switch modeSlaveMaster {
+        case .master:
+            return ServicesModel.shared.servicesMaster.count
+        case .slave:
+            return ServicesModel.shared.servicesSlave.count
+        }
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let modeSlaveMaster = modeSlaveMaster else { return UICollectionViewCell() }
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ServicesCollectionViewCell.identifier, for: indexPath) as? ServicesCollectionViewCell {
-            cell.setup(title: ServicesModel.shared.services[indexPath.row].title,
-                       description: ServicesModel.shared.services[indexPath.row].description,
-                       imageData: ServicesModel.shared.services[indexPath.row].userImageData)
+            switch modeSlaveMaster {
+            case .master:
+                cell.setup(title: ServicesModel.shared.servicesMaster[indexPath.row].title,
+                           description: ServicesModel.shared.servicesMaster[indexPath.row].description,
+                           imageData: ServicesModel.shared.servicesMaster[indexPath.row].userImageData)
+            case .slave:
+                cell.setup(title: ServicesModel.shared.servicesSlave[indexPath.row].title,
+                           description: ServicesModel.shared.servicesSlave[indexPath.row].description,
+                           imageData: ServicesModel.shared.servicesSlave[indexPath.row].userImageData)
+            }
             return cell
         }
         return UICollectionViewCell()
@@ -91,8 +105,19 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
         return CGSize(width: collectionView.bounds.width, height: 70)
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let modeSlaveMaster = modeSlaveMaster else { return }
         let viewController = ServiceViewController()
-        let userId = ServicesModel.shared.services[indexPath.row].userId
+        var userId: String
+        var serviceModel: ServiceModel
+        switch modeSlaveMaster {
+        case .master:
+            userId = ServicesModel.shared.servicesMaster[indexPath.row].userId
+            serviceModel = ServicesModel.shared.servicesMaster[indexPath.row]
+        case .slave:
+            userId = ServicesModel.shared.servicesSlave[indexPath.row].userId
+            serviceModel = ServicesModel.shared.servicesSlave[indexPath.row]
+        }
+        
         DataManager.shared.getUserProfile(userId: userId) { result in
             DispatchQueue.main.async {
                 switch result {
@@ -100,8 +125,8 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
                     DispatchQueue.main.async {
                         let userModel = UserOtherProfileModel()
                         userModel.setup(userId: userId, json: success)
-                        viewController.userModel = userModel
-                        viewController.serviceModel = ServicesModel.shared.services[indexPath.row]
+                        viewController.userOtherModel = userModel
+                        viewController.serviceModel = serviceModel
                         self.navigationController?.pushViewController(viewController, animated: true)
                     }
                 case .failure(let failure):

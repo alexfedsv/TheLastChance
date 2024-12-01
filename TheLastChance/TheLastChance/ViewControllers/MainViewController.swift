@@ -95,19 +95,25 @@ final class MainViewController: UIViewController {
                 targetButtonLabel.layer.opacity = 1
                 targetButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                if ServicesModel.shared.services.isEmpty {
+                if !ServicesModel.shared.isLoaded {
                     DataManager.shared.getServices { result in
                         DispatchQueue.main.async {
                             switch result {
                             case .success(let success):
                                 let viewController = ServicesViewController()
                                 for elem in success.services {
-                                    ServicesModel.shared.services.append(ServiceModel(serviceId: "0", json: elem))
+                                    if elem.role == "master" {
+                                        ServicesModel.shared.servicesMaster.append(ServiceModel(json: elem))
+                                    }
+                                    if elem.role == "slave" {
+                                        ServicesModel.shared.servicesSlave.append(ServiceModel(json: elem))
+                                    }
                                 }
                                 viewController.modeSlaveMaster = modeSlaveMaster
                                 self.navigationController?.pushViewController(viewController, animated: true)
                                 self.masterButtonView.isUserInteractionEnabled = true
                                 self.slaveButtonView.isUserInteractionEnabled = true
+                                ServicesModel.shared.isLoaded = true
                             case .failure(let failure):
                                 self.masterButtonView.isUserInteractionEnabled = true
                                 self.slaveButtonView.isUserInteractionEnabled = true

@@ -10,7 +10,8 @@ import UIKit
 class ServiceViewController: UIViewController {
 
     var serviceModel: ServiceModel?
-    var userModel: UserOtherProfileModel?
+    var userOtherModel: UserOtherProfileModel?
+    private var petsModel: PetsModel = PetsModel()
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
     private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {
@@ -104,6 +105,7 @@ class ServiceViewController: UIViewController {
         label.textColor = .white
         return label
     }()
+    var collectionView: UICollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
@@ -122,10 +124,21 @@ class ServiceViewController: UIViewController {
         contentView.addSubview(descriptionTitleLabel)
         contentView.addSubview(descriptionLabel)
         contentView.addSubview(separator2View)
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
+        collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
+        collectionView.backgroundColor = .systemBackground
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(PetCollectionViewCell.self, forCellWithReuseIdentifier: PetCollectionViewCell.identifier)
+        contentView.addSubview(collectionView)
         contentView.addSubview(toContactsButtonView)
         toContactsButtonView.addSubview(toContactsButtonLabel)
         toContactsButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toContacts)))
         setupConstraints()
+        getPets()
         setupData()
     }
     override func viewDidLayoutSubviews() {
@@ -144,10 +157,10 @@ class ServiceViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = rightBarButtonItem*/
     }
     private func setupData() {
-        guard let userModel = userModel else { return }
+        guard let userModel = userOtherModel else { return }
         guard let serviceModel = serviceModel else { return }
         DispatchQueue.main.async {
-            self.userModel = userModel
+            self.userOtherModel = userModel
             switch serviceModel.role {
             case .master:
                 self.userRole.text = "ЗАКАЗЧИК"
@@ -163,6 +176,36 @@ class ServiceViewController: UIViewController {
                 self.userPhotoImageView.image = nil
             }
         }
+    }
+    private func getPets() {
+        guard let serviceModel = serviceModel else { return }
+        let petIds = serviceModel.petIds
+        let dispatchGroup = DispatchGroup()
+        for petId in petIds {
+            dispatchGroup.enter()
+            DataManager.shared.getPetProfile(petId: petId) { resultPetProfile in
+                switch resultPetProfile {
+                case .success(let successPetProfile):
+                    self.petsModel.pets.append(successPetProfile)
+                case .failure(let failurePetProfile):
+                    print("[ERROR]: \(failurePetProfile.message())")
+                }
+                dispatchGroup.leave()
+            }
+        }
+        dispatchGroup.notify(queue: .main) {
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
+    }
+    private func toPetProfileViewController(petModel: PetProfileModel) {
+        guard let userModel = userOtherModel else { return }
+        let viewController = PetProfileViewController()
+        viewController.petModel = petModel
+        viewController.userModel = userModel
+        viewController.isHost = false
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
     @objc
     private func toContacts() {
@@ -214,6 +257,7 @@ extension ServiceViewController {
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         titleTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         toContactsButtonView.translatesAutoresizingMaskIntoConstraints = false
         toContactsButtonLabel.translatesAutoresizingMaskIntoConstraints = false
         
@@ -280,9 +324,34 @@ extension ServiceViewController {
         descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
         separator2View.topAnchor.constraint(greaterThanOrEqualTo: descriptionLabel.bottomAnchor, constant: 15).isActive = true
-        separator2View.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -15).isActive = true
         separator2View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
         separator2View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator2View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        
+        collectionView.topAnchor.constraint(equalTo: separator2View.bottomAnchor, constant: 10).isActive = true
+        collectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10).isActive = true
+        collectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10).isActive = true
+        collectionView.heightAnchor.constraint(equalToConstant: 160).isActive = true
+        collectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -15).isActive = true
+    }
+}
+extension ServiceViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return petsModel.pets.count
+    }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PetCollectionViewCell.identifier, for: indexPath) as? PetCollectionViewCell {
+            cell.setup(title: petsModel.pets[indexPath.row].typeOfAnimal, name: petsModel.pets[indexPath.row].petName, imageData: petsModel.pets[indexPath.row].petAvatar)
+            return cell
+        }
+        return UICollectionViewCell()
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 100, height: 150)
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let petModel = petsModel.pets[indexPath.row]
+        print("Выбрано животное: \(petModel.petName) из типа: \(petModel.typeOfAnimal)")
+        toPetProfileViewController(petModel: petModel)
     }
 }

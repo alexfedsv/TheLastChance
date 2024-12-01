@@ -9,13 +9,14 @@ import UIKit
 
 final class RegistrationViewController: UIViewController {
 
+    private var registrationModel: RegistrationModel = RegistrationModel()
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
     private let imagePicker = UIImagePickerController()
 
     private lazy var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .secondarySystemBackground
+        imageView.backgroundColor = .systemBackground
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
@@ -45,6 +46,14 @@ final class RegistrationViewController: UIViewController {
         label.textColor = .systemTeal
         return label
     }()
+    private lazy var usernameLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.text = "Имя:"
+        label.numberOfLines = 1
+        label.textColor = .systemTeal
+        return label
+    }()
     private lazy var contactsLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
@@ -70,6 +79,24 @@ final class RegistrationViewController: UIViewController {
         return label
     }()
     private lazy var loginTextView: UITextView = {
+        let textView = UITextView()
+        textView.layer.borderColor = UIColor.systemTeal.cgColor
+        textView.layer.borderWidth = 1.0
+        textView.font = .italicSystemFont(ofSize: 16)
+        textView.setContentHuggingPriority(.required, for: .vertical)
+        textView.setContentCompressionResistancePriority(.required, for: .vertical)
+        textView.backgroundColor = .secondarySystemBackground
+        textView.layer.cornerRadius = 10
+        textView.layer.masksToBounds = true
+        textView.textContainerInset = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
+        textView.tintColor = .systemTeal
+        textView.autocapitalizationType = .none
+        textView.autocorrectionType = .no
+        textView.spellCheckingType = .no
+        textView.returnKeyType = .go
+        return textView
+    }()
+    private lazy var usernameTextView: UITextView = {
         let textView = UITextView()
         textView.layer.borderColor = UIColor.systemTeal.cgColor
         textView.layer.borderWidth = 1.0
@@ -141,6 +168,16 @@ final class RegistrationViewController: UIViewController {
         textView.returnKeyType = .go
         return textView
     }()
+    private lazy var toLoginViewControllerLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.numberOfLines = 1
+        label.text = "Уже есть аккаунт"
+        label.isUserInteractionEnabled = true
+        label.textColor = .systemTeal
+        label.font = .italicSystemFont(ofSize: 14)
+        return label
+    }()
     private lazy var saveButtonView: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
@@ -158,44 +195,42 @@ final class RegistrationViewController: UIViewController {
     private var keyboardUpDownConstraints: NSLayoutConstraint = NSLayoutConstraint()
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .systemBackground
         imagePicker.delegate = self
         imagePicker.allowsEditing = true
         imagePicker.sourceType = .photoLibrary
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         userPhotoImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(addUserImage)))
-        view.addSubview(userPhotoImageView)
-        view.addSubview(separator0View)
-        view.addSubview(loginLabel)
-        view.addSubview(loginTextView)
-        view.addSubview(contactsLabel)
-        view.addSubview(contactsTextView)
+        contentView.addSubview(userPhotoImageView)
+        contentView.addSubview(separator0View)
+        contentView.addSubview(loginLabel)
+        contentView.addSubview(loginTextView)
+        contentView.addSubview(usernameLabel)
+        contentView.addSubview(usernameTextView)
+        contentView.addSubview(contactsLabel)
+        contentView.addSubview(contactsTextView)
+        contentView.addSubview(toLoginViewControllerLabel)
+        toLoginViewControllerLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toLoginViewController)))
         view.addSubview(saveButtonView)
         saveButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(save)))
         saveButtonView.addSubview(saveButtonLabel)
-        view.backgroundColor = .systemBackground
-        view.addSubview(passwordLabel)
-        view.addSubview(passwordTextView)
-        view.addSubview(confirmPasswordLabel)
-        view.addSubview(confirmPasswordTextView)
-        view.addSubview(separator1View)
+        contentView.backgroundColor = .systemBackground
+        contentView.addSubview(passwordLabel)
+        contentView.addSubview(passwordTextView)
+        contentView.addSubview(confirmPasswordLabel)
+        contentView.addSubview(confirmPasswordTextView)
+        contentView.addSubview(separator1View)
         loginTextView.delegate = self
+        usernameTextView.delegate = self
         contactsTextView.delegate = self
         passwordTextView.delegate = self
-        setupNavBar()
+        confirmPasswordTextView.delegate = self
         setupConstraints()
         setupKeyboardObservers()
     }
     deinit {
         NotificationCenter.default.removeObserver(self)
-    }
-    private func setupNavBar() {
-        self.navigationController?.navigationBar.tintColor = UIColor.systemTeal
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
-        self.navigationItem.hidesBackButton = false
-        let backButton = UIBarButtonItem()
-        backButton.title = ""
-        self.navigationItem.backBarButtonItem = backButton
     }
     private func setupKeyboardObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -213,11 +248,14 @@ final class RegistrationViewController: UIViewController {
             scrollView.scrollIndicatorInsets = contentInsets
             if loginTextView.isFirstResponder {
                 scrollView.scrollRectToVisible(loginTextView.frame, animated: true)
+            } else if usernameTextView.isFirstResponder {
+                scrollView.scrollRectToVisible(usernameTextView.frame, animated: true)
             } else if contactsTextView.isFirstResponder {
                 scrollView.scrollRectToVisible(contactsTextView.frame, animated: true)
-            }
-            else if passwordTextView.isFirstResponder {
-               scrollView.scrollRectToVisible(passwordTextView.frame, animated: true)
+            } else if passwordTextView.isFirstResponder {
+                scrollView.scrollRectToVisible(passwordTextView.frame, animated: true)
+            } else if confirmPasswordTextView.isFirstResponder {
+                scrollView.scrollRectToVisible(confirmPasswordTextView.frame, animated: true)
            }
         }
     }
@@ -246,25 +284,53 @@ final class RegistrationViewController: UIViewController {
                 self.saveButtonLabel.layer.opacity = 1
                 self.saveButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
+                if self.registrationModel.checkData() {
+                    DataManager.shared.registrate(registrationModel: self.registrationModel) { err in
+                        if err == nil {
+                            let viewController = UserHostProfileViewController()
+                            var viewControllers = self.navigationController?.viewControllers ?? []
+                            viewControllers.removeLast()
+                            viewControllers.append(viewController)
+                            self.navigationController?.setViewControllers(viewControllers, animated: true)
+                        }
+                    }
+                } else {
+                    print("[DEBUG][\(#function)]: data is incomplete")
+                }
                 self.saveButtonView.isUserInteractionEnabled = true
             }
+        }
+    }
+    @objc
+    private func toLoginViewController() {
+        print(#function)
+        DispatchQueue.main.async {
+            let viewController = LoginViewController()
+            var viewControllers = self.navigationController?.viewControllers ?? []
+            viewControllers.removeLast()
+            viewControllers.append(viewController)
+            self.navigationController?.setViewControllers(viewControllers, animated: true)
         }
     }
 }
 extension RegistrationViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
-        /*guard let text = textView.text else { return }
-        if textView == typeOfAnimalTextView {
-            petModel?.typeOfAnimal = text
+        guard let text = textView.text else { return }
+        if textView == loginTextView {
+            registrationModel.login = text
         }
-        if textView == petnameTextView {
-            print(text)
-            petModel?.petName = text
+        if textView == usernameTextView {
+            registrationModel.username = text
         }
-        if textView == infoTextView {
-            print(text)
-            petModel?.info = text
-        }*/
+        if textView == contactsTextView {
+            registrationModel.contacts = text
+        }
+        if textView == passwordTextView {
+            registrationModel.password = text
+        }
+        if textView == confirmPasswordTextView {
+            registrationModel.passwordConfirmation = text
+        }
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
@@ -282,6 +348,8 @@ extension RegistrationViewController {
         separator0View.translatesAutoresizingMaskIntoConstraints = false
         loginLabel.translatesAutoresizingMaskIntoConstraints = false
         loginTextView.translatesAutoresizingMaskIntoConstraints = false
+        usernameLabel.translatesAutoresizingMaskIntoConstraints = false
+        usernameTextView.translatesAutoresizingMaskIntoConstraints = false
         contactsLabel.translatesAutoresizingMaskIntoConstraints = false
         contactsTextView.translatesAutoresizingMaskIntoConstraints = false
         passwordLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -289,6 +357,7 @@ extension RegistrationViewController {
         confirmPasswordLabel.translatesAutoresizingMaskIntoConstraints = false
         confirmPasswordTextView.translatesAutoresizingMaskIntoConstraints = false
         separator1View.translatesAutoresizingMaskIntoConstraints = false
+        toLoginViewControllerLabel.translatesAutoresizingMaskIntoConstraints = false
         saveButtonView.translatesAutoresizingMaskIntoConstraints = false
         saveButtonLabel.translatesAutoresizingMaskIntoConstraints = false
 
@@ -303,12 +372,12 @@ extension RegistrationViewController {
         contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
         contentView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
         
-        userPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30).isActive = true
+        userPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5).isActive = true
         userPhotoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        userPhotoImageView.widthAnchor.constraint(equalToConstant: 180).isActive = true
+        userPhotoImageView.widthAnchor.constraint(equalToConstant: 170).isActive = true
         userPhotoImageView.heightAnchor.constraint(equalTo: userPhotoImageView.widthAnchor).isActive = true
 
-        separator0View.topAnchor.constraint(equalTo: userPhotoImageView.bottomAnchor, constant: 30).isActive = true
+        separator0View.topAnchor.constraint(equalTo: userPhotoImageView.bottomAnchor, constant: 15).isActive = true
         separator0View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
         separator0View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator0View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
@@ -322,7 +391,16 @@ extension RegistrationViewController {
         loginTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
         loginTextView.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
-        contactsLabel.topAnchor.constraint(equalTo: loginTextView.bottomAnchor, constant: 10).isActive = true
+        usernameLabel.topAnchor.constraint(equalTo: loginTextView.bottomAnchor, constant: 10).isActive = true
+        usernameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
+        usernameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        
+        usernameTextView.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 3).isActive = true
+        usernameTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
+        usernameTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        usernameTextView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        contactsLabel.topAnchor.constraint(equalTo: usernameTextView.bottomAnchor, constant: 10).isActive = true
         contactsLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
         contactsLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
         
@@ -350,15 +428,18 @@ extension RegistrationViewController {
         confirmPasswordTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 40).isActive = true
         
         separator1View.topAnchor.constraint(equalTo: confirmPasswordTextView.bottomAnchor, constant: 25).isActive = true
-        separator1View.bottomAnchor.constraint(equalTo: saveButtonView.topAnchor, constant: -15).isActive = true
         separator1View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
         separator1View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator1View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
+        toLoginViewControllerLabel.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 10).isActive = true
+        toLoginViewControllerLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+        
+        saveButtonView.topAnchor.constraint(equalTo: toLoginViewControllerLabel.bottomAnchor, constant: 10).isActive = true
         saveButtonView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
         saveButtonView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -25).isActive = true
         saveButtonView.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        saveButtonView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30).isActive = true
+        saveButtonView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -15).isActive = true
         
         saveButtonLabel.centerYAnchor.constraint(equalTo: saveButtonView.centerYAnchor).isActive = true
         saveButtonLabel.centerXAnchor.constraint(equalTo: saveButtonView.centerXAnchor).isActive = true
@@ -375,21 +456,21 @@ extension RegistrationViewController: UIImagePickerControllerDelegate, UINavigat
         }
     }
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
         var iconData: Data?
         if let pickedImageEdited = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
             if let data = getAvatarIcon(pickedImageEdited: pickedImageEdited) {
                 iconData = data
             }
         }
-        guard let iconData = iconData else { return }
-
-        DispatchQueue.main.async {
-            if let image = UIImage(data: iconData) {
-                self.userPhotoImageView.image = image
-                UserHostProfileModel.shared.userImage = iconData
-            } else {
-                print("ERROR[\(#function)]: Cannot converte Data to UIImage")
+        if let iconData = iconData {
+            self.registrationModel.userImage = iconData
+            DispatchQueue.main.async {
+                if let image = UIImage(data: iconData) {
+                    self.userPhotoImageView.image = image
+                } else {
+                    self.registrationModel.userImage = nil
+                    print("ERROR[\(#function)]: Cannot converte Data to UIImage")
+                }
             }
         }
         dismiss(animated: true, completion: nil)

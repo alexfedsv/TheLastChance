@@ -105,7 +105,7 @@ final class LoginViewController: UIViewController {
         view.addSubview(passwordTextView)
         passwordTextView.delegate = self
         view.addSubview(registrationLabel)
-        registrationLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toRegistrationView)))
+        registrationLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toRegistrationViewController)))
         view.addSubview(titleLabel)
         view.addSubview(loginButtonView)
         view.addSubview(loginButtonLabel)
@@ -123,11 +123,14 @@ final class LoginViewController: UIViewController {
         }
     }
     @objc
-    private func toRegistrationView() {
+    private func toRegistrationViewController() {
         print(#function)
         DispatchQueue.main.async {
             let viewController = RegistrationViewController()
-            self.navigationController?.pushViewController(viewController, animated: true)
+            var viewControllers = self.navigationController?.viewControllers ?? []
+            viewControllers.removeLast()
+            viewControllers.append(viewController)
+            self.navigationController?.setViewControllers(viewControllers, animated: true)
         }
     }
     @objc

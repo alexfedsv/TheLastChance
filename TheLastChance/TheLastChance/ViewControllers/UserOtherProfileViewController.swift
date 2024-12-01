@@ -139,6 +139,7 @@ final class UserOtherProfileViewController: UIViewController {
             let viewController = PetProfileViewController()
             viewController.petModel = petModel
             viewController.userModel = userModel
+            viewController.isHost = false
             self.navigationController?.pushViewController(viewController, animated: true)
         } else {
             let viewController = PetProfileViewController()
