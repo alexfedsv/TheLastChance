@@ -39,12 +39,12 @@ class DataManager: DataManagerProtocol {
     func login(login: String, password: String, completion: @escaping (NetworkError?) -> Void) {
         self.networkServiceProtocol.login(login: login, password: password) { userIdResult in
             switch userIdResult {
-            case .success(let userId):
-                self.networkServiceProtocol.getUserProfile(userId: userId) { userProfileResult in
+            case .success(let json):
+                self.networkServiceProtocol.getUserProfile(userId: json.userId) { userProfileResult in
                     switch userProfileResult {
                     case .success(let userProfile):
-                        Settings.shared.userId = userId
-                        UserHostProfileModel.shared.setup(userId: userId, json: userProfile)
+                        Settings.shared.userId = json.userId
+                        UserHostProfileModel.shared.setup(userId: json.userId, json: userProfile)
                         completion(nil)
                     case .failure(let failure):
                         completion(failure)
@@ -64,8 +64,8 @@ class DataManager: DataManagerProtocol {
             userImageString: PhotoHelper.getImageBase64String(imageData: registrationModel.userImage),
             backgroundImageString: PhotoHelper.getImageBase64String(imageData: registrationModel.backgroundImage)) { result in
                 switch result {
-                case .success(let userId):
-                    UserHostProfileModel.shared.userId = userId
+                case .success(let json):
+                    UserHostProfileModel.shared.userId = json.userId
                     UserHostProfileModel.shared.username = registrationModel.username
                     UserHostProfileModel.shared.contacts = registrationModel.contacts
                     UserHostProfileModel.shared.userImage = registrationModel.userImage

@@ -9,11 +9,12 @@ import Foundation
 
 final class NetworkMockManager: NetworkProtocol {
     
-    func login(login: String, password: String, completion: @escaping (Result<String, NetworkError>) -> Void) {
+    func login(login: String, password: String, completion: @escaping (Result<JSON.Auth, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
             if let user = MockAuth.shared.auth.first(where: { $0.login == login }) {
                 if password == user.password {
-                    completion(.success(user.userId))
+                    let login = JSON.Auth(userId: user.userId)
+                    completion(.success(login))
                 } else {
                     completion(.failure(.wrongPassword(atFunc: #function)))
                 }
@@ -22,12 +23,13 @@ final class NetworkMockManager: NetworkProtocol {
             }
         })
     }
-    func registrate(login: String, username: String, contacts: String, password: String, userImageString: String, backgroundImageString: String, completion: @escaping (Result<String, NetworkError>) -> Void) {
+    func registrate(login: String, username: String, contacts: String, password: String, userImageString: String, backgroundImageString: String, completion: @escaping (Result<JSON.Auth, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
             let userId = String(MockAuth.shared.auth.count)
             MockAuth.shared.auth.append(MockAuth.Auth(userId: userId, login: login, password: password))
             MockUser.shared.users.append(JSON.UserProfile(userId: userId, username: username, contacts: contacts, userImage: userImageString, backgroundImage: backgroundImageString))
-            completion(.success(userId))
+            let login = JSON.Auth(userId: userId)
+            completion(.success(login))
         })
     }
     func getUserProfile(userId: String, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void) {
@@ -73,15 +75,11 @@ final class NetworkMockManager: NetworkProtocol {
     }
     func addPet(petModel: PetProfileModel, completion: @escaping (Result<String, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
-            if let petIdIndex = Int(petModel.petId) {
-                let string = PhotoHelper.getImageBase64String(imageData: petModel.petAvatar)
-                let json = JSON.PetProfile(typeOfAnimal: petModel.typeOfAnimal, petName: petModel.petName, info: petModel.info, petAvatar: string)
-                MockPets.shared.petIds.petIds.append(String(MockPets.shared.petIds.petIds.count))
-                MockPets.shared.pets.append(json)
-                completion(.success(String(MockPets.shared.petIds.petIds.count)))
-            } else {
-                completion(.failure(.notFoundMock(atFunc: #function)))
-            }
+            let string = PhotoHelper.getImageBase64String(imageData: petModel.petAvatar)
+            let json = JSON.PetProfile(typeOfAnimal: petModel.typeOfAnimal, petName: petModel.petName, info: petModel.info, petAvatar: string)
+            MockPets.shared.petIds.petIds.append(String(MockPets.shared.petIds.petIds.count))
+            MockPets.shared.pets.append(json)
+            completion(.success(String(MockPets.shared.petIds.petIds.count)))
         })
     }
 }

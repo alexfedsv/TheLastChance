@@ -24,6 +24,8 @@
 		D00C144B2CBAC4F800AF2BD9 /* PetProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */; };
 		D00C144D2CBAC54A00AF2BD9 /* NavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144C2CBAC54A00AF2BD9 /* NavBarView.swift */; };
 		D00C144F2CBAC84F00AF2BD9 /* PetProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D00C144E2CBAC84E00AF2BD9 /* PetProfileModel.swift */; };
+		D0131E232D07521600030C90 /* PreprofileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0131E222D07521600030C90 /* PreprofileViewController.swift */; };
+		D0131E252D07741200030C90 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0131E242D07741200030C90 /* SettingsViewController.swift */; };
 		D0352A0A2CF0F5EC0047D613 /* PhotoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0352A092CF0F5EC0047D613 /* PhotoHelper.swift */; };
 		D0352A0C2CF1040B0047D613 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0352A0B2CF1040B0047D613 /* Settings.swift */; };
 		D0352A0E2CF106A30047D613 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0352A0D2CF106A30047D613 /* MainViewController.swift */; };
@@ -76,6 +78,8 @@
 		D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetProfileViewController.swift; sourceTree = "<group>"; };
 		D00C144C2CBAC54A00AF2BD9 /* NavBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavBarView.swift; sourceTree = "<group>"; };
 		D00C144E2CBAC84E00AF2BD9 /* PetProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetProfileModel.swift; sourceTree = "<group>"; };
+		D0131E222D07521600030C90 /* PreprofileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreprofileViewController.swift; sourceTree = "<group>"; };
+		D0131E242D07741200030C90 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		D0352A092CF0F5EC0047D613 /* PhotoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoHelper.swift; sourceTree = "<group>"; };
 		D0352A0B2CF1040B0047D613 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		D0352A0D2CF106A30047D613 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -164,8 +168,10 @@
 				D05290862CFB826000BFDA56 /* UserOtherProfileViewController.swift */,
 				D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */,
 				D0413EA12CD3EDCB00E8F4D9 /* AddEditPetViewController.swift */,
+				D0131E222D07521600030C90 /* PreprofileViewController.swift */,
 				D0CDA8A22CDB85C000B67DC2 /* LoginViewController.swift */,
 				D0352A0F2CF12C8D0047D613 /* RegistrationViewController.swift */,
+				D0131E242D07741200030C90 /* SettingsViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -316,6 +322,7 @@
 				D00C14292CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld in Sources */,
 				D00C14412CBA8A3700AF2BD9 /* JSON.swift in Sources */,
 				D00C143D2CBA88E900AF2BD9 /* DataManager.swift in Sources */,
+				D0131E252D07741200030C90 /* SettingsViewController.swift in Sources */,
 				D00C143F2CBA89E800AF2BD9 /* NetworkProtocol.swift in Sources */,
 				D0413EA02CD3CA7100E8F4D9 /* ServicesModel.swift in Sources */,
 				D05733452CFC5E7A0095DF6E /* ServiceAddModel.swift in Sources */,
@@ -329,6 +336,7 @@
 				D0352A0E2CF106A30047D613 /* MainViewController.swift in Sources */,
 				D0BAC0B92CD11B5300ACEFE6 /* PetAddCollectionViewCell.swift in Sources */,
 				D0BAC0BB2CD1225700ACEFE6 /* MockImageHelper.swift in Sources */,
+				D0131E232D07521600030C90 /* PreprofileViewController.swift in Sources */,
 				D0CDA8A32CDB85C000B67DC2 /* LoginViewController.swift in Sources */,
 				D00C144B2CBAC4F800AF2BD9 /* PetProfileViewController.swift in Sources */,
 				D05290852CFB6F1D00BFDA56 /* UserOtherProfileModel.swift in Sources */,

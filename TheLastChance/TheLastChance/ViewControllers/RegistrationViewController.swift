@@ -9,6 +9,8 @@ import UIKit
 
 final class RegistrationViewController: UIViewController {
 
+    weak var preprofileViewControllerDelegate: PreprofileViewControllerDelegate?
+    private var commandToParent: PreprofileViewController.Command = .back
     private var registrationModel: RegistrationModel = RegistrationModel()
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
@@ -213,7 +215,7 @@ final class RegistrationViewController: UIViewController {
         contentView.addSubview(toLoginViewControllerLabel)
         toLoginViewControllerLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toLoginViewController)))
         view.addSubview(saveButtonView)
-        saveButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(save)))
+        saveButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(registrate)))
         saveButtonView.addSubview(saveButtonLabel)
         contentView.backgroundColor = .systemBackground
         contentView.addSubview(passwordLabel)
@@ -228,6 +230,12 @@ final class RegistrationViewController: UIViewController {
         confirmPasswordTextView.delegate = self
         setupConstraints()
         setupKeyboardObservers()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print(#function)
+        guard let preprofileViewControllerDelegate = preprofileViewControllerDelegate else { return }
+        preprofileViewControllerDelegate.childIsKilled(commandToParent: commandToParent)
     }
     deinit {
         NotificationCenter.default.removeObserver(self)
@@ -270,7 +278,7 @@ final class RegistrationViewController: UIViewController {
         present(imagePicker, animated: true, completion: nil)
     }
     @objc
-    private func save() {
+    private func registrate() {
         saveButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             self.saveButtonView.layer.opacity = 0.9
@@ -287,11 +295,9 @@ final class RegistrationViewController: UIViewController {
                 if self.registrationModel.checkData() {
                     DataManager.shared.registrate(registrationModel: self.registrationModel) { err in
                         if err == nil {
-                            let viewController = UserHostProfileViewController()
-                            var viewControllers = self.navigationController?.viewControllers ?? []
-                            viewControllers.removeLast()
-                            viewControllers.append(viewController)
-                            self.navigationController?.setViewControllers(viewControllers, animated: true)
+                            self.dismiss(animated: true, completion: nil)
+                        } else {
+                            self.dismiss(animated: true, completion: nil)
                         }
                     }
                 } else {
@@ -304,12 +310,10 @@ final class RegistrationViewController: UIViewController {
     @objc
     private func toLoginViewController() {
         print(#function)
+        guard let delegate = preprofileViewControllerDelegate else { return }
         DispatchQueue.main.async {
-            let viewController = LoginViewController()
-            var viewControllers = self.navigationController?.viewControllers ?? []
-            viewControllers.removeLast()
-            viewControllers.append(viewController)
-            self.navigationController?.setViewControllers(viewControllers, animated: true)
+            self.commandToParent = .toLogin
+            self.dismiss(animated: true, completion: nil)
         }
     }
 }

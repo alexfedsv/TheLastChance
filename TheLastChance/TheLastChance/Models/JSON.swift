@@ -8,6 +8,13 @@
 import Foundation
 
 struct JSON {
+    struct Auth: Codable {
+        var userId: String
+        private enum CodingKeys: String, CodingKey {
+            case userId = "user_id"
+        }
+        
+    }
     struct PetIds: Codable {
         var petIds: [String]
         private enum CodingKeys: String, CodingKey {

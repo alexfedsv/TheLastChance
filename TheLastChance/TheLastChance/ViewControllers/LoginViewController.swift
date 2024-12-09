@@ -9,6 +9,8 @@ import UIKit
 
 final class LoginViewController: UIViewController {
     
+    weak var preprofileViewControllerDelegate: PreprofileViewControllerDelegate?
+    private var commandToParent: PreprofileViewController.Command = .back
     private lazy var loginLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
@@ -113,6 +115,12 @@ final class LoginViewController: UIViewController {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(removeKeyboard)))
         setupConstraints()
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        print(#function)
+        guard let preprofileViewControllerDelegate = preprofileViewControllerDelegate else { return }
+        preprofileViewControllerDelegate.childIsKilled(commandToParent: commandToParent)
+    }
     @objc
     private func removeKeyboard() {
         if loginTextView.isFirstResponder {
@@ -125,12 +133,10 @@ final class LoginViewController: UIViewController {
     @objc
     private func toRegistrationViewController() {
         print(#function)
+        guard let delegate = preprofileViewControllerDelegate else { return }
         DispatchQueue.main.async {
-            let viewController = RegistrationViewController()
-            var viewControllers = self.navigationController?.viewControllers ?? []
-            viewControllers.removeLast()
-            viewControllers.append(viewController)
-            self.navigationController?.setViewControllers(viewControllers, animated: true)
+            self.commandToParent = .toRegistration
+            self.dismiss(animated: true, completion: nil)
         }
     }
     @objc
@@ -152,11 +158,7 @@ final class LoginViewController: UIViewController {
                     DataManager.shared.login(login: loginText, password: passwordText) { err in
                         DispatchQueue.main.async {
                             if err == nil {
-                                let viewController = UserHostProfileViewController()
-                                var viewControllers = self.navigationController?.viewControllers ?? []
-                                viewControllers.removeLast()
-                                viewControllers.append(viewController)
-                                self.navigationController?.setViewControllers(viewControllers, animated: true)
+                                self.dismiss(animated: true, completion: nil)
                             }
                             self.loginButtonView.isUserInteractionEnabled = true
                         }

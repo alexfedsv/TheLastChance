@@ -20,9 +20,9 @@ final class NetworkManager: NetworkProtocol {
     }
     private let baseURL: String = "http://83.166.238.38:8081/"
     
-    func login(login: String, password: String, completion: @escaping (Result<String, NetworkError>) -> Void) {
+    func login(login: String, password: String, completion: @escaping (Result<JSON.Auth, NetworkError>) -> Void) {
         let parameters: [String: Any] = [
-            "login": login,
+            "username": login,
             "password": password
         ]
         guard let url = URL(string: baseURL + APIfunc.login.rawValue), let body = try? JSONSerialization.data(withJSONObject: parameters, options: []) else {
@@ -45,7 +45,7 @@ final class NetworkManager: NetworkProtocol {
             } else if let response = response as? HTTPURLResponse, let data = data {
                 if response.statusCode == 200 {
                     do {
-                        let jsonObject = try JSONDecoder().decode(String.self, from: data)
+                        let jsonObject = try JSONDecoder().decode(JSON.Auth.self, from: data)
                         completion(.success(jsonObject))
                         return
                     } catch {
@@ -68,7 +68,7 @@ final class NetworkManager: NetworkProtocol {
             }
         }.resume()
     }
-    func registrate(login: String, username: String, contacts: String, password: String, userImageString: String, backgroundImageString: String, completion: @escaping (Result<String, NetworkError>) -> Void) {
+    func registrate(login: String, username: String, contacts: String, password: String, userImageString: String, backgroundImageString: String, completion: @escaping (Result<JSON.Auth, NetworkError>) -> Void) {
         let parameters: [String: Any] = [
             "login": login,
             "username": username,
@@ -97,7 +97,7 @@ final class NetworkManager: NetworkProtocol {
             } else if let response = response as? HTTPURLResponse, let data = data {
                 if response.statusCode == 200 {
                     do {
-                        let jsonObject = try JSONDecoder().decode(String.self, from: data)
+                        let jsonObject = try JSONDecoder().decode(JSON.Auth.self, from: data)
                         completion(.success(jsonObject))
                         return
                     } catch {

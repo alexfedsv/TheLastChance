@@ -50,8 +50,12 @@ final class ServicesViewController: UIViewController {
     @objc
     private func addButtonTapped() {
         if Settings.shared.userId == "" {
-            let viewController = LoginViewController()
-            self.navigationController?.pushViewController(viewController, animated: true)
+            if let tabBarController = self.tabBarController {
+                if let viewControllers = tabBarController.viewControllers,
+                    viewControllers.count > 0 {
+                    tabBarController.selectedViewController = viewControllers[1]
+                }
+            }
         } else {
             let viewController = AddServiceViewController()
             viewController.servicesViewController = self
