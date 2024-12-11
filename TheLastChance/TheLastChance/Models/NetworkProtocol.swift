@@ -16,4 +16,5 @@ protocol NetworkProtocol {
     func getServices(completion: @escaping (Result<JSON.Services, NetworkError>) -> Void)
     func addService(serviceModel: ServiceModel, completion: @escaping (Result<String, NetworkError>) -> Void)
     func addPet(petModel: PetProfileModel, completion: @escaping (Result<String, NetworkError>) -> Void)
+    func editPet(petModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
 }

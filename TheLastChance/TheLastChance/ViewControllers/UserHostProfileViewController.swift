@@ -16,10 +16,23 @@ final class UserHostProfileViewController: UIViewController {
         imageView.image = UIImage(named: "Mock/Users/animals")
         return imageView
     }()
+    private var backgroundPhotoLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .right
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .secondarySystemBackground
+        label.shadowColor = .systemTeal
+        label.shadowOffset = .init(width: 2, height: 2)
+        label.text = "Загрузить"
+        label.numberOfLines = 1
+        return label
+    }()
     private var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
         imageView.backgroundColor = .systemTeal
+        imageView.image = UIImage(systemName: "person.crop.circle")
+        imageView.tintColor = .systemTeal
         return imageView
     }()
     private var separator0View: UIView = {
@@ -62,6 +75,7 @@ final class UserHostProfileViewController: UIViewController {
         super.viewDidLoad()
         setupNavBar()
         view.addSubview(userBackgroundPhotoImageView)
+        userBackgroundPhotoImageView.addSubview(backgroundPhotoLabel)
         view.addSubview(userPhotoImageView)
         view.addSubview(separator0View)
         view.addSubview(usernameLabel)
@@ -95,9 +109,9 @@ final class UserHostProfileViewController: UIViewController {
         let backButton = UIBarButtonItem()
         backButton.title = ""
         self.navigationItem.backBarButtonItem = backButton
-        let rightButtonImage = UIImage(systemName: "gearshape")
-        let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(toSettings))
-        self.navigationItem.rightBarButtonItem = rightBarButtonItem
+        //let rightButtonImage = UIImage(systemName: "gearshape")
+        //let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(toSettings))
+        //self.navigationItem.rightBarButtonItem = rightBarButtonItem
     }
     private func setupUser() {
         self.usernameLabel.text = UserHostProfileModel.shared.username
@@ -105,7 +119,7 @@ final class UserHostProfileViewController: UIViewController {
         if let userImage = UserHostProfileModel.shared.userImage {
             self.userPhotoImageView.image = UIImage(data: userImage)
         } else {
-            self.userPhotoImageView.image = nil
+            self.userPhotoImageView.image = UIImage(systemName: "person.crop.circle")
         }
     }
     private func getPets() {
@@ -167,6 +181,7 @@ final class UserHostProfileViewController: UIViewController {
 extension UserHostProfileViewController {
     private func setupConstraints() {
         userBackgroundPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
+        backgroundPhotoLabel.translatesAutoresizingMaskIntoConstraints = false
         userPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
         separator0View.translatesAutoresizingMaskIntoConstraints = false
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -179,6 +194,9 @@ extension UserHostProfileViewController {
         userBackgroundPhotoImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
         userBackgroundPhotoImageView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
         userBackgroundPhotoImageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        
+        backgroundPhotoLabel.trailingAnchor.constraint(equalTo: userBackgroundPhotoImageView.trailingAnchor, constant: -15).isActive = true
+        backgroundPhotoLabel.bottomAnchor.constraint(equalTo: userBackgroundPhotoImageView.bottomAnchor, constant: -10).isActive = true
         
         userPhotoImageView.bottomAnchor.constraint(equalTo: userBackgroundPhotoImageView.bottomAnchor, constant: -10).isActive = true
         userPhotoImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true

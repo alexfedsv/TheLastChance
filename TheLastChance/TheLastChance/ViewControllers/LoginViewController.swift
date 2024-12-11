@@ -61,6 +61,7 @@ final class LoginViewController: UIViewController {
         textView.autocorrectionType = .no
         textView.spellCheckingType = .no
         textView.returnKeyType = .go
+        textView.isSecureTextEntry = true
         return textView
     }()
     private lazy var registrationLabel: UILabel = {
@@ -157,6 +158,7 @@ final class LoginViewController: UIViewController {
                 if let loginText = self.loginTextView.text, let passwordText = self.passwordTextView.text {
                     DataManager.shared.login(login: loginText, password: passwordText) { err in
                         DispatchQueue.main.async {
+                            self.commandToParent = .toUserProfile
                             if err == nil {
                                 self.dismiss(animated: true, completion: nil)
                             }

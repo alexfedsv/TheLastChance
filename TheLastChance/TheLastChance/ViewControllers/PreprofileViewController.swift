@@ -16,11 +16,20 @@ final class PreprofileViewController: UIViewController {
     enum Command {
         case toLogin
         case toRegistration
+        case toUserProfile
         case back
     }
+    private let activityIndicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .large)
+        view.hidesWhenStopped = true
+        return view
+    }()
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        view.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
+        setupConstraints()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -32,7 +41,7 @@ final class PreprofileViewController: UIViewController {
             print("[DEBUG][\(#function)]: Юзер не автризован")
             let viewController = LoginViewController()
             viewController.preprofileViewControllerDelegate = self
-            present(viewController, animated: false, completion: nil)
+            present(viewController, animated: true, completion: nil)
         } else {
             print("[DEBUG][\(#function)]: Юзер автризован")
             let viewController = UserHostProfileViewController()
@@ -72,6 +81,17 @@ extension PreprofileViewController: PreprofileViewControllerDelegate {
                 viewControllers.append(viewController)
                 self.navigationController?.setViewControllers(viewControllers, animated: true)
             }
+        case .toUserProfile:
+            self.decisionMaker()
         }
+
+    }
+}
+extension PreprofileViewController {
+    private func setupConstraints() {
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        activityIndicator.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor).isActive = true
     }
 }

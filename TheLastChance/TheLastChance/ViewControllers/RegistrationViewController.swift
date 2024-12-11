@@ -150,6 +150,7 @@ final class RegistrationViewController: UIViewController {
         textView.autocorrectionType = .no
         textView.spellCheckingType = .no
         textView.returnKeyType = .go
+        textView.isSecureTextEntry = true
         return textView
     }()
     private lazy var confirmPasswordTextView: UITextView = {
@@ -168,6 +169,7 @@ final class RegistrationViewController: UIViewController {
         textView.autocorrectionType = .no
         textView.spellCheckingType = .no
         textView.returnKeyType = .go
+        textView.isSecureTextEntry = true
         return textView
     }()
     private lazy var toLoginViewControllerLabel: UILabel = {
@@ -294,16 +296,20 @@ final class RegistrationViewController: UIViewController {
             } completion: { _ in
                 if self.registrationModel.checkData() {
                     DataManager.shared.registrate(registrationModel: self.registrationModel) { err in
-                        if err == nil {
-                            self.dismiss(animated: true, completion: nil)
-                        } else {
-                            self.dismiss(animated: true, completion: nil)
+                        DispatchQueue.main.async {
+                            self.commandToParent = .toUserProfile
+                            if err == nil {
+                                self.dismiss(animated: true, completion: nil)
+                            } else {
+                                self.dismiss(animated: true, completion: nil)
+                            }
+                            self.saveButtonView.isUserInteractionEnabled = true
                         }
                     }
                 } else {
                     print("[DEBUG][\(#function)]: data is incomplete")
+                    self.saveButtonView.isUserInteractionEnabled = true
                 }
-                self.saveButtonView.isUserInteractionEnabled = true
             }
         }
     }
@@ -331,6 +337,7 @@ extension RegistrationViewController: UITextViewDelegate {
         }
         if textView == passwordTextView {
             registrationModel.password = text
+            //textView.text = String(repeating: "*", count: (textView.text ?? "").count)
         }
         if textView == confirmPasswordTextView {
             registrationModel.passwordConfirmation = text

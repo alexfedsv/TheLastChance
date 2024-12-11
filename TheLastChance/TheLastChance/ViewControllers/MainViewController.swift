@@ -20,7 +20,7 @@ final class MainViewController: UIViewController {
         let label = UILabel()
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = "Я хочу предоставить услугу по уходу за питомцем"
+        label.text = "ИСПОЛНИТЕЛЬ\n\nЯ хочу предоставить услугу по уходу за питомцем"
         label.textColor = .white
         return label
     }()
@@ -35,7 +35,7 @@ final class MainViewController: UIViewController {
         let label = UILabel()
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = "Я нуждаюсь в услуге по уходу за питомцем"
+        label.text = "ЗАКАЗЧИК\n\nЯ нуждаюсь в услуге по уходу за питомцем"
         label.textColor = .white
         return label
     }()
@@ -51,6 +51,9 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let backButton = UIBarButtonItem()
+        backButton.title = ""
+        self.navigationItem.backBarButtonItem = backButton
         view.backgroundColor = .systemBackground
         view.addSubview(slaveButtonView)
         slaveButtonView.addSubview(slaveButtonLabel)

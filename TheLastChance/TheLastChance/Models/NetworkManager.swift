@@ -390,5 +390,7 @@ final class NetworkManager: NetworkProtocol {
             }
         }.resume()
     }
-
+    func editPet(petModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void) {
+        
+    }
 }

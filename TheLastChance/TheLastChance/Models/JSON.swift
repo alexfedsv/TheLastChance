@@ -22,11 +22,13 @@ struct JSON {
         }
     }
     struct PetProfile: Codable {
+        var petId: String
         var typeOfAnimal: String
         var petName: String
         var info: String
         var petAvatar: String
         private enum CodingKeys: String, CodingKey {
+            case petId = "pet_id"
             case typeOfAnimal = "type_of_animal"
             case petName = "name"
             case info = "info"

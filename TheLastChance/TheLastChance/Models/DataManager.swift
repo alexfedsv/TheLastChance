@@ -43,6 +43,7 @@ class DataManager: DataManagerProtocol {
                 self.networkServiceProtocol.getUserProfile(userId: json.userId) { userProfileResult in
                     switch userProfileResult {
                     case .success(let userProfile):
+                        print("[DEBUG][\(#function)] юзер авторизован с userId: \(json.userId)")
                         Settings.shared.userId = json.userId
                         UserHostProfileModel.shared.setup(userId: json.userId, json: userProfile)
                         completion(nil)
@@ -65,6 +66,8 @@ class DataManager: DataManagerProtocol {
             backgroundImageString: PhotoHelper.getImageBase64String(imageData: registrationModel.backgroundImage)) { result in
                 switch result {
                 case .success(let json):
+                    print("[DEBUG][\(#function)] юзер зарегистрирован с userId: \(json.userId)")
+                    Settings.shared.userId = json.userId
                     UserHostProfileModel.shared.userId = json.userId
                     UserHostProfileModel.shared.username = registrationModel.username
                     UserHostProfileModel.shared.contacts = registrationModel.contacts
@@ -106,7 +109,7 @@ class DataManager: DataManagerProtocol {
         networkServiceProtocol.addService(serviceModel: serviceModel) { result in
             switch result {
             case .success(let success):
-                var serviceModelCreated: ServiceModel = serviceModel
+                let serviceModelCreated: ServiceModel = serviceModel
                 serviceModelCreated.serviceId = success
                 completion(.success(serviceModelCreated))
             case .failure(let failure):
@@ -118,7 +121,7 @@ class DataManager: DataManagerProtocol {
         networkServiceProtocol.addPet(petModel: petModel) { result in
             switch result {
             case .success(let success):
-                var petModelCreated: PetProfileModel = petModel
+                let petModelCreated: PetProfileModel = petModel
                 petModelCreated.petId = success
                 completion(.success(petModelCreated))
             case .failure(let failure):

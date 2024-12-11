@@ -11,7 +11,7 @@ final class AddServiceViewController: UIViewController {
 
     var petsModel: PetsModel = PetsModel()
     var serviceAddModel = ServiceAddModel()
-    weak var servicesViewController: ServicesViewController?
+    weak var servicesViewController: ServicesViewControllerDelegate?
     private var collectionHeight0Constraint = NSLayoutConstraint()
     private var collectionHeight1Constraint = NSLayoutConstraint()
     private var addHeight0Constraint = NSLayoutConstraint()
@@ -259,11 +259,11 @@ final class AddServiceViewController: UIViewController {
                         print(#function)
                         switch success.role {
                         case .master:
-                            ServicesModel.shared.servicesMaster.append(success)
+                            ServicesModel.shared.servicesMaster.insert(success, at: 0)
                         case .slave:
-                            ServicesModel.shared.servicesSlave.append(success)
+                            ServicesModel.shared.servicesSlave.insert(success, at: 0)
                         }
-                        servicesViewController.reloadCollection()
+                        servicesViewController.setModeSlaveMaster(mode: self.serviceAddModel.role)
                         self.navigationController?.popViewController(animated: true)
                     case .failure(let failure):
                         break

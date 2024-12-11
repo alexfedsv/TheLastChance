@@ -21,6 +21,8 @@ final class UserOtherProfileViewController: UIViewController {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
         imageView.backgroundColor = .systemTeal
+        imageView.image = UIImage(systemName: "person.crop.circle")
+        imageView.tintColor = .systemTeal
         return imageView
     }()
     private var separator0View: UIView = {
@@ -103,7 +105,7 @@ final class UserOtherProfileViewController: UIViewController {
         if let userImage = userModel.userImage {
             self.userPhotoImageView.image = UIImage(data: userImage)
         } else {
-            self.userPhotoImageView.image = nil
+            self.userPhotoImageView.image = UIImage(systemName: "person.crop.circle")
         }
     }
     private func getPets() {

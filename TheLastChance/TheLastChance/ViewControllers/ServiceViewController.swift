@@ -100,7 +100,7 @@ class ServiceViewController: UIViewController {
     private lazy var toContactsButtonLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.text = "Контакты"
+        label.text = "К профилю"
         label.font = .systemFont(ofSize: 14)
         label.textColor = .white
         return label
