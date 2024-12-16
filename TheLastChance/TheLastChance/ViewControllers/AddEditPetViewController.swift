@@ -147,6 +147,20 @@ final class AddEditPetViewController: UIViewController {
         label.textColor = .white
         return label
     }()
+    private lazy var removeButtonView: UIView = {
+        let view = UIView()
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 12
+        view.backgroundColor = .systemOrange
+        return view
+    }()
+    private lazy var removeButtonLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.text = "Удалить"
+        label.textColor = .white
+        return label
+    }()
     private var keyboardUpDownConstraints: NSLayoutConstraint = NSLayoutConstraint()
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -165,8 +179,11 @@ final class AddEditPetViewController: UIViewController {
         view.addSubview(petnameTextView)
         view.addSubview(separator1View)
         view.addSubview(saveButtonView)
-        saveButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(save)))
+        saveButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(savePet)))
         saveButtonView.addSubview(saveButtonLabel)
+        view.addSubview(removeButtonView)
+        removeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(removePet)))
+        removeButtonView.addSubview(removeButtonLabel)
         view.backgroundColor = .systemBackground
         view.addSubview(infoLabel)
         view.addSubview(infoTextView)
@@ -239,7 +256,7 @@ final class AddEditPetViewController: UIViewController {
         present(imagePicker, animated: true, completion: nil)
     }
     @objc
-    private func save() {
+    private func savePet() {
         guard let userViewController = userViewController else { return }
         guard let petModel = petModel else { return }
         guard let addEdit = addEdit else { return }
@@ -277,6 +294,40 @@ final class AddEditPetViewController: UIViewController {
                     print(".editPet")
                 }
                 
+            }
+        }
+    }
+    @objc
+    private func removePet() {
+        guard let userViewController = userViewController else { 
+            print("1")
+            return }
+        guard let petModel = petModel else { 
+            print("2")
+            return }
+        guard let addEdit = addEdit else { 
+            print("3")
+            return }
+        removeButtonView.isUserInteractionEnabled = false
+        UIView.animate(withDuration: 0.3) {
+            self.removeButtonView.layer.opacity = 0.9
+            self.removeButtonView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.removeButtonLabel.layer.opacity = 0.9
+            self.removeButtonLabel.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        } completion: { _ in
+            UIView.animate(withDuration: 0.3) {
+                self.removeButtonView.layer.opacity = 1
+                self.removeButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                self.removeButtonLabel.layer.opacity = 1
+                self.removeButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+            } completion: { _ in
+                switch addEdit {
+                case .addPet:
+                    print(".addPet")
+                case .editPet:
+                    print(".editPet - remove")
+                }
+                self.removeButtonView.isUserInteractionEnabled = true
             }
         }
     }
@@ -321,6 +372,8 @@ extension AddEditPetViewController {
         separator2View.translatesAutoresizingMaskIntoConstraints = false
         saveButtonView.translatesAutoresizingMaskIntoConstraints = false
         saveButtonLabel.translatesAutoresizingMaskIntoConstraints = false
+        removeButtonView.translatesAutoresizingMaskIntoConstraints = false
+        removeButtonLabel.translatesAutoresizingMaskIntoConstraints = false
 
         scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
@@ -333,9 +386,9 @@ extension AddEditPetViewController {
         contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
         contentView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
         
-        petPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30).isActive = true
+        petPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20).isActive = true
         petPhotoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        petPhotoImageView.widthAnchor.constraint(equalToConstant: 180).isActive = true
+        petPhotoImageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         petPhotoImageView.heightAnchor.constraint(equalTo: petPhotoImageView.widthAnchor).isActive = true
         
         userPhotoImageView.bottomAnchor.constraint(equalTo: petPhotoImageView.bottomAnchor).isActive = true
@@ -343,7 +396,7 @@ extension AddEditPetViewController {
         userPhotoImageView.widthAnchor.constraint(equalToConstant: 80).isActive = true
         userPhotoImageView.heightAnchor.constraint(equalTo: userPhotoImageView.widthAnchor).isActive = true
         
-        separator0View.topAnchor.constraint(equalTo: petPhotoImageView.bottomAnchor, constant: 30).isActive = true
+        separator0View.topAnchor.constraint(equalTo: petPhotoImageView.bottomAnchor, constant: 20).isActive = true
         separator0View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
         separator0View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator0View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
@@ -389,10 +442,18 @@ extension AddEditPetViewController {
         saveButtonView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
         saveButtonView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -25).isActive = true
         saveButtonView.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        saveButtonView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30).isActive = true
+        saveButtonView.bottomAnchor.constraint(equalTo: removeButtonView.topAnchor, constant: -10).isActive = true
         
         saveButtonLabel.centerYAnchor.constraint(equalTo: saveButtonView.centerYAnchor).isActive = true
         saveButtonLabel.centerXAnchor.constraint(equalTo: saveButtonView.centerXAnchor).isActive = true
+        
+        removeButtonView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
+        removeButtonView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -25).isActive = true
+        removeButtonView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        removeButtonView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
+        
+        removeButtonLabel.centerYAnchor.constraint(equalTo: removeButtonView.centerYAnchor).isActive = true
+        removeButtonLabel.centerXAnchor.constraint(equalTo: removeButtonView.centerXAnchor).isActive = true
     }
 }
 extension AddEditPetViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {

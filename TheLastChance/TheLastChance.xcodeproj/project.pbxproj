@@ -38,6 +38,7 @@
 		D05290872CFB826000BFDA56 /* UserOtherProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05290862CFB826000BFDA56 /* UserOtherProfileViewController.swift */; };
 		D05733452CFC5E7A0095DF6E /* ServiceAddModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05733442CFC5E7A0095DF6E /* ServiceAddModel.swift */; };
 		D05733472CFC7B730095DF6E /* RegistrationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05733462CFC7B730095DF6E /* RegistrationModel.swift */; };
+		D05A2EE22D101CD600D94393 /* UserEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D05A2EE12D101CD500D94393 /* UserEditViewController.swift */; };
 		D064B6B42D0876FC006D827A /* BadWords.swift in Sources */ = {isa = PBXBuildFile; fileRef = D064B6B32D0876FC006D827A /* BadWords.swift */; };
 		D0BAC0AE2CD0E94200ACEFE6 /* UserProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0AD2CD0E94200ACEFE6 /* UserProfileModel.swift */; };
 		D0BAC0B02CD0F24600ACEFE6 /* PetsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BAC0AF2CD0F24600ACEFE6 /* PetsModel.swift */; };
@@ -52,6 +53,8 @@
 		D0CDA8A72CDBA37500B67DC2 /* SegmentedControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0CDA8A62CDBA37500B67DC2 /* SegmentedControlView.swift */; };
 		D0E0EA092CDF793500C70C62 /* TabBarControllerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E0EA082CDF793500C70C62 /* TabBarControllerFactory.swift */; };
 		D0E0EA0D2CDF91F900C70C62 /* UserBackgroundPhotoImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E0EA0C2CDF91F900C70C62 /* UserBackgroundPhotoImageView.swift */; };
+		D0E8301E2D10A3D800D8147C /* UserProfileEditedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E8301D2D10A3D800D8147C /* UserProfileEditedModel.swift */; };
+		D0E830202D10A3EA00D8147C /* UserSettingsEditedModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E8301F2D10A3EA00D8147C /* UserSettingsEditedModel.swift */; };
 		D0F632312CD2512B000CDF34 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D0F632302CD2512B000CDF34 /* Colors.xcassets */; };
 		D0F632352CD2B3C8000CDF34 /* ServicesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */; };
 		D0F632372CD2B445000CDF34 /* ServiceModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0F632362CD2B445000CDF34 /* ServiceModel.swift */; };
@@ -92,6 +95,7 @@
 		D05290862CFB826000BFDA56 /* UserOtherProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserOtherProfileViewController.swift; sourceTree = "<group>"; };
 		D05733442CFC5E7A0095DF6E /* ServiceAddModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceAddModel.swift; sourceTree = "<group>"; };
 		D05733462CFC7B730095DF6E /* RegistrationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationModel.swift; sourceTree = "<group>"; };
+		D05A2EE12D101CD500D94393 /* UserEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEditViewController.swift; sourceTree = "<group>"; };
 		D064B6B32D0876FC006D827A /* BadWords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadWords.swift; sourceTree = "<group>"; };
 		D0BAC0AD2CD0E94200ACEFE6 /* UserProfileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileModel.swift; sourceTree = "<group>"; };
 		D0BAC0AF2CD0F24600ACEFE6 /* PetsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetsModel.swift; sourceTree = "<group>"; };
@@ -106,6 +110,8 @@
 		D0CDA8A62CDBA37500B67DC2 /* SegmentedControlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlView.swift; sourceTree = "<group>"; };
 		D0E0EA082CDF793500C70C62 /* TabBarControllerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarControllerFactory.swift; sourceTree = "<group>"; };
 		D0E0EA0C2CDF91F900C70C62 /* UserBackgroundPhotoImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserBackgroundPhotoImageView.swift; sourceTree = "<group>"; };
+		D0E8301D2D10A3D800D8147C /* UserProfileEditedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileEditedModel.swift; sourceTree = "<group>"; };
+		D0E8301F2D10A3EA00D8147C /* UserSettingsEditedModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingsEditedModel.swift; sourceTree = "<group>"; };
 		D0F632302CD2512B000CDF34 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		D0F632342CD2B3C8000CDF34 /* ServicesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServicesViewController.swift; sourceTree = "<group>"; };
 		D0F632362CD2B445000CDF34 /* ServiceModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceModel.swift; sourceTree = "<group>"; };
@@ -166,6 +172,7 @@
 				D0CDA8A42CDB8F1B00B67DC2 /* AddServiceViewController.swift */,
 				D00C14222CBA7DCE00AF2BD9 /* UserHostProfileViewController.swift */,
 				D05290862CFB826000BFDA56 /* UserOtherProfileViewController.swift */,
+				D05A2EE12D101CD500D94393 /* UserEditViewController.swift */,
 				D00C144A2CBAC4F800AF2BD9 /* PetProfileViewController.swift */,
 				D0413EA12CD3EDCB00E8F4D9 /* AddEditPetViewController.swift */,
 				D0131E222D07521600030C90 /* PreprofileViewController.swift */,
@@ -228,6 +235,8 @@
 			children = (
 				D05733462CFC7B730095DF6E /* RegistrationModel.swift */,
 				D05733442CFC5E7A0095DF6E /* ServiceAddModel.swift */,
+				D0E8301D2D10A3D800D8147C /* UserProfileEditedModel.swift */,
+				D0E8301F2D10A3EA00D8147C /* UserSettingsEditedModel.swift */,
 			);
 			path = ToSend;
 			sourceTree = "<group>";
@@ -322,11 +331,13 @@
 				D0352A102CF12C8D0047D613 /* RegistrationViewController.swift in Sources */,
 				D00C14232CBA7DCE00AF2BD9 /* UserHostProfileViewController.swift in Sources */,
 				D0BAC0B72CD10BD200ACEFE6 /* MockUser.swift in Sources */,
+				D0E8301E2D10A3D800D8147C /* UserProfileEditedModel.swift in Sources */,
 				D00C144F2CBAC84F00AF2BD9 /* PetProfileModel.swift in Sources */,
 				D0352A0C2CF1040B0047D613 /* Settings.swift in Sources */,
 				D0413EA22CD3EDCB00E8F4D9 /* AddEditPetViewController.swift in Sources */,
 				D00C14432CBA8D4B00AF2BD9 /* NetworkManager.swift in Sources */,
 				D00C14292CBA7DCE00AF2BD9 /* TheLastChance.xcdatamodeld in Sources */,
+				D05A2EE22D101CD600D94393 /* UserEditViewController.swift in Sources */,
 				D00C14412CBA8A3700AF2BD9 /* JSON.swift in Sources */,
 				D00C143D2CBA88E900AF2BD9 /* DataManager.swift in Sources */,
 				D0131E252D07741200030C90 /* SettingsViewController.swift in Sources */,
@@ -337,6 +348,7 @@
 				D0E0EA0D2CDF91F900C70C62 /* UserBackgroundPhotoImageView.swift in Sources */,
 				D0CDA8A72CDBA37500B67DC2 /* SegmentedControlView.swift in Sources */,
 				D064B6B42D0876FC006D827A /* BadWords.swift in Sources */,
+				D0E830202D10A3EA00D8147C /* UserSettingsEditedModel.swift in Sources */,
 				D0BAC0AE2CD0E94200ACEFE6 /* UserProfileModel.swift in Sources */,
 				D0352A0A2CF0F5EC0047D613 /* PhotoHelper.swift in Sources */,
 				D0BAC0B22CD0F5F100ACEFE6 /* PetCollectionViewCell.swift in Sources */,

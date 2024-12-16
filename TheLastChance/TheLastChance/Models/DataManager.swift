@@ -45,6 +45,7 @@ class DataManager: DataManagerProtocol {
                     case .success(let userProfile):
                         print("[DEBUG][\(#function)] юзер авторизован с userId: \(json.userId)")
                         Settings.shared.userId = json.userId
+                        Settings.shared.login = login
                         UserHostProfileModel.shared.setup(userId: json.userId, json: userProfile)
                         completion(nil)
                     case .failure(let failure):
@@ -68,6 +69,7 @@ class DataManager: DataManagerProtocol {
                 case .success(let json):
                     print("[DEBUG][\(#function)] юзер зарегистрирован с userId: \(json.userId)")
                     Settings.shared.userId = json.userId
+                    Settings.shared.login = registrationModel.login
                     UserHostProfileModel.shared.userId = json.userId
                     UserHostProfileModel.shared.username = registrationModel.username
                     UserHostProfileModel.shared.contacts = registrationModel.contacts

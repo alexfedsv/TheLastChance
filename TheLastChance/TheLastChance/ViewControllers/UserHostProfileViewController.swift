@@ -12,7 +12,7 @@ final class UserHostProfileViewController: UIViewController {
     var petsModel: PetsModel = PetsModel()
     private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {
         let imageView = UserBackgroundPhotoImageView()
-        imageView.backgroundColor = .systemTeal
+        imageView.backgroundColor = .systemTeal.withAlphaComponent(0.25)
         imageView.image = UIImage(named: "Mock/Users/animals")
         return imageView
     }()
@@ -23,14 +23,14 @@ final class UserHostProfileViewController: UIViewController {
         label.textColor = .secondarySystemBackground
         label.shadowColor = .systemTeal
         label.shadowOffset = .init(width: 2, height: 2)
-        label.text = "Загрузить"
+        label.text = ""
         label.numberOfLines = 1
         return label
     }()
     private var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
-        imageView.backgroundColor = .systemTeal
+        imageView.backgroundColor = .clear
         imageView.image = UIImage(systemName: "person.crop.circle")
         imageView.tintColor = .systemTeal
         return imageView
@@ -59,15 +59,15 @@ final class UserHostProfileViewController: UIViewController {
     private var usernameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 21)
-        label.numberOfLines = 0
+        label.font = .systemFont(ofSize: 16)
+        label.numberOfLines = 1
         return label
     }()
     private var contactsLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 21)
-        label.numberOfLines = 0
+        label.font = .systemFont(ofSize: 16)
+        label.numberOfLines = 1
         return label
     }()
     var collectionView: UICollectionView!
@@ -102,7 +102,7 @@ final class UserHostProfileViewController: UIViewController {
         super.viewDidLayoutSubviews()
         userPhotoImageView.layer.cornerRadius = userPhotoImageView.bounds.width / 2
     }
-    private func setupNavBar() {
+    /*private func setupNavBar() {
         self.navigationController?.navigationBar.tintColor = UIColor.systemTeal
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         self.navigationItem.hidesBackButton = false
@@ -110,9 +110,25 @@ final class UserHostProfileViewController: UIViewController {
         backButton.title = ""
         self.navigationItem.backBarButtonItem = backButton
         //let rightButtonImage = UIImage(systemName: "gearshape")
-        //let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(toSettings))
-        //self.navigationItem.rightBarButtonItem = rightBarButtonItem
+        let rightButtonImage = UIImage(systemName: "pencil")
+        let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(toEditProfile))
+        self.navigationItem.rightBarButtonItem = rightBarButtonItem
+    }*/
+    private func setupNavBar() {
+        self.navigationController?.navigationBar.tintColor = UIColor.systemTeal
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        self.navigationItem.hidesBackButton = false
+        let backButton = UIBarButtonItem()
+        backButton.title = ""
+        self.navigationItem.backBarButtonItem = backButton
+        let rightButtonImageSettings = UIImage(systemName: "gearshape")
+        let rightBarButtonSettings = UIBarButtonItem(image: rightButtonImageSettings, style: .plain, target: self, action: #selector(settingButtonTapped))
+        let rightButtonEditProfile = UIImage(systemName: "pencil")
+        let rightBarButtonEditProfile = UIBarButtonItem(image: rightButtonEditProfile, style: .plain, target: self, action: #selector(toEditProfile))
+        self.navigationItem.rightBarButtonItems = [rightBarButtonEditProfile, rightBarButtonSettings]
     }
+    
+    
     private func setupUser() {
         self.usernameLabel.text = UserHostProfileModel.shared.username
         self.contactsLabel.text = UserHostProfileModel.shared.contacts
@@ -154,6 +170,7 @@ final class UserHostProfileViewController: UIViewController {
         viewController.petModel = petModel
         viewController.userModel = UserHostProfileModel.shared
         viewController.isHost = true
+        viewController.userViewController = self
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     private func toAddEditPetViewController(petModel: PetProfileModel) {
@@ -162,11 +179,24 @@ final class UserHostProfileViewController: UIViewController {
         viewController.petModel = petModel
         viewController.userModel = UserHostProfileModel.shared
         viewController.addEdit = .addPet
+        viewController.userViewController = self
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     @objc
-    private func toSettings() {
-        print(#function)
+    private func toEditProfile() {
+        let viewController = UserEditViewController()
+        viewController.userViewController = self
+        viewController.userModel = UserHostProfileModel.shared
+        viewController.userViewController = self
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
+    @objc
+    private func settingButtonTapped() {
+        let viewController = SettingsViewController()
+        viewController.userViewController = self
+        viewController.userModel = UserHostProfileModel.shared
+        viewController.userViewController = self
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
     @objc
     private func backPressed() {

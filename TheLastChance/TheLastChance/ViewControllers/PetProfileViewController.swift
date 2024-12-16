@@ -12,6 +12,7 @@ final class PetProfileViewController: UIViewController {
     var userModel: UserProfileModel?
     var petModel: PetProfileModel?
     var isHost: Bool = false
+    weak var userViewController: UserHostProfileViewController?
     private let descriptionLabelsFontSize: CGFloat = 16
     private let contentLabelsFontSize: CGFloat = 15
     private lazy var userPhotoImageView: UIImageView = {
@@ -111,7 +112,7 @@ final class PetProfileViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: contentLabelsFontSize)
         label.numberOfLines = 0
-        label.text = "advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет"
+        label.text = "advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice"
         return label
     }()
     override func viewDidLoad() {
@@ -180,6 +181,7 @@ final class PetProfileViewController: UIViewController {
         viewController.userModel = UserHostProfileModel.shared
         viewController.petModel = petModel
         viewController.addEdit = .editPet
+        viewController.userViewController = userViewController
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     @objc

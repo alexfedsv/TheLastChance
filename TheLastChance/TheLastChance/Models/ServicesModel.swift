@@ -12,5 +12,7 @@ final class ServicesModel {
     private init() {}
     var servicesMaster: [ServiceModel] = []
     var servicesSlave: [ServiceModel] = []
+    var servicesMasterSearch: [ServiceModel] = []
+    var servicesSlaveSearch: [ServiceModel] = []
     var isLoaded: Bool = false
 }

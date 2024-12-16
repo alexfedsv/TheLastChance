@@ -13,4 +13,5 @@ final class Settings {
         get { return UserDefaults.standard.string(forKey: "userId") ?? "" }
         set { UserDefaults.standard.set(newValue, forKey: "userId") }
     }*/
+    var login: String = ""
 }

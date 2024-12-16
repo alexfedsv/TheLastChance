@@ -43,6 +43,7 @@ final class LoginViewController: UIViewController {
         textView.autocorrectionType = .no
         textView.spellCheckingType = .no
         textView.returnKeyType = .go
+        textView.isSecureTextEntry = false
         return textView
     }()
     private lazy var passwordTextView: UITextView = {
@@ -61,7 +62,7 @@ final class LoginViewController: UIViewController {
         textView.autocorrectionType = .no
         textView.spellCheckingType = .no
         textView.returnKeyType = .go
-        textView.isSecureTextEntry = true
+        textView.isSecureTextEntry = false
         return textView
     }()
     private lazy var registrationLabel: UILabel = {

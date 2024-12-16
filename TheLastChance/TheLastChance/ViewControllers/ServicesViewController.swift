@@ -13,12 +13,26 @@ protocol ServicesViewControllerDelegate: AnyObject {
 
 final class ServicesViewController: UIViewController {
 
+    private lazy var searchBar: UISearchBar = {
+        let bar = UISearchBar()
+        bar.barTintColor = .systemTeal
+        bar.backgroundColor = .systemBackground
+        bar.autocapitalizationType = .none
+        bar.autocorrectionType = .no
+        bar.spellCheckingType = .no
+        bar.returnKeyType = .go
+        bar.searchBarStyle = .minimal
+        return bar
+    }()
+    private var isSearchOn = false
     private var collectionView: UICollectionView!
     var modeSlaveMaster: ServiceModel.Mode?
    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
+        view.addSubview(searchBar)
+        searchBar.delegate = self
         view.backgroundColor = .systemBackground
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -72,6 +86,39 @@ final class ServicesViewController: UIViewController {
         }
     }
 }
+extension ServicesViewController: UISearchBarDelegate {
+    func searchBar(_: UISearchBar, textDidChange: String) {
+        guard let modeSlaveMaster = modeSlaveMaster else { return }
+        print(textDidChange)
+        if textDidChange.isEmpty {
+            isSearchOn = false
+            switch modeSlaveMaster {
+            case .master:
+                ServicesModel.shared.servicesMasterSearch = []
+            case .slave:
+                ServicesModel.shared.servicesSlaveSearch = []
+            }
+        } else {
+            isSearchOn = true
+            switch modeSlaveMaster {
+            case .master:
+                ServicesModel.shared.servicesMasterSearch = ServicesModel.shared.servicesMaster.filter { service in
+                    service.title.lowercased().contains(textDidChange.lowercased()) ||
+                    service.description.lowercased().contains(textDidChange.lowercased())
+                }
+            case .slave:
+                ServicesModel.shared.servicesSlaveSearch = ServicesModel.shared.servicesSlave.filter { service in
+                    service.title.lowercased().contains(textDidChange.lowercased()) ||
+                    service.description.lowercased().contains(textDidChange.lowercased())
+                }
+            }
+        }
+        collectionView.reloadData()
+    }
+    func searchBarTextDidEndEditing(_: UISearchBar) {
+        
+    }
+}
 extension ServicesViewController: ServicesViewControllerDelegate {
     func setModeSlaveMaster(mode: ServiceModel.Mode) {
         self.modeSlaveMaster = mode
@@ -83,8 +130,14 @@ extension ServicesViewController: ServicesViewControllerDelegate {
 extension ServicesViewController {
     private func setupConstraints() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
         
-        collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10).isActive = true
+        searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        searchBar.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
+        searchBar.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
+        searchBar.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        
+        collectionView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 5).isActive = true
         collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
         collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
@@ -95,23 +148,44 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
         guard let modeSlaveMaster = modeSlaveMaster else { return 0 }
         switch modeSlaveMaster {
         case .master:
-            return ServicesModel.shared.servicesMaster.count
+            if isSearchOn {
+                return ServicesModel.shared.servicesMasterSearch.count
+            } else {
+                return ServicesModel.shared.servicesMaster.count
+            }
         case .slave:
-            return ServicesModel.shared.servicesSlave.count
+            if isSearchOn {
+                return ServicesModel.shared.servicesSlaveSearch.count
+            } else {
+                return ServicesModel.shared.servicesSlave.count
+            }
         }
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let modeSlaveMaster = modeSlaveMaster else { return UICollectionViewCell() }
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ServicesCollectionViewCell.identifier, for: indexPath) as? ServicesCollectionViewCell {
+            
             switch modeSlaveMaster {
             case .master:
-                cell.setup(title: ServicesModel.shared.servicesMaster[indexPath.row].title,
-                           description: ServicesModel.shared.servicesMaster[indexPath.row].description,
-                           imageData: ServicesModel.shared.servicesMaster[indexPath.row].userImageData)
+                if isSearchOn {
+                    cell.setup(title: ServicesModel.shared.servicesMasterSearch[indexPath.row].title,
+                               description: ServicesModel.shared.servicesMasterSearch[indexPath.row].description,
+                               imageData: ServicesModel.shared.servicesMasterSearch[indexPath.row].userImageData)
+                } else {
+                    cell.setup(title: ServicesModel.shared.servicesMaster[indexPath.row].title,
+                               description: ServicesModel.shared.servicesMaster[indexPath.row].description,
+                               imageData: ServicesModel.shared.servicesMaster[indexPath.row].userImageData)
+                }
             case .slave:
-                cell.setup(title: ServicesModel.shared.servicesSlave[indexPath.row].title,
-                           description: ServicesModel.shared.servicesSlave[indexPath.row].description,
-                           imageData: ServicesModel.shared.servicesSlave[indexPath.row].userImageData)
+                if isSearchOn {
+                    cell.setup(title: ServicesModel.shared.servicesSlaveSearch[indexPath.row].title,
+                               description: ServicesModel.shared.servicesSlaveSearch[indexPath.row].description,
+                               imageData: ServicesModel.shared.servicesSlaveSearch[indexPath.row].userImageData)
+                } else {
+                    cell.setup(title: ServicesModel.shared.servicesSlave[indexPath.row].title,
+                               description: ServicesModel.shared.servicesSlave[indexPath.row].description,
+                               imageData: ServicesModel.shared.servicesSlave[indexPath.row].userImageData)
+                }
             }
             return cell
         }
@@ -127,11 +201,21 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
         var serviceModel: ServiceModel
         switch modeSlaveMaster {
         case .master:
-            userId = ServicesModel.shared.servicesMaster[indexPath.row].userId
-            serviceModel = ServicesModel.shared.servicesMaster[indexPath.row]
+            if isSearchOn{
+                userId = ServicesModel.shared.servicesMasterSearch[indexPath.row].userId
+                serviceModel = ServicesModel.shared.servicesMasterSearch[indexPath.row]
+            } else {
+                userId = ServicesModel.shared.servicesMaster[indexPath.row].userId
+                serviceModel = ServicesModel.shared.servicesMaster[indexPath.row]
+            }
         case .slave:
-            userId = ServicesModel.shared.servicesSlave[indexPath.row].userId
-            serviceModel = ServicesModel.shared.servicesSlave[indexPath.row]
+            if isSearchOn{
+                userId = ServicesModel.shared.servicesSlaveSearch[indexPath.row].userId
+                serviceModel = ServicesModel.shared.servicesSlaveSearch[indexPath.row]
+            } else {
+                userId = ServicesModel.shared.servicesSlave[indexPath.row].userId
+                serviceModel = ServicesModel.shared.servicesSlave[indexPath.row]
+            }
         }
         
         DataManager.shared.getUserProfile(userId: userId) { result in

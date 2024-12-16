@@ -15,16 +15,38 @@ final class RegistrationViewController: UIViewController {
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
     private let imagePicker = UIImagePickerController()
-
+    enum ImageAdding {
+        case userImage
+        case backgroundImage
+    }
+    private var imageAdding: ImageAdding?
     private lazy var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .systemBackground
+        imageView.backgroundColor = .clear
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.image = UIImage(systemName: "plus.circle")
         imageView.tintColor = .systemTeal
         return imageView
+    }()
+    private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {
+        let imageView = UserBackgroundPhotoImageView()
+        imageView.backgroundColor = .systemTeal.withAlphaComponent(0.25)
+        imageView.isUserInteractionEnabled = true
+        return imageView
+    }()
+    private var backgroundPhotoLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .right
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .secondarySystemBackground
+        label.shadowColor = .systemTeal
+        label.shadowOffset = .init(width: 2, height: 2)
+        label.text = "Загрузить"
+        label.numberOfLines = 1
+        label.isUserInteractionEnabled = true
+        return label
     }()
     private lazy var separator0View: UIView = {
         let view = UIView()
@@ -150,7 +172,6 @@ final class RegistrationViewController: UIViewController {
         textView.autocorrectionType = .no
         textView.spellCheckingType = .no
         textView.returnKeyType = .go
-        textView.isSecureTextEntry = true
         return textView
     }()
     private lazy var confirmPasswordTextView: UITextView = {
@@ -169,7 +190,6 @@ final class RegistrationViewController: UIViewController {
         textView.autocorrectionType = .no
         textView.spellCheckingType = .no
         textView.returnKeyType = .go
-        textView.isSecureTextEntry = true
         return textView
     }()
     private lazy var toLoginViewControllerLabel: UILabel = {
@@ -196,7 +216,6 @@ final class RegistrationViewController: UIViewController {
         label.textColor = .white
         return label
     }()
-    private var keyboardUpDownConstraints: NSLayoutConstraint = NSLayoutConstraint()
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
@@ -205,8 +224,11 @@ final class RegistrationViewController: UIViewController {
         imagePicker.sourceType = .photoLibrary
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
+        contentView.addSubview(userBackgroundPhotoImageView)
+        userBackgroundPhotoImageView.addSubview(backgroundPhotoLabel)
+        backgroundPhotoLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(addBackgroundImage)))
+        userBackgroundPhotoImageView.addSubview(userPhotoImageView)
         userPhotoImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(addUserImage)))
-        contentView.addSubview(userPhotoImageView)
         contentView.addSubview(separator0View)
         contentView.addSubview(loginLabel)
         contentView.addSubview(loginTextView)
@@ -277,6 +299,13 @@ final class RegistrationViewController: UIViewController {
     @objc
     private func addUserImage() {
         print(#function)
+        imageAdding = .userImage
+        present(imagePicker, animated: true, completion: nil)
+    }
+    @objc
+    private func addBackgroundImage() {
+        print(#function)
+        imageAdding = .backgroundImage
         present(imagePicker, animated: true, completion: nil)
     }
     @objc
@@ -355,6 +384,8 @@ extension RegistrationViewController {
     private func setupConstraints() {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
+        userBackgroundPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
+        backgroundPhotoLabel.translatesAutoresizingMaskIntoConstraints = false
         userPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
         separator0View.translatesAutoresizingMaskIntoConstraints = false
         loginLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -383,12 +414,20 @@ extension RegistrationViewController {
         contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
         contentView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
         
-        userPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5).isActive = true
-        userPhotoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
-        userPhotoImageView.widthAnchor.constraint(equalToConstant: 170).isActive = true
+        userBackgroundPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5).isActive = true
+        userBackgroundPhotoImageView.leadingAnchor.constraint(equalTo:  contentView.leadingAnchor, constant: 5).isActive = true
+        userBackgroundPhotoImageView.trailingAnchor.constraint(equalTo:  contentView.trailingAnchor, constant: -5).isActive = true
+        userBackgroundPhotoImageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        
+        backgroundPhotoLabel.trailingAnchor.constraint(equalTo: userBackgroundPhotoImageView.trailingAnchor, constant: -15).isActive = true
+        backgroundPhotoLabel.bottomAnchor.constraint(equalTo: userBackgroundPhotoImageView.bottomAnchor, constant: -10).isActive = true
+        
+        userPhotoImageView.bottomAnchor.constraint(equalTo: userBackgroundPhotoImageView.bottomAnchor, constant: -10).isActive = true
+        userPhotoImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        userPhotoImageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         userPhotoImageView.heightAnchor.constraint(equalTo: userPhotoImageView.widthAnchor).isActive = true
 
-        separator0View.topAnchor.constraint(equalTo: userPhotoImageView.bottomAnchor, constant: 15).isActive = true
+        separator0View.topAnchor.constraint(equalTo: userBackgroundPhotoImageView.bottomAnchor, constant: 15).isActive = true
         separator0View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
         separator0View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator0View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
@@ -467,6 +506,10 @@ extension RegistrationViewController: UIImagePickerControllerDelegate, UINavigat
         }
     }
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let imageAdding = imageAdding else {
+            dismiss(animated: true, completion: nil)
+            return
+        }
         var iconData: Data?
         if let pickedImageEdited = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
             if let data = getAvatarIcon(pickedImageEdited: pickedImageEdited) {
@@ -474,10 +517,17 @@ extension RegistrationViewController: UIImagePickerControllerDelegate, UINavigat
             }
         }
         if let iconData = iconData {
-            self.registrationModel.userImage = iconData
+            
             DispatchQueue.main.async {
                 if let image = UIImage(data: iconData) {
-                    self.userPhotoImageView.image = image
+                    switch imageAdding {
+                    case .userImage:
+                        self.registrationModel.userImage = iconData
+                        self.userPhotoImageView.image = image
+                    case .backgroundImage:
+                        self.registrationModel.backgroundImage = iconData
+                        self.userBackgroundPhotoImageView.image = image
+                    }
                 } else {
                     self.registrationModel.userImage = nil
                     print("ERROR[\(#function)]: Cannot converte Data to UIImage")
