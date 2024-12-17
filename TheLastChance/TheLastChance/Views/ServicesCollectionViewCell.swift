@@ -15,6 +15,7 @@ final class ServicesCollectionViewCell: UICollectionViewCell {
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
+        imageView.tintColor = .secondarySystemBackground
         return imageView
     }()
     private var titleLabel: UILabel = {
@@ -50,7 +51,7 @@ final class ServicesCollectionViewCell: UICollectionViewCell {
                 self.imageView.image = UIImage(data: imageData)
             } else {
                 print("[ERROR][\(#function)]: imageData = nil")
-                self.imageView.image = nil
+                self.imageView.image = UIImage(systemName: "person.crop.circle")
             }
         }
     }

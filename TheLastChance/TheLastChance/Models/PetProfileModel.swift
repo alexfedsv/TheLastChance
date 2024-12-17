@@ -18,17 +18,21 @@ final class PetProfileModel {
         self.typeOfAnimal = typeOfAnimal
         self.petName = petName
         self.info = info
-        self.petAvatar = Data(base64Encoded: petAvatar, options: .ignoreUnknownCharacters)
+        if !petAvatar.isEmpty {
+            self.petAvatar = Data(base64Encoded: petAvatar, options: .ignoreUnknownCharacters)
+        }
     }
     init(petId: String, json: JSON.PetProfile) {
         self.petId = petId
         self.typeOfAnimal = json.typeOfAnimal
         self.petName = json.petName
         self.info = json.info
-        if let data = Data(base64Encoded: json.petAvatar, options: .ignoreUnknownCharacters) {
-            self.petAvatar = data
-        } else {
-            print("[ERROR][\(#function)]: Wrong Data")
+        if !json.petAvatar.isEmpty {
+            if let data = Data(base64Encoded: json.petAvatar, options: .ignoreUnknownCharacters) {
+                self.petAvatar = data
+            } else {
+                print("[ERROR][\(#function)]: Wrong Data")
+            }
         }
     }
 }

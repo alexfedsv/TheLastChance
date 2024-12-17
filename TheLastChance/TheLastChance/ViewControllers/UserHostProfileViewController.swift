@@ -7,13 +7,14 @@
 
 import UIKit
 
+
 final class UserHostProfileViewController: UIViewController {
 
     var petsModel: PetsModel = PetsModel()
+    private var myServices: [ServiceModel] = []
     private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {
         let imageView = UserBackgroundPhotoImageView()
         imageView.backgroundColor = .systemTeal.withAlphaComponent(0.25)
-        imageView.image = UIImage(named: "Mock/Users/animals")
         return imageView
     }()
     private var backgroundPhotoLabel: UILabel = {
@@ -32,7 +33,7 @@ final class UserHostProfileViewController: UIViewController {
         imageView.layer.masksToBounds = true
         imageView.backgroundColor = .clear
         imageView.image = UIImage(systemName: "person.crop.circle")
-        imageView.tintColor = .systemTeal
+        imageView.tintColor = .secondarySystemBackground
         return imageView
     }()
     private var separator0View: UIView = {
@@ -70,7 +71,8 @@ final class UserHostProfileViewController: UIViewController {
         label.numberOfLines = 1
         return label
     }()
-    var collectionView: UICollectionView!
+    var collectionPetsView: UICollectionView!
+    var collectionServicesView: UICollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
@@ -82,38 +84,37 @@ final class UserHostProfileViewController: UIViewController {
         view.addSubview(contactsLabel)
         view.addSubview(separator1View)
         view.backgroundColor = .systemBackground
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 10
-        layout.minimumInteritemSpacing = 10
-        collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
-        collectionView.backgroundColor = .systemBackground
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.register(PetCollectionViewCell.self, forCellWithReuseIdentifier: PetCollectionViewCell.identifier)
-        collectionView.register(PetAddCollectionViewCell.self, forCellWithReuseIdentifier: PetAddCollectionViewCell.identifier)
-        view.addSubview(collectionView)
+        let layoutPets = UICollectionViewFlowLayout()
+        layoutPets.scrollDirection = .horizontal
+        layoutPets.minimumLineSpacing = 10
+        layoutPets.minimumInteritemSpacing = 10
+        collectionPetsView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layoutPets)
+        collectionPetsView.backgroundColor = .systemBackground
+        collectionPetsView.dataSource = self
+        collectionPetsView.delegate = self
+        collectionPetsView.register(PetCollectionViewCell.self, forCellWithReuseIdentifier: PetCollectionViewCell.identifier)
+        collectionPetsView.register(PetAddCollectionViewCell.self, forCellWithReuseIdentifier: PetAddCollectionViewCell.identifier)
+        view.addSubview(collectionPetsView)
         view.addSubview(separator2View)
+        let layoutServices = UICollectionViewFlowLayout()
+        layoutServices.scrollDirection = .vertical
+        layoutServices.minimumLineSpacing = 10
+        layoutServices.minimumInteritemSpacing = 10
+        collectionServicesView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layoutServices)
+        collectionServicesView.backgroundColor = .systemBackground
+        collectionServicesView.dataSource = self
+        collectionServicesView.delegate = self
+        collectionServicesView.register(ServicesCollectionViewCell.self, forCellWithReuseIdentifier: ServicesCollectionViewCell.identifier)
+        view.addSubview(collectionServicesView)
         setupConstraints()
         setupUser()
         getPets()
+        getMyServices()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         userPhotoImageView.layer.cornerRadius = userPhotoImageView.bounds.width / 2
     }
-    /*private func setupNavBar() {
-        self.navigationController?.navigationBar.tintColor = UIColor.systemTeal
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
-        self.navigationItem.hidesBackButton = false
-        let backButton = UIBarButtonItem()
-        backButton.title = ""
-        self.navigationItem.backBarButtonItem = backButton
-        //let rightButtonImage = UIImage(systemName: "gearshape")
-        let rightButtonImage = UIImage(systemName: "pencil")
-        let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(toEditProfile))
-        self.navigationItem.rightBarButtonItem = rightBarButtonItem
-    }*/
     private func setupNavBar() {
         self.navigationController?.navigationBar.tintColor = UIColor.systemTeal
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
@@ -127,9 +128,7 @@ final class UserHostProfileViewController: UIViewController {
         let rightBarButtonEditProfile = UIBarButtonItem(image: rightButtonEditProfile, style: .plain, target: self, action: #selector(toEditProfile))
         self.navigationItem.rightBarButtonItems = [rightBarButtonEditProfile, rightBarButtonSettings]
     }
-    
-    
-    private func setupUser() {
+    func setupUser() {
         self.usernameLabel.text = UserHostProfileModel.shared.username
         self.contactsLabel.text = UserHostProfileModel.shared.contacts
         if let userImage = UserHostProfileModel.shared.userImage {
@@ -137,6 +136,40 @@ final class UserHostProfileViewController: UIViewController {
         } else {
             self.userPhotoImageView.image = UIImage(systemName: "person.crop.circle")
         }
+        if let backgroundImage = UserHostProfileModel.shared.backgroundImage {
+            self.userBackgroundPhotoImageView.image = UIImage(data: backgroundImage)
+        }
+    }
+    private func getMyServices() {
+        if !ServicesModel.shared.isLoaded {
+            DataManager.shared.getServices { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let success):
+                        let viewController = ServicesViewController()
+                        for elem in success {
+                            if elem.role == "master" {
+                                ServicesModel.shared.servicesMaster.append(ServiceModel(json: elem))
+                            }
+                            if elem.role == "slave" {
+                                ServicesModel.shared.servicesSlave.append(ServiceModel(json: elem))
+                            }
+                        }
+                        self.myServices = ServicesModel.shared.servicesMaster.filter({ $0.userId == Settings.shared.userId }) + ServicesModel.shared.servicesSlave.filter({ $0.userId == Settings.shared.userId })
+                        self.collectionServicesView.reloadData()
+                        ServicesModel.shared.isLoaded = true
+                    case .failure(let failure):
+                        print("фиаско")
+                    }
+                }
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.myServices = ServicesModel.shared.servicesMaster.filter({ $0.userId == Settings.shared.userId }) + ServicesModel.shared.servicesSlave.filter({ $0.userId == Settings.shared.userId })
+                self.collectionServicesView.reloadData()
+            }
+        }
+        
     }
     private func getPets() {
         let dispatchGroup = DispatchGroup()
@@ -157,7 +190,7 @@ final class UserHostProfileViewController: UIViewController {
                 }
                 dispatchGroup.notify(queue: .main) {
                     DispatchQueue.main.async {
-                        self.collectionView.reloadData()
+                        self.collectionPetsView.reloadData()
                     }
                 }
             case .failure(let failurePetIds):
@@ -173,12 +206,11 @@ final class UserHostProfileViewController: UIViewController {
         viewController.userViewController = self
         self.navigationController?.pushViewController(viewController, animated: true)
     }
-    private func toAddEditPetViewController(petModel: PetProfileModel) {
-        let viewController = AddEditPetViewController()
+    private func toAddPetViewController(petModel: PetProfileModel) {
+        let viewController = AddPetViewController()
         viewController.userViewController = self
         viewController.petModel = petModel
         viewController.userModel = UserHostProfileModel.shared
-        viewController.addEdit = .addPet
         viewController.userViewController = self
         self.navigationController?.pushViewController(viewController, animated: true)
     }
@@ -204,10 +236,11 @@ final class UserHostProfileViewController: UIViewController {
     }
     func reloadCollection() {
         DispatchQueue.main.async {
-            self.collectionView.reloadData()
+            self.collectionPetsView.reloadData()
         }
     }
 }
+
 extension UserHostProfileViewController {
     private func setupConstraints() {
         userBackgroundPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -217,7 +250,8 @@ extension UserHostProfileViewController {
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
         contactsLabel.translatesAutoresizingMaskIntoConstraints = false
         separator1View.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionPetsView.translatesAutoresizingMaskIntoConstraints = false
+        collectionServicesView.translatesAutoresizingMaskIntoConstraints = false
         separator2View.translatesAutoresizingMaskIntoConstraints = false
         
         userBackgroundPhotoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
@@ -251,46 +285,76 @@ extension UserHostProfileViewController {
         separator1View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
         separator1View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
-        collectionView.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 10).isActive = true
-        collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
-        collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
-        collectionView.heightAnchor.constraint(equalToConstant: 160).isActive = true
+        collectionPetsView.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 10).isActive = true
+        collectionPetsView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
+        collectionPetsView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
+        collectionPetsView.heightAnchor.constraint(equalToConstant: 160).isActive = true
         
-        separator2View.topAnchor.constraint(equalTo: collectionView.bottomAnchor, constant: 10).isActive = true
+        separator2View.topAnchor.constraint(equalTo: collectionPetsView.bottomAnchor, constant: 10).isActive = true
         separator2View.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
         separator2View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
         separator2View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        
+        collectionServicesView.topAnchor.constraint(equalTo: separator2View.bottomAnchor, constant: 10).isActive = true
+        collectionServicesView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
+        collectionServicesView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
+        collectionServicesView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -5).isActive = true
     }
 }
 extension UserHostProfileViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return petsModel.pets.count + 1
+        if collectionView == collectionPetsView {
+            return petsModel.pets.count + 1
+        } else if collectionView == collectionServicesView {
+            return myServices.count
+        } else {
+            return 0
+        }
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if indexPath.row < petsModel.pets.count {
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PetCollectionViewCell.identifier, for: indexPath) as? PetCollectionViewCell {
-                cell.setup(title: petsModel.pets[indexPath.row].typeOfAnimal, name: petsModel.pets[indexPath.row].petName, imageData: petsModel.pets[indexPath.row].petAvatar)
-                return cell
+        if collectionView == collectionPetsView {
+            if indexPath.row < petsModel.pets.count {
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PetCollectionViewCell.identifier, for: indexPath) as? PetCollectionViewCell {
+                    cell.setup(title: petsModel.pets[indexPath.row].typeOfAnimal, name: petsModel.pets[indexPath.row].petName, imageData: petsModel.pets[indexPath.row].petAvatar)
+                    return cell
+                }
+            } else {
+                if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PetAddCollectionViewCell.identifier, for: indexPath) as? PetAddCollectionViewCell {
+                    return cell
+                }
             }
-        } else {
-            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PetAddCollectionViewCell.identifier, for: indexPath) as? PetAddCollectionViewCell {
+        } else if collectionView == collectionServicesView {
+            if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ServicesCollectionViewCell.identifier, for: indexPath) as? ServicesCollectionViewCell {
+                cell.setup(title: myServices[indexPath.row].title,
+                           description: myServices[indexPath.row].description,
+                           imageData: myServices[indexPath.row].userImageData)
                 return cell
             }
         }
         return UICollectionViewCell()
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 100, height: 150)
+        if collectionView == collectionPetsView {
+            return CGSize(width: 100, height: 150)
+        } else if collectionView == collectionServicesView {
+            return CGSize(width: collectionView.bounds.width, height: 70)
+        } else {
+            return CGSize(width: 0, height: 0)
+        }
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.row < petsModel.pets.count {
-            let petModel = petsModel.pets[indexPath.row]
-            print("Выбрано животное: \(petModel.petName) из типа: \(petModel.typeOfAnimal)")
-            toPetProfileViewController(petModel: petModel)
-        }
-        if indexPath.row == petsModel.pets.count {
-            let petModel = PetProfileModel(petId: "0", typeOfAnimal: "", petName: "", info: "", petAvatar: "")
-            toAddEditPetViewController(petModel: petModel)
+        if collectionView == collectionPetsView {
+            if indexPath.row < petsModel.pets.count {
+                let petModel = petsModel.pets[indexPath.row]
+                print("Выбрано животное: \(petModel.petName) из типа: \(petModel.typeOfAnimal)")
+                toPetProfileViewController(petModel: petModel)
+            }
+            if indexPath.row == petsModel.pets.count {
+                let petModel = PetProfileModel(petId: "0", typeOfAnimal: "", petName: "", info: "", petAvatar: "")
+                toAddPetViewController(petModel: petModel)
+            }
+        } else if collectionView == collectionServicesView  {
+            
         }
     }
 }

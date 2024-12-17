@@ -35,6 +35,18 @@ struct JSON {
             case petAvatar = "avatar"
         }
     }
+    struct PetId: Codable {
+        var petId: String
+        private enum CodingKeys: String, CodingKey {
+            case petId = "pet_id"
+        }
+    }
+    struct ServiceId: Codable {
+        var serviceId: String
+        private enum CodingKeys: String, CodingKey {
+            case serviceId = "service_id"
+        }
+    }
     struct UserProfile: Codable {
         var userId: String
         var username: String
@@ -45,11 +57,11 @@ struct JSON {
             case userId = "user_id"
             case username = "username"
             case contacts = "contacts"
-            case userImage = "user_image"
-            case backgroundImage = "background_image"
+            case userImage = "user_image_string"
+            case backgroundImage = "background_image_string"
         }
     }
-    struct Services: Codable {
+    /*struct Services: Codable {
         struct Service: Codable {
             var role: String
             var serviceId: String
@@ -58,6 +70,7 @@ struct JSON {
             var description: String
             var userImage: String
             var petIds: [String]
+            var price: Int
             private enum CodingKeys: String, CodingKey {
                 case role = "role"
                 case serviceId = "service_id"
@@ -66,8 +79,39 @@ struct JSON {
                 case description = "description"
                 case userImage = "user_image"
                 case petIds = "pet_ids"
+                case price = "price"
             }
         }
         var services: [Service]
+    }*/
+    struct Service: Codable {
+        var role: String
+        var serviceId: String
+        var userId: String
+        var title: String
+        var description: String
+        var userImage: String
+        var petIds: [String]
+        var price: Int
+        private enum CodingKeys: String, CodingKey {
+            case role = "role"
+            case serviceId = "service_id"
+            case userId = "user_id"
+            case title = "title"
+            case description = "description"
+            case userImage = "user_image"
+            case petIds = "pet_ids"
+            case price = "price"
+        }
+    }
+    struct Advice: Codable {
+        var advice: String
+        var animal: String
+        var prompt: String
+        private enum CodingKeys: String, CodingKey {
+            case advice = "advice"
+            case animal = "animal"
+            case prompt = "prompt"
+        }
     }
 }

@@ -73,6 +73,13 @@ final class AddServiceViewController: UIViewController {
         label.numberOfLines = 1
         return label
     }()
+    private lazy var priceLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.text = "Цена:"
+        label.numberOfLines = 1
+        return label
+    }()
     private lazy var titleTextView: UITextView = {
         let textView = UITextView()
         textView.layer.borderColor = UIColor.systemTeal.cgColor
@@ -107,6 +114,25 @@ final class AddServiceViewController: UIViewController {
         textView.autocorrectionType = .no
         textView.spellCheckingType = .no
         textView.returnKeyType = .go
+        return textView
+    }()
+    private lazy var priceTextView: UITextView = {
+        let textView = UITextView()
+        textView.layer.borderColor = UIColor.systemTeal.cgColor
+        textView.layer.borderWidth = 1.0
+        textView.font = .italicSystemFont(ofSize: 16)
+        textView.setContentHuggingPriority(.required, for: .vertical)
+        textView.setContentCompressionResistancePriority(.required, for: .vertical)
+        textView.backgroundColor = .secondarySystemBackground
+        textView.layer.cornerRadius = 10
+        textView.layer.masksToBounds = true
+        textView.textContainerInset = UIEdgeInsets(top: 10, left: 15, bottom: 10, right: 15)
+        textView.tintColor = .systemTeal
+        textView.autocapitalizationType = .none
+        textView.autocorrectionType = .no
+        textView.spellCheckingType = .no
+        textView.returnKeyType = .go
+        textView.keyboardType = .decimalPad
         return textView
     }()
     private lazy var saveButtonView: UIView = {
@@ -148,6 +174,8 @@ final class AddServiceViewController: UIViewController {
         contentView.addSubview(titleTextView)
         contentView.addSubview(descriptionLabel)
         contentView.addSubview(descriptionTextView)
+        contentView.addSubview(priceLabel)
+        contentView.addSubview(priceTextView)
         contentView.addSubview(separator1View)
         contentView.addSubview(saveButtonView)
         saveButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(save)))
@@ -155,6 +183,7 @@ final class AddServiceViewController: UIViewController {
         contentView.addSubview(separator2View)
         titleTextView.delegate = self
         descriptionTextView.delegate = self
+        priceTextView.delegate = self
         setupConstraints()
         getUser()
         setupKeyboardObservers()
@@ -252,23 +281,26 @@ final class AddServiceViewController: UIViewController {
                     title: self.serviceAddModel.title,
                     description: self.serviceAddModel.description,
                     userImageData: PhotoHelper.getImageBase64String(imageData: UserHostProfileModel.shared.userImage),
-                    petIds: self.serviceAddModel.petIds)
+                    petIds: self.serviceAddModel.petIds,
+                    price: self.serviceAddModel.price)
                 DataManager.shared.addService(serviceModel: serviceModel) { result in
-                    switch result {
-                    case .success(let success):
-                        print(#function)
-                        switch success.role {
-                        case .master:
-                            ServicesModel.shared.servicesMaster.insert(success, at: 0)
-                        case .slave:
-                            ServicesModel.shared.servicesSlave.insert(success, at: 0)
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let success):
+                            print(#function)
+                            switch success.role {
+                            case .master:
+                                ServicesModel.shared.servicesMaster.insert(success, at: 0)
+                            case .slave:
+                                ServicesModel.shared.servicesSlave.insert(success, at: 0)
+                            }
+                            servicesViewController.setModeSlaveMaster(mode: self.serviceAddModel.role)
+                            self.navigationController?.popViewController(animated: true)
+                        case .failure(let failure):
+                            break
                         }
-                        servicesViewController.setModeSlaveMaster(mode: self.serviceAddModel.role)
-                        self.navigationController?.popViewController(animated: true)
-                    case .failure(let failure):
-                        break
+                        self.saveButtonView.isUserInteractionEnabled = true
                     }
-                    self.saveButtonView.isUserInteractionEnabled = true
                 }
             }
         }
@@ -297,12 +329,13 @@ extension AddServiceViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         guard let text = textView.text else { return }
         if textView == titleTextView {
-            print(text)
             serviceAddModel.title = text
         }
         if textView == descriptionTextView {
-            print(text)
             serviceAddModel.description = text
+        }
+        if textView == priceTextView {
+            serviceAddModel.price = Int(text) ?? 0
         }
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -326,6 +359,8 @@ extension AddServiceViewController {
         titleTextView.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionTextView.translatesAutoresizingMaskIntoConstraints = false
+        priceLabel.translatesAutoresizingMaskIntoConstraints = false
+        priceTextView.translatesAutoresizingMaskIntoConstraints = false
         separator1View.translatesAutoresizingMaskIntoConstraints = false
         separator2View.translatesAutoresizingMaskIntoConstraints = false
         saveButtonView.translatesAutoresizingMaskIntoConstraints = false
@@ -396,8 +431,17 @@ extension AddServiceViewController {
         descriptionTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
         descriptionTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
         descriptionTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 120).isActive = true
-       
-        separator1View.topAnchor.constraint(equalTo: descriptionTextView.bottomAnchor, constant: 15).isActive = true
+
+        priceLabel.topAnchor.constraint(equalTo: descriptionTextView.bottomAnchor, constant: 5).isActive = true
+        priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
+        priceLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        
+        priceTextView.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 3).isActive = true
+        priceTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
+        priceTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        priceTextView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        separator1View.topAnchor.constraint(equalTo: priceTextView.bottomAnchor, constant: 15).isActive = true
         separator1View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
         separator1View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator1View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true

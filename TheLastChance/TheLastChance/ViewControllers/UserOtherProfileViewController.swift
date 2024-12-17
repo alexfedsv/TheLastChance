@@ -13,8 +13,7 @@ final class UserOtherProfileViewController: UIViewController {
     var petsModel: PetsModel = PetsModel()
     private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {
         let imageView = UserBackgroundPhotoImageView()
-        imageView.backgroundColor = .systemTeal
-        imageView.image = UIImage(named: "Mock/Users/animals")
+        imageView.backgroundColor = .systemTeal.withAlphaComponent(0.25)
         return imageView
     }()
     private var userPhotoImageView: UIImageView = {
@@ -22,7 +21,7 @@ final class UserOtherProfileViewController: UIViewController {
         imageView.layer.masksToBounds = true
         imageView.backgroundColor = .systemTeal
         imageView.image = UIImage(systemName: "person.crop.circle")
-        imageView.tintColor = .systemTeal
+        imageView.tintColor = .secondarySystemBackground
         return imageView
     }()
     private var separator0View: UIView = {
@@ -49,14 +48,14 @@ final class UserOtherProfileViewController: UIViewController {
     private var usernameLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 21)
+        label.font = .systemFont(ofSize: 16)
         label.numberOfLines = 0
         return label
     }()
     private var contactsLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 21)
+        label.font = .systemFont(ofSize: 16)
         label.numberOfLines = 0
         return label
     }()
@@ -106,6 +105,9 @@ final class UserOtherProfileViewController: UIViewController {
             self.userPhotoImageView.image = UIImage(data: userImage)
         } else {
             self.userPhotoImageView.image = UIImage(systemName: "person.crop.circle")
+        }
+        if let backgroundImage = userModel.backgroundImage {
+            self.userBackgroundPhotoImageView.image = UIImage(data: backgroundImage)
         }
     }
     private func getPets() {

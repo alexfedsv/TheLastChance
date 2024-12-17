@@ -27,7 +27,7 @@ final class RegistrationViewController: UIViewController {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.image = UIImage(systemName: "plus.circle")
-        imageView.tintColor = .systemTeal
+        imageView.tintColor = .secondarySystemBackground
         return imageView
     }()
     private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {

@@ -56,33 +56,47 @@ final class NetworkMockManager: NetworkProtocol {
             }
         })
     }
-    func getServices(completion: @escaping (Result<JSON.Services, NetworkError>) -> Void) {
+    func getServices(completion: @escaping (Result<[JSON.Service], NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
             let services = MockServices.shared.services
-            completion(.success(JSON.Services(services: services)))
+            completion(.success(services))
         })
     }
-    func addService(serviceModel: ServiceModel, completion: @escaping (Result<String, NetworkError>) -> Void) {
+    func addService(serviceModel: ServiceModel, completion: @escaping (Result<JSON.ServiceId, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
             if let user = MockUser.shared.users.first(where: { $0.userId == serviceModel.userId }) {
-                let json = JSON.Services.Service(role: serviceModel.role.rawValue, serviceId: String(MockServices.shared.services.count), userId: serviceModel.userId, title: serviceModel.title, description: serviceModel.description, userImage: user.userImage, petIds: serviceModel.petIds)
+                let json = JSON.Service(role: serviceModel.role.rawValue, serviceId: String(MockServices.shared.services.count), userId: serviceModel.userId, title: serviceModel.title, description: serviceModel.description, userImage: user.userImage, petIds: serviceModel.petIds, price: serviceModel.price)
                 MockServices.shared.services.append(json)
-                completion(.success(String(MockServices.shared.services.count)))
+                let serviceId = JSON.ServiceId(serviceId: String(MockServices.shared.services.count))
+                completion(.success(serviceId))
             } else {
                 completion(.failure(.notFoundMock(atFunc: #function)))
             }
         })
     }
-    func addPet(petModel: PetProfileModel, completion: @escaping (Result<String, NetworkError>) -> Void) {
+    func addPet(petModel: PetProfileModel, completion: @escaping (Result<JSON.PetId, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
             let string = PhotoHelper.getImageBase64String(imageData: petModel.petAvatar)
             let json = JSON.PetProfile(petId: String(MockPets.shared.pets.count), typeOfAnimal: petModel.typeOfAnimal, petName: petModel.petName, info: petModel.info, petAvatar: string)
             MockPets.shared.petIds.petIds.append(String(MockPets.shared.petIds.petIds.count))
             MockPets.shared.pets.append(json)
-            completion(.success(String(MockPets.shared.petIds.petIds.count)))
+            let petId = JSON.PetId(petId: String(MockPets.shared.petIds.petIds.count))
+            completion(.success(petId))
         })
     }
-    func editPet(petModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void) {
-        
+    func deletePet(petId: String, completion: @escaping (NetworkError?) -> Void) {
+        completion(.mockServiceUnrealized(atFunc: #function))
+    }
+    func editPet(petProfileModel: PetProfileModel, completion: @escaping (NetworkError?) -> Void) {
+        completion(.mockServiceUnrealized(atFunc: #function))
+    }
+    func editUserProfile(model: UserProfileEditedModel, completion: @escaping (NetworkError?) -> Void) {
+        completion(.mockServiceUnrealized(atFunc: #function))
+    }
+    func editUserSettings(model: UserSettingsEditedModel, completion: @escaping (NetworkError?) -> Void) {
+        completion(.mockServiceUnrealized(atFunc: #function))
+    }
+    func getAdvice(typeOfAnimal: String, info: String, completion: @escaping (Result<JSON.Advice, NetworkError>) -> Void) {
+        completion(.failure(.mockServiceUnrealized(atFunc: #function)))
     }
 }

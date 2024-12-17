@@ -1,21 +1,16 @@
 //
-//  AddEditPetViewController.swift
+//  AddPetViewController.swift
 //  TheLastChance
 //
-//  Created by  Alexander Fedoseev on 31.10.2024.
+//  Created by  Alexander Fedoseev on 17.12.2024.
 //
 
 import UIKit
 
-/*final class AddEditPetViewController: UIViewController {
+final class AddPetViewController: UIViewController {
 
-    enum AddEdit {
-        case addPet
-        case editPet
-    }
     var userModel: UserProfileModel?
     var petModel: PetProfileModel?
-    var addEdit: AddEdit?
     weak var userViewController: UserHostProfileViewController?
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
@@ -34,7 +29,7 @@ import UIKit
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.image = UIImage(systemName: "plus.circle")
-        imageView.tintColor = .systemTeal
+        imageView.tintColor = .secondarySystemBackground
         return imageView
     }()
     private lazy var separator0View: UIView = {
@@ -147,20 +142,6 @@ import UIKit
         label.textColor = .white
         return label
     }()
-    private lazy var removeButtonView: UIView = {
-        let view = UIView()
-        view.layer.masksToBounds = true
-        view.layer.cornerRadius = 12
-        view.backgroundColor = .systemOrange
-        return view
-    }()
-    private lazy var removeButtonLabel: UILabel = {
-        let label = UILabel()
-        label.textAlignment = .center
-        label.text = "Удалить"
-        label.textColor = .white
-        return label
-    }()
     private var keyboardUpDownConstraints: NSLayoutConstraint = NSLayoutConstraint()
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -181,9 +162,6 @@ import UIKit
         view.addSubview(saveButtonView)
         saveButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(savePet)))
         saveButtonView.addSubview(saveButtonLabel)
-        view.addSubview(removeButtonView)
-        removeButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(removePet)))
-        removeButtonView.addSubview(removeButtonLabel)
         view.backgroundColor = .systemBackground
         view.addSubview(infoLabel)
         view.addSubview(infoTextView)
@@ -259,7 +237,6 @@ import UIKit
     private func savePet() {
         guard let userViewController = userViewController else { return }
         guard let petModel = petModel else { return }
-        guard let addEdit = addEdit else { return }
         saveButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             self.saveButtonView.layer.opacity = 0.9
@@ -273,66 +250,26 @@ import UIKit
                 self.saveButtonLabel.layer.opacity = 1
                 self.saveButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                switch addEdit {
-                case .addPet:
-                    DataManager.shared.addPet(petModel: petModel) { result in
-                        DispatchQueue.main.async {
-                            switch result {
-                            case .success(let success):
-                                print(#function)
-                                success.petAvatar = petModel.petAvatar
-                                userViewController.petsModel.pets.append(success)
-                                userViewController.reloadCollection()
-                                self.navigationController?.popViewController(animated: true)
-                            case .failure(let failure):
-                                break
-                            }
-                            self.saveButtonView.isUserInteractionEnabled = true
+                DataManager.shared.addPet(petModel: petModel) { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let success):
+                            print(#function)
+                            success.petAvatar = petModel.petAvatar
+                            userViewController.petsModel.pets.append(success)
+                            userViewController.reloadCollection()
+                            self.navigationController?.popViewController(animated: true)
+                        case .failure(let failure):
+                            break
                         }
+                        self.saveButtonView.isUserInteractionEnabled = true
                     }
-                case .editPet:
-                    print(".editPet")
                 }
-                
-            }
-        }
-    }
-    @objc
-    private func removePet() {
-        guard let userViewController = userViewController else { 
-            print("1")
-            return }
-        guard let petModel = petModel else { 
-            print("2")
-            return }
-        guard let addEdit = addEdit else { 
-            print("3")
-            return }
-        removeButtonView.isUserInteractionEnabled = false
-        UIView.animate(withDuration: 0.3) {
-            self.removeButtonView.layer.opacity = 0.9
-            self.removeButtonView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-            self.removeButtonLabel.layer.opacity = 0.9
-            self.removeButtonLabel.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-        } completion: { _ in
-            UIView.animate(withDuration: 0.3) {
-                self.removeButtonView.layer.opacity = 1
-                self.removeButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-                self.removeButtonLabel.layer.opacity = 1
-                self.removeButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-            } completion: { _ in
-                switch addEdit {
-                case .addPet:
-                    print(".addPet")
-                case .editPet:
-                    print(".editPet - remove")
-                }
-                self.removeButtonView.isUserInteractionEnabled = true
             }
         }
     }
 }
-extension AddEditPetViewController: UITextViewDelegate {
+extension AddPetViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         guard let text = textView.text else { return }
         if textView == typeOfAnimalTextView {
@@ -355,7 +292,7 @@ extension AddEditPetViewController: UITextViewDelegate {
         return true
     }
 }
-extension AddEditPetViewController {
+extension AddPetViewController {
     private func setupConstraints() {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -372,8 +309,6 @@ extension AddEditPetViewController {
         separator2View.translatesAutoresizingMaskIntoConstraints = false
         saveButtonView.translatesAutoresizingMaskIntoConstraints = false
         saveButtonLabel.translatesAutoresizingMaskIntoConstraints = false
-        removeButtonView.translatesAutoresizingMaskIntoConstraints = false
-        removeButtonLabel.translatesAutoresizingMaskIntoConstraints = false
 
         scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
@@ -442,21 +377,13 @@ extension AddEditPetViewController {
         saveButtonView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
         saveButtonView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -25).isActive = true
         saveButtonView.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        saveButtonView.bottomAnchor.constraint(equalTo: removeButtonView.topAnchor, constant: -10).isActive = true
+        saveButtonView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
         
         saveButtonLabel.centerYAnchor.constraint(equalTo: saveButtonView.centerYAnchor).isActive = true
         saveButtonLabel.centerXAnchor.constraint(equalTo: saveButtonView.centerXAnchor).isActive = true
-        
-        removeButtonView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
-        removeButtonView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -25).isActive = true
-        removeButtonView.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        removeButtonView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10).isActive = true
-        
-        removeButtonLabel.centerYAnchor.constraint(equalTo: removeButtonView.centerYAnchor).isActive = true
-        removeButtonLabel.centerXAnchor.constraint(equalTo: removeButtonView.centerXAnchor).isActive = true
     }
 }
-extension AddEditPetViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension AddPetViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private func getAvatarIcon(pickedImageEdited: UIImage) -> Data? {
         if let imageData = pickedImageEdited.jpegData(compressionQuality: 0.3) {
             let imageSize = imageData.count
@@ -488,4 +415,5 @@ extension AddEditPetViewController: UIImagePickerControllerDelegate, UINavigatio
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
-}*/
+}
+

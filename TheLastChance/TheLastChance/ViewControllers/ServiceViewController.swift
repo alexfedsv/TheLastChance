@@ -14,25 +14,21 @@ class ServiceViewController: UIViewController {
     private var petsModel: PetsModel = PetsModel()
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
-    private var userBackgroundPhotoImageView: UserBackgroundPhotoImageView = {
-        let imageView = UserBackgroundPhotoImageView()
-        imageView.backgroundColor = .systemTeal
-        imageView.image = UIImage(named: "Mock/Users/animals")
-        return imageView
-    }()
+    private let descriptionLabelsFontSize: CGFloat = 16
+    private let contentLabelsFontSize: CGFloat = 15
     private lazy var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
-        imageView.backgroundColor = .systemTeal
+        imageView.tintColor = .systemTeal
         return imageView
     }()
     private lazy var userRole: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 18)
-        label.textColor = .systemBackground
+        label.textColor = .systemTeal
         label.shadowColor = .secondarySystemBackground
-        label.shadowOffset = .init(width: 1, height: 1)
+        label.shadowOffset = .init(width: 2, height: 2)
         label.numberOfLines = 1
         return label
     }()
@@ -66,27 +62,47 @@ class ServiceViewController: UIViewController {
     }()
     private lazy var titleTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
+        label.font = .systemFont(ofSize: descriptionLabelsFontSize)
         label.text = "Заголовок:"
         label.numberOfLines = 1
         return label
     }()
     private lazy var descriptionTitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
+        label.font = .systemFont(ofSize: descriptionLabelsFontSize)
         label.text = "Описание:"
+        label.numberOfLines = 1
+        return label
+    }()
+    private lazy var priceTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: descriptionLabelsFontSize)
+        label.text = "Стоимость услуги:"
         label.numberOfLines = 1
         return label
     }()
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18)
+        label.font = .systemFont(ofSize: contentLabelsFontSize)
         label.numberOfLines = 0
         return label
     }()
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 18)
+        label.font = .systemFont(ofSize: contentLabelsFontSize)
+        label.numberOfLines = 0
+        return label
+    }()
+    private lazy var priceValLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: contentLabelsFontSize)
+        label.text = "рублей"
+        label.numberOfLines = 1
+        return label
+    }()
+    private lazy var priceLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: contentLabelsFontSize)
         label.numberOfLines = 0
         return label
     }()
@@ -112,7 +128,6 @@ class ServiceViewController: UIViewController {
         view.addSubview(scrollView)
         view.backgroundColor = .systemBackground
         scrollView.addSubview(contentView)
-        contentView.addSubview(userBackgroundPhotoImageView)
         contentView.addSubview(userPhotoImageView)
         contentView.addSubview(userRole)
         contentView.addSubview(separator0View)
@@ -123,6 +138,9 @@ class ServiceViewController: UIViewController {
         contentView.addSubview(titleLabel)
         contentView.addSubview(descriptionTitleLabel)
         contentView.addSubview(descriptionLabel)
+        contentView.addSubview(priceTitleLabel)
+        contentView.addSubview(priceLabel)
+        contentView.addSubview(priceValLabel)
         contentView.addSubview(separator2View)
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -152,9 +170,11 @@ class ServiceViewController: UIViewController {
         let backButton = UIBarButtonItem()
         backButton.title = ""
         self.navigationItem.backBarButtonItem = backButton
-        /*let rightButtonImage = UIImage(systemName: "pencil")
-        let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(toAddEditPetViewController))
-        self.navigationItem.rightBarButtonItem = rightBarButtonItem*/
+        if serviceModel?.userId == Settings.shared.userId {
+            let rightButtonImage = UIImage(systemName: "trash")
+            let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(removeService))
+            self.navigationItem.rightBarButtonItem = rightBarButtonItem
+        }
     }
     private func setupData() {
         guard let userModel = userOtherModel else { return }
@@ -170,10 +190,11 @@ class ServiceViewController: UIViewController {
             self.usernameLabel.text = userModel.username
             self.titleLabel.text = serviceModel.title
             self.descriptionLabel.text = serviceModel.description
+            self.priceLabel.text = String(serviceModel.price)
             if let userImage = userModel.userImage {
                 self.userPhotoImageView.image = UIImage(data: userImage)
             } else {
-                self.userPhotoImageView.image = nil
+                self.userPhotoImageView.image = UIImage(systemName: "person.crop.circle")
             }
         }
     }
@@ -241,12 +262,15 @@ class ServiceViewController: UIViewController {
             }
         }
     }
+    @objc
+    private func removeService() {
+        print(#function)
+    }
 }
 extension ServiceViewController {
     private func setupConstraints() {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
-        userBackgroundPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
         userPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
         userRole.translatesAutoresizingMaskIntoConstraints = false
         separator0View.translatesAutoresizingMaskIntoConstraints = false
@@ -255,8 +279,11 @@ extension ServiceViewController {
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        priceLabel.translatesAutoresizingMaskIntoConstraints = false
         titleTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         descriptionTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        priceTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        priceValLabel.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         toContactsButtonView.translatesAutoresizingMaskIntoConstraints = false
         toContactsButtonLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -271,13 +298,8 @@ extension ServiceViewController {
         contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
         contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
         contentView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
-
-        userBackgroundPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        userBackgroundPhotoImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
-        userBackgroundPhotoImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
-        userBackgroundPhotoImageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
         
-        userPhotoImageView.bottomAnchor.constraint(equalTo: userBackgroundPhotoImageView.bottomAnchor, constant: -10).isActive = true
+        userPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20).isActive = true
         userPhotoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         userPhotoImageView.widthAnchor.constraint(equalToConstant: 140).isActive = true
         userPhotoImageView.heightAnchor.constraint(equalTo: userPhotoImageView.widthAnchor).isActive = true
@@ -285,7 +307,7 @@ extension ServiceViewController {
         userRole.centerXAnchor.constraint(equalTo: userPhotoImageView.centerXAnchor).isActive = true
         userRole.centerYAnchor.constraint(equalTo: userPhotoImageView.centerYAnchor, constant: 40).isActive = true
         
-        separator0View.topAnchor.constraint(equalTo: userBackgroundPhotoImageView.bottomAnchor, constant: 10).isActive = true
+        separator0View.topAnchor.constraint(equalTo: userPhotoImageView.bottomAnchor, constant: 10).isActive = true
         separator0View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
         separator0View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator0View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
@@ -308,7 +330,7 @@ extension ServiceViewController {
         separator1View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
         titleTitleLabel.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 10).isActive = true
-        titleTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
+        titleTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
         titleTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
         titleLabel.topAnchor.constraint(equalTo: titleTitleLabel.bottomAnchor, constant: 5).isActive = true
@@ -316,14 +338,24 @@ extension ServiceViewController {
         titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
         descriptionTitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10).isActive = true
-        descriptionTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
+        descriptionTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
         descriptionTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
         descriptionLabel.topAnchor.constraint(equalTo: descriptionTitleLabel.bottomAnchor, constant: 5).isActive = true
         descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
         descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
-        separator2View.topAnchor.constraint(greaterThanOrEqualTo: descriptionLabel.bottomAnchor, constant: 15).isActive = true
+        priceTitleLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 10).isActive = true
+        priceTitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        priceTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
+        
+        priceLabel.topAnchor.constraint(equalTo: priceTitleLabel.bottomAnchor, constant: 5).isActive = true
+        priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        
+        priceValLabel.topAnchor.constraint(equalTo: priceTitleLabel.bottomAnchor, constant: 5).isActive = true
+        priceValLabel.leadingAnchor.constraint(equalTo: priceLabel.trailingAnchor, constant: 10).isActive = true
+        
+        separator2View.topAnchor.constraint(greaterThanOrEqualTo: priceLabel.bottomAnchor, constant: 15).isActive = true
         separator2View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
         separator2View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator2View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true

@@ -8,7 +8,6 @@
 import Foundation
 
 final class UserProfileEditedModel {
-    var login: String = ""
     var username: String = ""
     var contacts: String = ""
     var userImage: Data?

@@ -104,7 +104,7 @@ final class MainViewController: UIViewController {
                             switch result {
                             case .success(let success):
                                 let viewController = ServicesViewController()
-                                for elem in success.services {
+                                for elem in success {
                                     if elem.role == "master" {
                                         ServicesModel.shared.servicesMaster.append(ServiceModel(json: elem))
                                     }

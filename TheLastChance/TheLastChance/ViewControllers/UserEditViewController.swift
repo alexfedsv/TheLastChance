@@ -193,12 +193,20 @@ final class UserEditViewController: UIViewController {
             } else {
                 self.userPhotoImageView.image = UIImage(systemName: "plus.circle")
             }
+            if let backgroundImage = UserHostProfileModel.shared.backgroundImage {
+                self.userBackgroundPhotoImageView.image = UIImage(data: backgroundImage)
+            }
             self.usernameTextView.text = userModel.username
             self.contactsTextView.text = userModel.contacts
+            self.userProfileEditedModel.username = userModel.username
+            self.userProfileEditedModel.contacts = userModel.contacts
+            self.userProfileEditedModel.userImage = userModel.userImage
+            self.userProfileEditedModel.backgroundImage = userModel.backgroundImage
         }
     }
     @objc
     private func applyChanges() {
+        guard let userViewController = userViewController else { return }
         applyChangesButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             self.applyChangesButtonView.layer.opacity = 0.9
@@ -212,8 +220,15 @@ final class UserEditViewController: UIViewController {
                 self.applyChangesButtonLabel.layer.opacity = 1
                 self.applyChangesButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                
-                    self.applyChangesButtonView.isUserInteractionEnabled = true
+                DataManager.shared.editUserProfile(model: self.userProfileEditedModel) { err in
+                    DispatchQueue.main.async {
+                        if err == nil {
+                            userViewController.setupUser()
+                        }
+                        self.applyChangesButtonView.isUserInteractionEnabled = true
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                }
             }
         }
     }

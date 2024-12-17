@@ -12,6 +12,8 @@ final class PetProfileViewController: UIViewController {
     var userModel: UserProfileModel?
     var petModel: PetProfileModel?
     var isHost: Bool = false
+    private var scrollView: UIScrollView = UIScrollView()
+    private var contentView: UIView = UIView()
     weak var userViewController: UserHostProfileViewController?
     private let descriptionLabelsFontSize: CGFloat = 16
     private let contentLabelsFontSize: CGFloat = 15
@@ -112,26 +114,29 @@ final class PetProfileViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: contentLabelsFontSize)
         label.numberOfLines = 0
-        label.text = "advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice совет advice"
+        label.text = ""
         return label
     }()
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
-        view.addSubview(petPhotoImageView)
-        view.addSubview(userPhotoImageView)
-        view.addSubview(separator0View)
-        view.addSubview(typeOfAnimalLabel)
-        view.addSubview(typeOfAnimalContentLabel)
-        view.addSubview(petnameLabel)
-        view.addSubview(petnameContentLabel)
-        view.addSubview(separator1View)
         view.backgroundColor = .systemBackground
-        view.addSubview(infoLabel)
-        view.addSubview(infoContentLabel)
-        view.addSubview(separator2View)
-        view.addSubview(adviceView)
-        view.addSubview(adviceDescriptionLabel)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubview(petPhotoImageView)
+        contentView.addSubview(userPhotoImageView)
+        contentView.addSubview(separator0View)
+        contentView.addSubview(typeOfAnimalLabel)
+        contentView.addSubview(typeOfAnimalContentLabel)
+        contentView.addSubview(petnameLabel)
+        contentView.addSubview(petnameContentLabel)
+        contentView.addSubview(separator1View)
+        contentView.backgroundColor = .systemBackground
+        contentView.addSubview(infoLabel)
+        contentView.addSubview(infoContentLabel)
+        contentView.addSubview(separator2View)
+        contentView.addSubview(adviceView)
+        contentView.addSubview(adviceDescriptionLabel)
         adviceView.addSubview(adviceImageView)
         adviceImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(getAdvice)))
         adviceView.addSubview(adviceLabel)
@@ -152,7 +157,7 @@ final class PetProfileViewController: UIViewController {
         if isHost {
             self.navigationItem.backBarButtonItem = backButton
             let rightButtonImage = UIImage(systemName: "pencil")
-            let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(toAddEditPetViewController))
+            let rightBarButtonItem = UIBarButtonItem(image: rightButtonImage, style: .plain, target: self, action: #selector(toEditPetViewController))
             self.navigationItem.rightBarButtonItem = rightBarButtonItem
         }
     }
@@ -176,21 +181,35 @@ final class PetProfileViewController: UIViewController {
         }
     }
     @objc
-    private func toAddEditPetViewController() {
-        let viewController = AddEditPetViewController()
+    private func toEditPetViewController() {
+        let viewController = EditPetViewController()
         viewController.userModel = UserHostProfileModel.shared
         viewController.petModel = petModel
-        viewController.addEdit = .editPet
         viewController.userViewController = userViewController
+        viewController.petViewController = self
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     @objc
     private func getAdvice() {
-        print(#function)
+        guard let petModel = petModel else { return }
+        DataManager.shared.getAdvice(typeOfAnimal: petModel.typeOfAnimal, info: petModel.info) { advice in
+            DispatchQueue.main.async {
+                print("advice = \(advice)")
+                self.adviceLabel.text = advice
+            }
+        }
+    }
+    func renewPetProfile(petProfileEdited: PetProfileModel) {
+        DispatchQueue.main.async {
+            self.petModel = petProfileEdited
+            self.setupData()
+        }
     }
 }
 extension PetProfileViewController {
     private func setupConstraints() {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
         userPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
         petPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
         separator0View.translatesAutoresizingMaskIntoConstraints = false
@@ -207,62 +226,74 @@ extension PetProfileViewController {
         adviceImageView.translatesAutoresizingMaskIntoConstraints = false
         adviceLabel.translatesAutoresizingMaskIntoConstraints = false
         
-        petPhotoImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30).isActive = true
-        petPhotoImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        petPhotoImageView.widthAnchor.constraint(equalToConstant: 180).isActive = true
+        scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        
+        contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
+        contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
+        contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
+        contentView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
+        
+        petPhotoImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20).isActive = true
+        petPhotoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
+        petPhotoImageView.widthAnchor.constraint(equalToConstant: 140).isActive = true
         petPhotoImageView.heightAnchor.constraint(equalTo: petPhotoImageView.widthAnchor).isActive = true
         
         userPhotoImageView.bottomAnchor.constraint(equalTo: petPhotoImageView.bottomAnchor).isActive = true
-        userPhotoImageView.leadingAnchor.constraint(equalTo: petPhotoImageView.trailingAnchor, constant: -30).isActive = true
+        userPhotoImageView.leadingAnchor.constraint(equalTo: petPhotoImageView.trailingAnchor, constant: -20).isActive = true
         userPhotoImageView.widthAnchor.constraint(equalToConstant: 80).isActive = true
         userPhotoImageView.heightAnchor.constraint(equalTo: userPhotoImageView.widthAnchor).isActive = true
         
         separator0View.topAnchor.constraint(equalTo: petPhotoImageView.bottomAnchor, constant: 30).isActive = true
-        separator0View.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
-        separator0View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
+        separator0View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        separator0View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator0View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
         typeOfAnimalLabel.topAnchor.constraint(equalTo: separator0View.bottomAnchor, constant: 15).isActive = true
-        typeOfAnimalLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
-        typeOfAnimalLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
+        typeOfAnimalLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        typeOfAnimalLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
         typeOfAnimalContentLabel.topAnchor.constraint(equalTo: typeOfAnimalLabel.bottomAnchor, constant: 5).isActive = true
-        typeOfAnimalContentLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
-        typeOfAnimalContentLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
+        typeOfAnimalContentLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        typeOfAnimalContentLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
         petnameLabel.topAnchor.constraint(equalTo: typeOfAnimalContentLabel.bottomAnchor, constant: 5).isActive = true
-        petnameLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
-        petnameLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
+        petnameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        petnameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
         petnameContentLabel.topAnchor.constraint(equalTo: petnameLabel.bottomAnchor, constant: 5).isActive = true
-        petnameContentLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
-        petnameContentLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
+        petnameContentLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        petnameContentLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
        
         separator1View.topAnchor.constraint(equalTo: petnameContentLabel.bottomAnchor, constant: 15).isActive = true
-        separator1View.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
-        separator1View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
+        separator1View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        separator1View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator1View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
         infoLabel.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 10).isActive = true
-        infoLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
-        infoLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
+        infoLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        infoLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
         infoContentLabel.topAnchor.constraint(equalTo: infoLabel.bottomAnchor, constant: 5).isActive = true
-        infoContentLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
-        infoContentLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20).isActive = true
+        infoContentLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
+        infoContentLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20).isActive = true
         
         separator2View.topAnchor.constraint(equalTo: infoContentLabel.bottomAnchor, constant: 5).isActive = true
-        separator2View.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 5).isActive = true
-        separator2View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
+        separator2View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        separator2View.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         separator2View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
         adviceDescriptionLabel.topAnchor.constraint(equalTo: separator2View.bottomAnchor, constant: 15).isActive = true
-        adviceDescriptionLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15).isActive = true
-        adviceDescriptionLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15).isActive = true
+        adviceDescriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
+        adviceDescriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
         
         adviceView.topAnchor.constraint(equalTo: adviceDescriptionLabel.bottomAnchor, constant: 5).isActive = true
-        adviceView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15).isActive = true
-        adviceView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15).isActive = true
+        adviceView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5).isActive = true
+        adviceView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
+        adviceView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
         
         adviceImageView.topAnchor.constraint(equalTo: adviceView.topAnchor, constant: 5).isActive = true
         adviceImageView.trailingAnchor.constraint(equalTo: adviceView.trailingAnchor, constant: -5).isActive = true

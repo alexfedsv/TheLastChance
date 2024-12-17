@@ -1,22 +1,18 @@
 //
-//  AddEditPetViewController.swift
+//  EditPetViewController.swift
 //  TheLastChance
 //
-//  Created by  Alexander Fedoseev on 31.10.2024.
+//  Created by  Alexander Fedoseev on 17.12.2024.
 //
 
 import UIKit
 
-/*final class AddEditPetViewController: UIViewController {
+final class EditPetViewController: UIViewController {
 
-    enum AddEdit {
-        case addPet
-        case editPet
-    }
     var userModel: UserProfileModel?
     var petModel: PetProfileModel?
-    var addEdit: AddEdit?
     weak var userViewController: UserHostProfileViewController?
+    weak var petViewController: PetProfileViewController?
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
     private let imagePicker = UIImagePickerController()
@@ -34,7 +30,7 @@ import UIKit
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.image = UIImage(systemName: "plus.circle")
-        imageView.tintColor = .systemTeal
+        imageView.tintColor = .secondarySystemBackground
         return imageView
     }()
     private lazy var separator0View: UIView = {
@@ -258,8 +254,8 @@ import UIKit
     @objc
     private func savePet() {
         guard let userViewController = userViewController else { return }
+        guard let petViewController = petViewController else { return }
         guard let petModel = petModel else { return }
-        guard let addEdit = addEdit else { return }
         saveButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             self.saveButtonView.layer.opacity = 0.9
@@ -273,41 +269,33 @@ import UIKit
                 self.saveButtonLabel.layer.opacity = 1
                 self.saveButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                switch addEdit {
-                case .addPet:
-                    DataManager.shared.addPet(petModel: petModel) { result in
-                        DispatchQueue.main.async {
-                            switch result {
-                            case .success(let success):
-                                print(#function)
-                                success.petAvatar = petModel.petAvatar
-                                userViewController.petsModel.pets.append(success)
+                DataManager.shared.editPet(petProfileModel: petModel) { err in
+                    DispatchQueue.main.async {
+                        if err == nil {
+                            if let index = userViewController.petsModel.pets.firstIndex(where: { $0.petId == petModel.petId }) {
+                                userViewController.petsModel.pets[index].typeOfAnimal = petModel.typeOfAnimal
+                                userViewController.petsModel.pets[index].petName = petModel.petName
+                                userViewController.petsModel.pets[index].info = petModel.info
+                                userViewController.petsModel.pets[index].petAvatar = petModel.petAvatar
                                 userViewController.reloadCollection()
+                                petViewController.renewPetProfile(petProfileEdited: petModel)
                                 self.navigationController?.popViewController(animated: true)
-                            case .failure(let failure):
-                                break
+                            } else {
+                                self.saveButtonView.isUserInteractionEnabled = true
                             }
+                        } else {
                             self.saveButtonView.isUserInteractionEnabled = true
                         }
                     }
-                case .editPet:
-                    print(".editPet")
                 }
-                
             }
         }
     }
     @objc
     private func removePet() {
-        guard let userViewController = userViewController else { 
-            print("1")
-            return }
-        guard let petModel = petModel else { 
-            print("2")
-            return }
-        guard let addEdit = addEdit else { 
-            print("3")
-            return }
+        guard let userViewController = userViewController else { return }
+        guard let petModel = petModel else { return }
+        guard let navigationController = self.navigationController else { return }
         removeButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             self.removeButtonView.layer.opacity = 0.9
@@ -321,18 +309,33 @@ import UIKit
                 self.removeButtonLabel.layer.opacity = 1
                 self.removeButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                switch addEdit {
-                case .addPet:
-                    print(".addPet")
-                case .editPet:
-                    print(".editPet - remove")
+                DataManager.shared.deletePet(petId: petModel.petId) { err in
+                    if err == nil {
+                        DispatchQueue.main.async {
+                            if let index = userViewController.petsModel.pets.firstIndex(where: { $0.petId == petModel.petId }) {
+                                userViewController.petsModel.pets.remove(at: index)
+                                userViewController.reloadCollection()
+                                var viewControllers = navigationController.viewControllers
+                                if viewControllers.count > 1 {
+                                    viewControllers.remove(at: viewControllers.count - 2)
+                                    navigationController.setViewControllers(viewControllers, animated: true)
+                                    navigationController.popViewController(animated: true)
+                                } else {
+                                    self.removeButtonView.isUserInteractionEnabled = true
+                                }
+                            } else {
+                                self.removeButtonView.isUserInteractionEnabled = true
+                            }
+                        }
+                    } else {
+                        self.removeButtonView.isUserInteractionEnabled = true
+                    }
                 }
-                self.removeButtonView.isUserInteractionEnabled = true
             }
         }
     }
 }
-extension AddEditPetViewController: UITextViewDelegate {
+extension EditPetViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         guard let text = textView.text else { return }
         if textView == typeOfAnimalTextView {
@@ -355,7 +358,7 @@ extension AddEditPetViewController: UITextViewDelegate {
         return true
     }
 }
-extension AddEditPetViewController {
+extension EditPetViewController {
     private func setupConstraints() {
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -456,7 +459,7 @@ extension AddEditPetViewController {
         removeButtonLabel.centerXAnchor.constraint(equalTo: removeButtonView.centerXAnchor).isActive = true
     }
 }
-extension AddEditPetViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension EditPetViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private func getAvatarIcon(pickedImageEdited: UIImage) -> Data? {
         if let imageData = pickedImageEdited.jpegData(compressionQuality: 0.3) {
             let imageSize = imageData.count
@@ -488,4 +491,5 @@ extension AddEditPetViewController: UIImagePickerControllerDelegate, UINavigatio
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
-}*/
+}
+
