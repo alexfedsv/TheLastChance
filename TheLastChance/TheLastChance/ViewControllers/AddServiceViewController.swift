@@ -149,6 +149,20 @@ final class AddServiceViewController: UIViewController {
         label.textColor = .white
         return label
     }()
+    /*private lazy var mapButtonView: UIView = {
+        let view = UIView()
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 12
+        view.backgroundColor = .systemTeal
+        return view
+    }()
+    private lazy var mapButtonLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.text = "Отметить на карте"
+        label.textColor = .white
+        return label
+    }()*/
     private var keyboardUpDownConstraints: NSLayoutConstraint = NSLayoutConstraint()
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -180,16 +194,28 @@ final class AddServiceViewController: UIViewController {
         contentView.addSubview(saveButtonView)
         saveButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(save)))
         saveButtonView.addSubview(saveButtonLabel)
+        //contentView.addSubview(mapButtonView)
+        //mapButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toMap)))
+        //mapButtonView.addSubview(mapButtonLabel)
         contentView.addSubview(separator2View)
         titleTextView.delegate = self
         descriptionTextView.delegate = self
         priceTextView.delegate = self
+        setupNavBar()
         setupConstraints()
         getUser()
         setupKeyboardObservers()
     }
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+    private func setupNavBar() {
+        self.navigationController?.navigationBar.tintColor = UIColor.systemTeal
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        self.navigationItem.hidesBackButton = false
+        let backButton = UIBarButtonItem()
+        backButton.title = ""
+        self.navigationItem.backBarButtonItem = backButton
     }
     private func setupKeyboardObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -305,6 +331,32 @@ final class AddServiceViewController: UIViewController {
             }
         }
     }
+    
+    /*@objc
+    private func toMap() {
+        mapButtonView.isUserInteractionEnabled = false
+        UIView.animate(withDuration: 0.3) {
+            self.mapButtonView.layer.opacity = 0.9
+            self.mapButtonView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.mapButtonLabel.layer.opacity = 0.9
+            self.mapButtonLabel.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        } completion: { _ in
+            UIView.animate(withDuration: 0.3) {
+                self.mapButtonView.layer.opacity = 1
+                self.mapButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                self.mapButtonLabel.layer.opacity = 1
+                self.mapButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+            } completion: { _ in
+                print(#function)
+                DispatchQueue.main.async {
+                    let viewController = MapViewController()
+                    self.navigationController?.pushViewController(viewController, animated: true)
+                    self.mapButtonView.isUserInteractionEnabled = true
+                }
+
+            }
+        }
+    }*/
 }
 extension AddServiceViewController: SegmentedControlDelegate {
     func segmentedControleSet(role: ServiceModel.Mode) {
@@ -365,6 +417,8 @@ extension AddServiceViewController {
         separator2View.translatesAutoresizingMaskIntoConstraints = false
         saveButtonView.translatesAutoresizingMaskIntoConstraints = false
         saveButtonLabel.translatesAutoresizingMaskIntoConstraints = false
+        //mapButtonView.translatesAutoresizingMaskIntoConstraints = false
+        //mapButtonLabel.translatesAutoresizingMaskIntoConstraints = false
         
         scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
@@ -454,6 +508,15 @@ extension AddServiceViewController {
         
         saveButtonLabel.centerYAnchor.constraint(equalTo: saveButtonView.centerYAnchor).isActive = true
         saveButtonLabel.centerXAnchor.constraint(equalTo: saveButtonView.centerXAnchor).isActive = true
+        
+        /*mapButtonView.topAnchor.constraint(equalTo: saveButtonView.bottomAnchor, constant: 15).isActive = true
+        mapButtonView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 25).isActive = true
+        mapButtonView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -25).isActive = true
+        mapButtonView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        mapButtonView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30).isActive = true
+        
+        mapButtonLabel.centerYAnchor.constraint(equalTo: mapButtonView.centerYAnchor).isActive = true
+        mapButtonLabel.centerXAnchor.constraint(equalTo: mapButtonView.centerXAnchor).isActive = true*/
     }
 }
 extension AddServiceViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

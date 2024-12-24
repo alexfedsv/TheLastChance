@@ -74,6 +74,9 @@ final class NetworkMockManager: NetworkProtocol {
             }
         })
     }
+    func deleteService(serviceId: String, completion: @escaping (NetworkError?) -> Void) {
+        completion(.mockServiceUnrealized(atFunc: #function))
+    }
     func addPet(petModel: PetProfileModel, completion: @escaping (Result<JSON.PetId, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
             let string = PhotoHelper.getImageBase64String(imageData: petModel.petAvatar)
@@ -97,6 +100,20 @@ final class NetworkMockManager: NetworkProtocol {
         completion(.mockServiceUnrealized(atFunc: #function))
     }
     func getAdvice(typeOfAnimal: String, info: String, completion: @escaping (Result<JSON.Advice, NetworkError>) -> Void) {
-        completion(.failure(.mockServiceUnrealized(atFunc: #function)))
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
+            completion(.success(JSON.Advice(advice: "совет", animal: typeOfAnimal, prompt: info)))
+        })
+    }
+    func getWordsForFilter(completion: @escaping (Result<[JSON.WordsForFilter], NetworkError>) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
+            let words = [JSON.WordsForFilter(word: "Кошка"), JSON.WordsForFilter(word: "Собака"), JSON.WordsForFilter(word: "Змея"), JSON.WordsForFilter(word: "Чупакабра"), JSON.WordsForFilter(word: "Мустанг"), JSON.WordsForFilter(word: "Олень"), JSON.WordsForFilter(word: "Котик"), JSON.WordsForFilter(word: "Велосипед"), JSON.WordsForFilter(word: "Магистр"), JSON.WordsForFilter(word: "Черепаха"), JSON.WordsForFilter(word: "Крыса"), JSON.WordsForFilter(word: "Собака"), JSON.WordsForFilter(word: "Змея"), JSON.WordsForFilter(word: "Чупакабра"), JSON.WordsForFilter(word: "Мустанг"), JSON.WordsForFilter(word: "Олень"), JSON.WordsForFilter(word: "Котик"), JSON.WordsForFilter(word: "Велосипед"), JSON.WordsForFilter(word: "Магистр"), JSON.WordsForFilter(word: "Черепаха"), JSON.WordsForFilter(word: "Крыса"), JSON.WordsForFilter(word: "Собакоситер"), JSON.WordsForFilter(word: "Черепахи"), JSON.WordsForFilter(word: "Няня")]
+            completion(.success(words))
+        })
+    }
+    func getFilteredServices(completion: @escaping (Result<[JSON.Service], NetworkError>) -> Void) {
+        completion(.success([
+            JSON.Service(role: "master", serviceId: "1 mock", userId: "22", title: "test1", description: "desc1", userImage: "", petIds: ["1", "2"], price: 999),
+            JSON.Service(role: "master", serviceId: "2 mock", userId: "26", title: "test2", description: "desc2", userImage: "", petIds: ["4", "7", "9"], price: 999)
+        ]))
     }
 }

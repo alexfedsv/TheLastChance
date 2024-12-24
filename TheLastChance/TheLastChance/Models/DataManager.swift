@@ -15,12 +15,15 @@ protocol DataManagerProtocol: AnyObject {
     func getPetProfile(petId: String, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
     func getServices(completion: @escaping (Result<[JSON.Service], NetworkError>) -> Void)
     func addService(serviceModel: ServiceModel, completion: @escaping (Result<ServiceModel, NetworkError>) -> Void)
+    func deleteService(serviceId: String, completion: @escaping (NetworkError?) -> Void)
     func addPet(petModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void)
     func deletePet(petId: String, completion: @escaping (NetworkError?) -> Void)
     func editPet(petProfileModel: PetProfileModel, completion: @escaping (NetworkError?) -> Void)
     func editUserProfile(model: UserProfileEditedModel, completion: @escaping (NetworkError?) -> Void)
     func editUserSettings(model: UserSettingsEditedModel, completion: @escaping (NetworkError?) -> Void)
     func getAdvice(typeOfAnimal: String, info: String, completion: @escaping (String) -> Void)
+    func getWordsForFilter(completion: @escaping ([String]) -> Void)
+    func getFilteredServices(completion: @escaping (NetworkError?) -> Void)
 }
 
 class DataManager: DataManagerProtocol {
@@ -29,7 +32,7 @@ class DataManager: DataManagerProtocol {
         case mock
     }
     static let shared = DataManager()
-    var dataSource: DataSource = .net
+    var dataSource: DataSource = .mock
     var networkServiceProtocol: NetworkProtocol
 
     init() {
@@ -129,6 +132,9 @@ class DataManager: DataManagerProtocol {
             }
         }
     }
+    func deleteService(serviceId: String, completion: @escaping (NetworkError?) -> Void) {
+        
+    }
     func addPet(petModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void) {
         networkServiceProtocol.addPet(petModel: petModel) { result in
             switch result {
@@ -167,6 +173,28 @@ class DataManager: DataManagerProtocol {
                 completion(success.advice)
             case .failure(let failure):
                 completion("")
+            }
+        }
+    }
+    func getWordsForFilter(completion: @escaping ([String]) -> Void) {
+        networkServiceProtocol.getWordsForFilter { result in
+            switch result {
+            case .success(let success):
+                let words = success.map({ $0.word })
+                completion(words)
+            case .failure(let failure):
+                completion([])
+            }
+        }
+    }
+    func getFilteredServices(completion: @escaping (NetworkError?) -> Void) {
+        networkServiceProtocol.getFilteredServices() { result in
+            switch result {
+            case .success(let success):
+                FilterModel.shared.servicesFiltered = success.map({ ServiceModel(json: $0) })
+                completion(nil)
+            case .failure(let failure):
+                completion(failure)
             }
         }
     }

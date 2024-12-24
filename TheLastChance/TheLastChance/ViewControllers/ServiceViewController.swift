@@ -10,7 +10,7 @@ import UIKit
 class ServiceViewController: UIViewController {
 
     var serviceModel: ServiceModel?
-    var userOtherModel: UserOtherProfileModel?
+    var userModel: UserProfileModel?
     private var petsModel: PetsModel = PetsModel()
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
@@ -177,10 +177,10 @@ class ServiceViewController: UIViewController {
         }
     }
     private func setupData() {
-        guard let userModel = userOtherModel else { return }
+        guard let userModel = userModel else { return }
         guard let serviceModel = serviceModel else { return }
         DispatchQueue.main.async {
-            self.userOtherModel = userModel
+            self.userModel = userModel
             switch serviceModel.role {
             case .master:
                 self.userRole.text = "ЗАКАЗЧИК"
@@ -221,7 +221,7 @@ class ServiceViewController: UIViewController {
         }
     }
     private func toPetProfileViewController(petModel: PetProfileModel) {
-        guard let userModel = userOtherModel else { return }
+        guard let userModel = userModel else { return }
         let viewController = PetProfileViewController()
         viewController.petModel = petModel
         viewController.userModel = userModel

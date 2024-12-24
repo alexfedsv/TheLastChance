@@ -59,6 +59,13 @@ final class UserOtherProfileViewController: UIViewController {
         label.numberOfLines = 0
         return label
     }()
+    private lazy var otherPetsLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.text = "Мои питомцы:"
+        label.numberOfLines = 1
+        return label
+    }()
     var collectionView: UICollectionView!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,6 +76,7 @@ final class UserOtherProfileViewController: UIViewController {
         view.addSubview(usernameLabel)
         view.addSubview(contactsLabel)
         view.addSubview(separator1View)
+        view.addSubview(otherPetsLabel)
         view.backgroundColor = .systemBackground
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -170,6 +178,7 @@ extension UserOtherProfileViewController {
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
         contactsLabel.translatesAutoresizingMaskIntoConstraints = false
         separator1View.translatesAutoresizingMaskIntoConstraints = false
+        otherPetsLabel.translatesAutoresizingMaskIntoConstraints = false
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         separator2View.translatesAutoresizingMaskIntoConstraints = false
         
@@ -201,7 +210,11 @@ extension UserOtherProfileViewController {
         separator1View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
         separator1View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
-        collectionView.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 10).isActive = true
+        otherPetsLabel.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 5).isActive = true
+        otherPetsLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
+        otherPetsLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
+        
+        collectionView.topAnchor.constraint(equalTo: otherPetsLabel.bottomAnchor, constant: 5).isActive = true
         collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
         collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
         collectionView.heightAnchor.constraint(equalToConstant: 160).isActive = true

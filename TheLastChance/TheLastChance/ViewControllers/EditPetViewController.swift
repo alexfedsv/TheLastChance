@@ -25,12 +25,12 @@ final class EditPetViewController: UIViewController {
     }()
     private lazy var petPhotoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .secondarySystemBackground
+        imageView.backgroundColor = .clear
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.image = UIImage(systemName: "plus.circle")
-        imageView.tintColor = .secondarySystemBackground
+        imageView.tintColor = .systemTeal
         return imageView
     }()
     private lazy var separator0View: UIView = {

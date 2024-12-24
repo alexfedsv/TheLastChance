@@ -19,6 +19,7 @@ enum APIfunc: String {
     case getPets = "get_pet_list"
     case getServices = "get_all_services"
     case addService = "add_service"
+    case deleteService = "delete_service"
     case updateUser = "update_user"
     case getAdvice = "get_advice"
 }

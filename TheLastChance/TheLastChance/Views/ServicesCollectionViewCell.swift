@@ -13,6 +13,7 @@ final class ServicesCollectionViewCell: UICollectionViewCell {
     private var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.isUserInteractionEnabled = true
+        imageView.image = UIImage(systemName: "person.crop.circle")
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.tintColor = .secondarySystemBackground
@@ -25,8 +26,7 @@ final class ServicesCollectionViewCell: UICollectionViewCell {
     }()
     private var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .lightText
+        label.font = UIFont.systemFont(ofSize: 13)
         label.numberOfLines = 0
         return label
     }()
@@ -34,7 +34,7 @@ final class ServicesCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         clipsToBounds = true
         layer.cornerRadius = 10
-        backgroundColor = .systemTeal
+        backgroundColor = .systemTeal.withAlphaComponent(0.7)
         addSubview(imageView)
         addSubview(titleLabel)
         addSubview(descriptionLabel)

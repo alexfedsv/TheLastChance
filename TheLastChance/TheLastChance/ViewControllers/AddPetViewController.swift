@@ -24,12 +24,12 @@ final class AddPetViewController: UIViewController {
     }()
     private lazy var petPhotoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .secondarySystemBackground
+        imageView.backgroundColor = .clear
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
         imageView.image = UIImage(systemName: "plus.circle")
-        imageView.tintColor = .secondarySystemBackground
+        imageView.tintColor = .systemTeal
         return imageView
     }()
     private lazy var separator0View: UIView = {
@@ -207,18 +207,7 @@ final class AddPetViewController: UIViewController {
         scrollView.scrollIndicatorInsets = contentInsets
     }
     private func setupData() {
-        if let petModel = petModel {
-            DispatchQueue.main.async {
-                if let data = petModel.petAvatar, let icon = UIImage(data: data) {
-                    self.petPhotoImageView.image = icon
-                } else {
-                    self.petPhotoImageView.image = UIImage(systemName: "plus.circle")
-                }
-                self.typeOfAnimalTextView.text = petModel.typeOfAnimal
-                self.petnameTextView.text = petModel.petName
-                self.infoTextView.text = petModel.info
-            }
-        }
+        self.petModel = PetProfileModel(petId: "", typeOfAnimal: "", petName: "", info: "", petAvatar: "")
         guard let userModel = userModel else { return }
         DispatchQueue.main.async {
             if let icon = userModel.userImage  {

@@ -17,16 +17,31 @@ final class PetProfileViewController: UIViewController {
     weak var userViewController: UserHostProfileViewController?
     private let descriptionLabelsFontSize: CGFloat = 16
     private let contentLabelsFontSize: CGFloat = 15
+    private let activityIndicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .large)
+        view.hidesWhenStopped = true
+        return view
+    }()
     private lazy var userPhotoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.masksToBounds = true
-        imageView.backgroundColor = .systemTeal
+        imageView.backgroundColor = .clear
+        imageView.image = UIImage(systemName: "person.crop.circle")
+        imageView.tintColor = .systemTeal
         return imageView
     }()
     private lazy var petPhotoImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.backgroundColor = .secondarySystemBackground
+        imageView.isUserInteractionEnabled = true
         imageView.layer.masksToBounds = true
-        imageView.backgroundColor = .systemTeal
+        if Bool.random() {
+            imageView.image = Bool.random() ? UIImage(systemName: "lizard.circle") : UIImage(systemName: "bird.circle")
+        } else {
+            imageView.image = Bool.random() ? UIImage(systemName: "dog.circle") : UIImage(systemName: "cat.circle")
+        }
+        imageView.contentMode = .scaleAspectFill
+        imageView.tintColor = .systemTeal
         return imageView
     }()
     private lazy var separator0View: UIView = {
@@ -106,7 +121,7 @@ final class PetProfileViewController: UIViewController {
     private lazy var adviceImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "gobackward")
-        imageView.backgroundColor = .secondarySystemBackground
+        imageView.tintColor = .systemTeal
         imageView.isUserInteractionEnabled = true
         return imageView
     }()
@@ -140,6 +155,7 @@ final class PetProfileViewController: UIViewController {
         adviceView.addSubview(adviceImageView)
         adviceImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(getAdvice)))
         adviceView.addSubview(adviceLabel)
+        adviceView.addSubview(activityIndicator)
         setupConstraints()
         setupData()
     }
@@ -168,12 +184,10 @@ final class PetProfileViewController: UIViewController {
             if let icon = userModel.userImage  {
                 self.userPhotoImageView.image = UIImage(data: icon)
             } else {
-                self.userPhotoImageView.image = nil
+                self.userPhotoImageView.image = UIImage(systemName: "person.crop.circle")
             }
             if let icon = petModel.petAvatar  {
                 self.petPhotoImageView.image = UIImage(data: icon)
-            } else {
-                self.petPhotoImageView.image = nil
             }
             self.typeOfAnimalContentLabel.text = petModel.typeOfAnimal
             self.petnameContentLabel.text = petModel.petName
@@ -192,10 +206,14 @@ final class PetProfileViewController: UIViewController {
     @objc
     private func getAdvice() {
         guard let petModel = petModel else { return }
+        activityIndicator.startAnimating()
+        adviceImageView.isUserInteractionEnabled = false
         DataManager.shared.getAdvice(typeOfAnimal: petModel.typeOfAnimal, info: petModel.info) { advice in
             DispatchQueue.main.async {
                 print("advice = \(advice)")
                 self.adviceLabel.text = advice
+                self.activityIndicator.stopAnimating()
+                self.adviceImageView.isUserInteractionEnabled = true
             }
         }
     }
@@ -225,6 +243,7 @@ extension PetProfileViewController {
         adviceView.translatesAutoresizingMaskIntoConstraints = false
         adviceImageView.translatesAutoresizingMaskIntoConstraints = false
         adviceLabel.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         
         scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
         scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
@@ -294,6 +313,7 @@ extension PetProfileViewController {
         adviceView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5).isActive = true
         adviceView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
         adviceView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        adviceView.heightAnchor.constraint(greaterThanOrEqualToConstant: 70).isActive = true
         
         adviceImageView.topAnchor.constraint(equalTo: adviceView.topAnchor, constant: 5).isActive = true
         adviceImageView.trailingAnchor.constraint(equalTo: adviceView.trailingAnchor, constant: -5).isActive = true
@@ -305,5 +325,7 @@ extension PetProfileViewController {
         adviceLabel.leadingAnchor.constraint(equalTo: adviceView.leadingAnchor, constant: 15).isActive = true
         adviceLabel.trailingAnchor.constraint(equalTo: adviceView.trailingAnchor, constant: -15).isActive = true
         
+        activityIndicator.centerYAnchor.constraint(equalTo: adviceView.centerYAnchor).isActive = true
+        activityIndicator.centerXAnchor.constraint(equalTo: adviceView.centerXAnchor).isActive = true
     }
 }

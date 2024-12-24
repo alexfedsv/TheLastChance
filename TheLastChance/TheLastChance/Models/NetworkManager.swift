@@ -346,6 +346,39 @@ final class NetworkManager: NetworkProtocol {
             }
         }.resume()
     }
+    func deleteService(serviceId: String, completion: @escaping (NetworkError?) -> Void) {
+        guard let url = URL(string:  baseURL + APIfunc.deleteService.rawValue + "?userID=\(Settings.shared.userId)&serviceID=\(serviceId)") else {
+            let error: NetworkError = .invalidRequest(atFunc: #function)
+            completion(error)
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.DELETE.rawValue
+        request.setValue(Headers.path.rawValue, forHTTPHeaderField: Headers.contentType.rawValue)
+        let session = URLSession.shared
+        session.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("ERROR[\(#function)]: \(error.localizedDescription)")
+                let err: NetworkError = .knownError(err: error, atFunc: #function)
+                completion(err)
+                return
+            } else if let response = response as? HTTPURLResponse, let data = data {
+                if response.statusCode == 200 {
+                    completion(nil)
+                } else {
+                    print("ERROR[\(#function)]: Something went wrong, response.statusCode: \(response.statusCode)")
+                    let err: NetworkError = .errorStatusCode(statusCode: response.statusCode, atFunc: #function)
+                    completion(err)
+                    return
+                }
+            } else {
+                print("ERROR[\(#function)]: Something went wrong")
+                let err: NetworkError = .unknownError(atFunc: #function)
+                completion(err)
+                return
+            }
+        }.resume()
+    }
     func addPet(petModel: PetProfileModel, completion: @escaping (Result<JSON.PetId, NetworkError>) -> Void) {
         let stringBase64 = PhotoHelper.getImageBase64String(imageData: petModel.petAvatar)
         let parameters: [String: Any] = [
@@ -564,5 +597,17 @@ final class NetworkManager: NetworkProtocol {
                 return
             }
         }.resume()
+    }
+    func getWordsForFilter(completion: @escaping (Result<[JSON.WordsForFilter], NetworkError>) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
+            let words = [JSON.WordsForFilter(word: "Кошка"), JSON.WordsForFilter(word: "Собака"), JSON.WordsForFilter(word: "Змея"), JSON.WordsForFilter(word: "Чупакабра"), JSON.WordsForFilter(word: "Мустанг"), JSON.WordsForFilter(word: "Олень"), JSON.WordsForFilter(word: "Котик"), JSON.WordsForFilter(word: "Велосипед"), JSON.WordsForFilter(word: "Магистр"), JSON.WordsForFilter(word: "Черепаха"), JSON.WordsForFilter(word: "Крыса"), JSON.WordsForFilter(word: "Собака"), JSON.WordsForFilter(word: "Змея"), JSON.WordsForFilter(word: "Чупакабра"), JSON.WordsForFilter(word: "Мустанг"), JSON.WordsForFilter(word: "Олень"), JSON.WordsForFilter(word: "Котик"), JSON.WordsForFilter(word: "Велосипед"), JSON.WordsForFilter(word: "Магистр"), JSON.WordsForFilter(word: "Черепаха"), JSON.WordsForFilter(word: "Крыса"), JSON.WordsForFilter(word: "Собакоситер"), JSON.WordsForFilter(word: "Черепахи"), JSON.WordsForFilter(word: "Няня")]
+            completion(.success(words))
+        })
+    }
+    func getFilteredServices(completion: @escaping (Result<[JSON.Service], NetworkError>) -> Void) {
+        completion(.success([
+            JSON.Service(role: "master", serviceId: "1 mock", userId: "22", title: "test1", description: "desc", userImage: "", petIds: [], price: 999),
+            JSON.Service(role: "master", serviceId: "2 mock", userId: "26", title: "test2", description: "desc", userImage: "", petIds: [], price: 999)
+        ]))
     }
 }

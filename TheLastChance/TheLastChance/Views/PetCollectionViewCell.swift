@@ -12,9 +12,15 @@ final class PetCollectionViewCell: UICollectionViewCell {
     static let identifier = "PetCollectionViewCellCell"
     private var avatarImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .systemTeal
+        imageView.backgroundColor = .clear
         imageView.isUserInteractionEnabled = true
+        if Bool.random() {
+            imageView.image = Bool.random() ? UIImage(systemName: "lizard.circle") : UIImage(systemName: "bird.circle")
+        } else {
+            imageView.image = Bool.random() ? UIImage(systemName: "dog.circle") : UIImage(systemName: "cat.circle")
+        }
         imageView.contentMode = .scaleAspectFill
+        imageView.tintColor = .systemTeal
         imageView.layer.masksToBounds = true
         return imageView
     }()
@@ -43,7 +49,7 @@ final class PetCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         clipsToBounds = true
         layer.cornerRadius = 10
-        backgroundColor = .systemTeal
+        backgroundColor = .systemTeal.withAlphaComponent(0.7)
         addSubview(avatarImageView)
         addSubview(titleLabel)
         addSubview(nameLabel)
@@ -59,9 +65,6 @@ final class PetCollectionViewCell: UICollectionViewCell {
             self.nameLabel.text = name
             if let imageData = imageData {
                 self.avatarImageView.image = UIImage(data: imageData)
-            } else {
-                print("[ERROR][\(#function)]: imageData = nil")
-                self.avatarImageView.image = nil
             }
         }
     }

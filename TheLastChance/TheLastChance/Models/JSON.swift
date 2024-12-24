@@ -114,4 +114,10 @@ struct JSON {
             case prompt = "prompt"
         }
     }
+    struct WordsForFilter: Codable {
+        var word: String
+        private enum CodingKeys: String, CodingKey {
+            case word = "word"
+        }
+    }
 }

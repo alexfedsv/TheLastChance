@@ -71,6 +71,20 @@ final class UserHostProfileViewController: UIViewController {
         label.numberOfLines = 1
         return label
     }()
+    private lazy var myPetsLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.text = "Мои питомцы:"
+        label.numberOfLines = 1
+        return label
+    }()
+    private lazy var myServicesLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 14)
+        label.text = "Мои заявки:"
+        label.numberOfLines = 1
+        return label
+    }()
     var collectionPetsView: UICollectionView!
     var collectionServicesView: UICollectionView!
     override func viewDidLoad() {
@@ -83,6 +97,8 @@ final class UserHostProfileViewController: UIViewController {
         view.addSubview(usernameLabel)
         view.addSubview(contactsLabel)
         view.addSubview(separator1View)
+        view.addSubview(myPetsLabel)
+        view.addSubview(myServicesLabel)
         view.backgroundColor = .systemBackground
         let layoutPets = UICollectionViewFlowLayout()
         layoutPets.scrollDirection = .horizontal
@@ -206,10 +222,9 @@ final class UserHostProfileViewController: UIViewController {
         viewController.userViewController = self
         self.navigationController?.pushViewController(viewController, animated: true)
     }
-    private func toAddPetViewController(petModel: PetProfileModel) {
+    private func toAddPetViewController() {
         let viewController = AddPetViewController()
         viewController.userViewController = self
-        viewController.petModel = petModel
         viewController.userModel = UserHostProfileModel.shared
         viewController.userViewController = self
         self.navigationController?.pushViewController(viewController, animated: true)
@@ -250,7 +265,9 @@ extension UserHostProfileViewController {
         usernameLabel.translatesAutoresizingMaskIntoConstraints = false
         contactsLabel.translatesAutoresizingMaskIntoConstraints = false
         separator1View.translatesAutoresizingMaskIntoConstraints = false
+        myPetsLabel.translatesAutoresizingMaskIntoConstraints = false
         collectionPetsView.translatesAutoresizingMaskIntoConstraints = false
+        myServicesLabel.translatesAutoresizingMaskIntoConstraints = false
         collectionServicesView.translatesAutoresizingMaskIntoConstraints = false
         separator2View.translatesAutoresizingMaskIntoConstraints = false
         
@@ -285,7 +302,11 @@ extension UserHostProfileViewController {
         separator1View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
         separator1View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
-        collectionPetsView.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 10).isActive = true
+        myPetsLabel.topAnchor.constraint(equalTo: separator1View.bottomAnchor, constant: 5).isActive = true
+        myPetsLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
+        myPetsLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
+        
+        collectionPetsView.topAnchor.constraint(equalTo: myPetsLabel.bottomAnchor, constant: 5).isActive = true
         collectionPetsView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
         collectionPetsView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
         collectionPetsView.heightAnchor.constraint(equalToConstant: 160).isActive = true
@@ -295,7 +316,11 @@ extension UserHostProfileViewController {
         separator2View.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -5).isActive = true
         separator2View.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
         
-        collectionServicesView.topAnchor.constraint(equalTo: separator2View.bottomAnchor, constant: 10).isActive = true
+        myServicesLabel.topAnchor.constraint(equalTo: separator2View.bottomAnchor, constant: 5).isActive = true
+        myServicesLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
+        myServicesLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
+        
+        collectionServicesView.topAnchor.constraint(equalTo: myServicesLabel.bottomAnchor, constant: 5).isActive = true
         collectionServicesView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10).isActive = true
         collectionServicesView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10).isActive = true
         collectionServicesView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -5).isActive = true
@@ -350,11 +375,17 @@ extension UserHostProfileViewController: UICollectionViewDataSource, UICollectio
                 toPetProfileViewController(petModel: petModel)
             }
             if indexPath.row == petsModel.pets.count {
-                let petModel = PetProfileModel(petId: "0", typeOfAnimal: "", petName: "", info: "", petAvatar: "")
-                toAddPetViewController(petModel: petModel)
+                toAddPetViewController()
             }
         } else if collectionView == collectionServicesView  {
-            
+            let viewController = ServiceViewController()
+            let serviceModel = myServices[indexPath.row]
+            DispatchQueue.main.async {
+                let userModel = UserHostProfileModel.shared
+                viewController.userModel = userModel
+                viewController.serviceModel = serviceModel
+                self.navigationController?.pushViewController(viewController, animated: true)
+            }
         }
     }
 }
