@@ -177,15 +177,20 @@ final class UserHostProfileViewController: BaseViewController {
                     case .failure(let failure):
                         print("фиаско")
                     }
+                    if self.myServices.isEmpty {
+                        self.myServicesLabel.isHidden = self.myServices.isEmpty
+                    }
                 }
             }
         } else {
             DispatchQueue.main.async {
                 self.myServices = ServicesModel.shared.servicesMaster.filter({ $0.userId == Settings.shared.userId }) + ServicesModel.shared.servicesSlave.filter({ $0.userId == Settings.shared.userId })
                 self.collectionServicesView.reloadData()
+                if self.myServices.isEmpty {
+                    self.myServicesLabel.isHidden = self.myServices.isEmpty
+                }
             }
         }
-        
     }
     private func getPets() {
         let dispatchGroup = DispatchGroup()

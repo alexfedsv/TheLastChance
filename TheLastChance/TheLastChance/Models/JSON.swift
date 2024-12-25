@@ -35,6 +35,12 @@ struct JSON {
             case petAvatar = "avatar"
         }
     }
+    struct Err: Codable {
+        var message: String
+        private enum CodingKeys: String, CodingKey {
+            case message = "message"
+        }
+    }
     struct PetId: Codable {
         var petId: String
         private enum CodingKeys: String, CodingKey {

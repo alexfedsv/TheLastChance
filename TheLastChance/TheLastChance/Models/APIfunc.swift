@@ -23,4 +23,5 @@ enum APIfunc: String {
     case updateUser = "update_user"
     case getAdvice = "get_advice"
     case getWordsForFilter = "get_top_animals"
+    case getFilteredServices = "search_services"
 }

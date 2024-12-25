@@ -416,6 +416,19 @@ final class NetworkManager: NetworkProtocol {
                         completion(.failure(err))
                         return
                     }
+                    
+                } else if response.statusCode == 400 {
+                    do {
+                        let jsonObject = try JSONDecoder().decode(JSON.Err.self, from: data)
+                        print("DEBUG[\(#function)]: \(jsonObject.message)")
+                        completion(.failure(.censorship(atFunc: #function)))
+                        return
+                    } catch {
+                        print("ERROR[\(#function)]: Decoding JSON: \(error)")
+                        let err: NetworkError = .decodingJSON(err: error, atFunc: #function)
+                        completion(.failure(err))
+                        return
+                    }
                 } else {
                     print("ERROR[\(#function)]: Something went wrong, response.statusCode: \(response.statusCode)")
                     let err: NetworkError = .errorStatusCode(statusCode: response.statusCode, atFunc: #function)
@@ -641,9 +654,52 @@ final class NetworkManager: NetworkProtocol {
         }.resume()
     }
     func getFilteredServices(completion: @escaping (Result<[JSON.Service], NetworkError>) -> Void) {
-        completion(.success([
-            JSON.Service(role: "master", serviceId: "1 mock", userId: "22", title: "test1", description: "desc", userImage: "", petIds: [], price: 999),
-            JSON.Service(role: "master", serviceId: "2 mock", userId: "26", title: "test2", description: "desc", userImage: "", petIds: [], price: 999)
-        ]))
+        let parameters: [String: Any] = [
+            "min_price": FilterModel.shared.minPrice,
+            "max_price": FilterModel.shared.maxPrice,
+            "animals": FilterModel.shared.words
+        ]
+        guard let url = URL(string: baseURL + APIfunc.getFilteredServices.rawValue + "?query=\"\""), let body = try? JSONSerialization.data(withJSONObject: parameters, options: []) else {
+            let error: NetworkError = .invalidRequest(atFunc: #function)
+            completion(.failure(error))
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.POST.rawValue
+        request.httpBody = body
+        request.setValue("\(body.count)", forHTTPHeaderField: Headers.contentLength.rawValue)
+        request.setValue(Headers.path.rawValue, forHTTPHeaderField: Headers.contentType.rawValue)
+        let session = URLSession.shared
+        session.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("ERROR[\(#function)]: \(error.localizedDescription)")
+                let err: NetworkError = .knownError(err: error, atFunc: #function)
+                completion(.failure(err))
+                return
+            } else if let response = response as? HTTPURLResponse, let data = data {
+                if response.statusCode == 200 {
+                    do {
+                        let jsonObject = try JSONDecoder().decode([JSON.Service].self, from: data)
+                        completion(.success(jsonObject))
+                        return
+                    } catch {
+                        print("ERROR[\(#function)]: Decoding JSON: \(error)")
+                        let err: NetworkError = .decodingJSON(err: error, atFunc: #function)
+                        completion(.failure(err))
+                        return
+                    }
+                } else {
+                    print("ERROR[\(#function)]: Something went wrong, response.statusCode: \(response.statusCode)")
+                    let err: NetworkError = .errorStatusCode(statusCode: response.statusCode, atFunc: #function)
+                    completion(.failure(err))
+                    return
+                }
+            } else {
+                print("ERROR[\(#function)]: Something went wrong")
+                let err: NetworkError = .unknownError(atFunc: #function)
+                completion(.failure(err))
+                return
+            }
+        }.resume()
     }
 }

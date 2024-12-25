@@ -181,6 +181,16 @@ extension FilterViewController: UITextViewDelegate {
             textView.resignFirstResponder()
             return false
         }
+        if text == " " {
+            return false
+        }
+        if textView == minPriceTextView || textView == maxPriceTextView {
+            let s = NSString(string: textView.text ?? "").replacingCharacters(in: range, with: text)
+            guard !s.isEmpty else { return true }
+            let numberFormatter = NumberFormatter()
+            numberFormatter.numberStyle = .none
+            return numberFormatter.number(from: s)?.intValue != nil
+        }
         return true
     }
 }

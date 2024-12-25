@@ -17,6 +17,7 @@ enum NetworkError: Error {
     case notFoundMock(atFunc: String)
     case notFound(atFunc: String)
     case wrongPassword(atFunc: String)
+    case censorship(atFunc: String)
 
     func message() -> String {
         switch self {
@@ -38,6 +39,8 @@ enum NetworkError: Error {
             return "[Network Error][Mock Layer][at \(atFunc)]: User not found"
         case .wrongPassword(let atFunc):
             return "[Network Error][Mock Layer][at \(atFunc)]: Password is wrong"
+        case .censorship(let atFunc):
+            return "[Network Error][Network Layer][at \(atFunc)]: Censorship"
         }
     }
 }

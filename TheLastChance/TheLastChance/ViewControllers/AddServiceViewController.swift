@@ -403,6 +403,13 @@ extension AddServiceViewController: UITextViewDelegate {
             textView.resignFirstResponder()
             return false
         }
+        if textView == priceTextView {
+            let s = NSString(string: priceTextView.text ?? "").replacingCharacters(in: range, with: text)
+            guard !s.isEmpty else { return true }
+            let numberFormatter = NumberFormatter()
+            numberFormatter.numberStyle = .none
+            return numberFormatter.number(from: s)?.intValue != nil
+        }
         return true
     }
 }

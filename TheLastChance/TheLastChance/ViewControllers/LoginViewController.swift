@@ -66,7 +66,7 @@ final class LoginViewController: BaseViewController {
         textView.isSecureTextEntry = false
         return textView
     }()
-    private lazy var registrationLabel: UILabel = {
+    private lazy var toRegistrationLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.numberOfLines = 1
@@ -109,8 +109,8 @@ final class LoginViewController: BaseViewController {
         view.addSubview(passwordLabel)
         view.addSubview(passwordTextView)
         passwordTextView.delegate = self
-        view.addSubview(registrationLabel)
-        registrationLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toRegistrationViewController)))
+        view.addSubview(toRegistrationLabel)
+        toRegistrationLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toRegistrationViewController)))
         view.addSubview(titleLabel)
         view.addSubview(loginButtonView)
         view.addSubview(loginButtonLabel)
@@ -136,10 +136,12 @@ final class LoginViewController: BaseViewController {
     @objc
     private func toRegistrationViewController() {
         print(#function)
+        toRegistrationLabel.isUserInteractionEnabled = false
         guard let delegate = preprofileViewControllerDelegate else { return }
         DispatchQueue.main.async {
             self.commandToParent = .toRegistration
             self.dismiss(animated: true, completion: nil)
+            self.toRegistrationLabel.isUserInteractionEnabled = true
         }
     }
     @objc
@@ -198,7 +200,7 @@ extension LoginViewController {
         loginTextView.translatesAutoresizingMaskIntoConstraints = false
         passwordLabel.translatesAutoresizingMaskIntoConstraints = false
         passwordTextView.translatesAutoresizingMaskIntoConstraints = false
-        registrationLabel.translatesAutoresizingMaskIntoConstraints = false
+        toRegistrationLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         loginButtonView.translatesAutoresizingMaskIntoConstraints = false
         loginButtonLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -221,10 +223,10 @@ extension LoginViewController {
         passwordTextView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15).isActive = true
         passwordTextView.heightAnchor.constraint(equalToConstant: 40).isActive = true
         
-        registrationLabel.centerYAnchor.constraint(equalTo: passwordTextView.bottomAnchor, constant: 35).isActive = true
-        registrationLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        toRegistrationLabel.centerYAnchor.constraint(equalTo: passwordTextView.bottomAnchor, constant: 35).isActive = true
+        toRegistrationLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
         
-        titleLabel.centerYAnchor.constraint(equalTo: registrationLabel.bottomAnchor, constant: 90).isActive = true
+        titleLabel.centerYAnchor.constraint(equalTo: toRegistrationLabel.bottomAnchor, constant: 90).isActive = true
         titleLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
         
         loginButtonView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 25).isActive = true

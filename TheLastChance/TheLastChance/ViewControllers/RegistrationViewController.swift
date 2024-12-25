@@ -345,10 +345,12 @@ final class RegistrationViewController: BaseViewController {
     @objc
     private func toLoginViewController() {
         print(#function)
+        toLoginViewControllerLabel.isUserInteractionEnabled = false
         guard let delegate = preprofileViewControllerDelegate else { return }
         DispatchQueue.main.async {
             self.commandToParent = .toLogin
             self.dismiss(animated: true, completion: nil)
+            self.toLoginViewControllerLabel.isUserInteractionEnabled = true
         }
     }
 }
@@ -376,8 +378,10 @@ extension RegistrationViewController: UITextViewDelegate {
             textView.resignFirstResponder()
             return false
         }
-        if text == " " && text != "" {
-            return false
+        if textView != usernameTextView {
+            if text == " " && text != "" {
+                return false
+            }
         }
         if textView == passwordTextView {
             registrationModel.password = ((registrationModel.password) as NSString).replacingCharacters(in: range, with: text)
