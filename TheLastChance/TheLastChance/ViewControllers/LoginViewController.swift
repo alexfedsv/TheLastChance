@@ -7,10 +7,11 @@
 
 import UIKit
 
-final class LoginViewController: UIViewController {
+final class LoginViewController: BaseViewController {
     
     weak var preprofileViewControllerDelegate: PreprofileViewControllerDelegate?
     private var commandToParent: PreprofileViewController.Command = .back
+    private var loginModel = LoginModel()
     private lazy var loginLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
@@ -156,15 +157,13 @@ final class LoginViewController: UIViewController {
                 self.loginButtonLabel.layer.opacity = 1
                 self.loginButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                if let loginText = self.loginTextView.text, let passwordText = self.passwordTextView.text {
-                    DataManager.shared.login(login: loginText, password: passwordText) { err in
-                        DispatchQueue.main.async {
-                            self.commandToParent = .toUserProfile
-                            if err == nil {
-                                self.dismiss(animated: true, completion: nil)
-                            }
-                            self.loginButtonView.isUserInteractionEnabled = true
+                DataManager.shared.login(loginModel: self.loginModel) { err in
+                    DispatchQueue.main.async {
+                        self.commandToParent = .toUserProfile
+                        if err == nil {
+                            self.dismiss(animated: true, completion: nil)
                         }
+                        self.loginButtonView.isUserInteractionEnabled = true
                     }
                 }
             }
@@ -173,11 +172,22 @@ final class LoginViewController: UIViewController {
 }
 extension LoginViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
+        if textView == passwordTextView {
+            textView.text = String(repeating: "*", count: (textView.text ?? "").count)
+        } else if textView == loginTextView {
+            loginModel.login = textView.text
+        }
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             textView.resignFirstResponder()
             return false
+        }
+        if text == " " && text != "" {
+            return false
+        }
+        if textView == passwordTextView {
+            loginModel.password = ((loginModel.password) as NSString).replacingCharacters(in: range, with: text)
         }
         return true
     }

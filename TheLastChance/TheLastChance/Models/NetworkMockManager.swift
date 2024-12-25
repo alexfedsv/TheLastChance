@@ -104,9 +104,9 @@ final class NetworkMockManager: NetworkProtocol {
             completion(.success(JSON.Advice(advice: "совет", animal: typeOfAnimal, prompt: info)))
         })
     }
-    func getWordsForFilter(completion: @escaping (Result<[JSON.WordsForFilter], NetworkError>) -> Void) {
+    func getWordsForFilter(completion: @escaping (Result<JSON.WordsForFilter, NetworkError>) -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
-            let words = [JSON.WordsForFilter(word: "Кошка"), JSON.WordsForFilter(word: "Собака"), JSON.WordsForFilter(word: "Змея"), JSON.WordsForFilter(word: "Чупакабра"), JSON.WordsForFilter(word: "Мустанг"), JSON.WordsForFilter(word: "Олень"), JSON.WordsForFilter(word: "Котик"), JSON.WordsForFilter(word: "Велосипед"), JSON.WordsForFilter(word: "Магистр"), JSON.WordsForFilter(word: "Черепаха"), JSON.WordsForFilter(word: "Крыса"), JSON.WordsForFilter(word: "Собака"), JSON.WordsForFilter(word: "Змея"), JSON.WordsForFilter(word: "Чупакабра"), JSON.WordsForFilter(word: "Мустанг"), JSON.WordsForFilter(word: "Олень"), JSON.WordsForFilter(word: "Котик"), JSON.WordsForFilter(word: "Велосипед"), JSON.WordsForFilter(word: "Магистр"), JSON.WordsForFilter(word: "Черепаха"), JSON.WordsForFilter(word: "Крыса"), JSON.WordsForFilter(word: "Собакоситер"), JSON.WordsForFilter(word: "Черепахи"), JSON.WordsForFilter(word: "Няня")]
+            let words = JSON.WordsForFilter(words: ["Кошка", "Собака", "Змея", "Чупакабра", "Мустанг", "Олень", "Котик", "Велосипед", "Магистр", "Черепаха", "Крыса", "Собака",  "Няня"])
             completion(.success(words))
         })
     }

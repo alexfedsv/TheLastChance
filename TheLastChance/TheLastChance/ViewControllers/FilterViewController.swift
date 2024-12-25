@@ -7,10 +7,9 @@
 
 import UIKit
 
-final class FilterViewController: UIViewController {
+final class FilterViewController: BaseViewController {
 
     weak var servicesViewControllerDelegate: ServicesViewControllerDelegate?
-    //private var filterToSendModel: FilterModel = FilterModel()
     var words: [String] = []
     private var collectionView: UICollectionView!
     private lazy var minPriceLabel: UILabel = {
@@ -44,7 +43,7 @@ final class FilterViewController: UIViewController {
         textView.spellCheckingType = .no
         textView.returnKeyType = .go
         textView.keyboardType = .numberPad
-        textView.text = "0"
+        textView.text = String(FilterModel.shared.minPrice)
         return textView
     }()
     private lazy var maxPriceLabel: UILabel = {
@@ -78,20 +77,20 @@ final class FilterViewController: UIViewController {
         textView.spellCheckingType = .no
         textView.returnKeyType = .go
         textView.keyboardType = .numberPad
-        textView.text = "1000"
+        textView.text = String(FilterModel.shared.maxPrice)
         return textView
     }()
-    private lazy var applyButtonView: UIView = {
+    private lazy var resetButtonView: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 12
-        view.backgroundColor = .systemTeal
+        view.backgroundColor = .systemOrange
         return view
     }()
-    private lazy var applyButtonLabel: UILabel = {
+    private lazy var resetButtonLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.text = "Применить"
+        label.text = "Очистить"
         label.textColor = .white
         return label
     }()
@@ -116,30 +115,34 @@ final class FilterViewController: UIViewController {
         view.addSubview(maxPriceLabel)
         view.addSubview(maxPriceTextView)
         view.addSubview(maxPriceTailLabel)
-        view.addSubview(applyButtonView)
-        applyButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(apply)))
-        applyButtonView.addSubview(applyButtonLabel)
+        view.addSubview(resetButtonView)
+        resetButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(reset)))
+        resetButtonView.addSubview(resetButtonLabel)
         setupConstraints()
     }
     @objc
-    private func apply() {
+    private func reset() {
         guard let delegate = servicesViewControllerDelegate else { return }
-        applyButtonView.isUserInteractionEnabled = false
+        resetButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
-            self.applyButtonView.layer.opacity = 0.9
-            self.applyButtonView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-            self.applyButtonLabel.layer.opacity = 0.9
-            self.applyButtonLabel.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.resetButtonView.layer.opacity = 0.9
+            self.resetButtonView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.resetButtonLabel.layer.opacity = 0.9
+            self.resetButtonLabel.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         } completion: { _ in
             UIView.animate(withDuration: 0.3) {
-                self.applyButtonView.layer.opacity = 1
-                self.applyButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-                self.applyButtonLabel.layer.opacity = 1
-                self.applyButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                self.resetButtonView.layer.opacity = 1
+                self.resetButtonView.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
+                self.resetButtonLabel.layer.opacity = 1
+                self.resetButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
+                self.minPriceTextView.text = "0"
+                self.maxPriceTextView.text = "0"
+                FilterModel.shared.reset()
                 delegate.applyFilters()
-                self.applyButtonView.isUserInteractionEnabled = true
-                self.navigationController?.popViewController(animated: true)
+                self.collectionView.reloadData()
+                self.resetButtonView.isUserInteractionEnabled = true
+                //self.navigationController?.popViewController(animated: true)
             }
         }
     }
@@ -153,7 +156,25 @@ extension FilterViewController: UITextViewDelegate {
         if textView == maxPriceTextView {
             FilterModel.shared.maxPrice = Int(text) ?? 0
         }
-        
+        guard let delegate = servicesViewControllerDelegate else { return }
+        delegate.applyFilters()
+    }
+    func textViewDidEndEditing(_ textView: UITextView) {
+        guard let text = textView.text else { return }
+        if textView == minPriceTextView {
+            if text == "" {
+                FilterModel.shared.minPrice = 0
+                textView.text = "0"
+            }
+        }
+        if textView == maxPriceTextView {
+            if text == "" {
+                FilterModel.shared.maxPrice = 0
+                textView.text = "0"
+            }
+        }
+        guard let delegate = servicesViewControllerDelegate else { return }
+        delegate.applyFilters()
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
@@ -172,8 +193,8 @@ extension FilterViewController {
         maxPriceLabel.translatesAutoresizingMaskIntoConstraints = false
         maxPriceTextView.translatesAutoresizingMaskIntoConstraints = false
         maxPriceTailLabel.translatesAutoresizingMaskIntoConstraints = false
-        applyButtonView.translatesAutoresizingMaskIntoConstraints = false
-        applyButtonLabel.translatesAutoresizingMaskIntoConstraints = false
+        resetButtonView.translatesAutoresizingMaskIntoConstraints = false
+        resetButtonLabel.translatesAutoresizingMaskIntoConstraints = false
         
         collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10).isActive = true
         collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 15).isActive = true
@@ -204,13 +225,13 @@ extension FilterViewController {
         maxPriceTailLabel.leadingAnchor.constraint(equalTo: maxPriceTextView.trailingAnchor, constant: 10).isActive = true
         maxPriceTailLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15).isActive = true
         
-        applyButtonView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 25).isActive = true
-        applyButtonView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -25).isActive = true
-        applyButtonView.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        applyButtonView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10).isActive = true
+        resetButtonView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 25).isActive = true
+        resetButtonView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -25).isActive = true
+        resetButtonView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        resetButtonView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10).isActive = true
         
-        applyButtonLabel.centerYAnchor.constraint(equalTo: applyButtonView.centerYAnchor).isActive = true
-        applyButtonLabel.centerXAnchor.constraint(equalTo: applyButtonView.centerXAnchor).isActive = true
+        resetButtonLabel.centerYAnchor.constraint(equalTo: resetButtonView.centerYAnchor).isActive = true
+        resetButtonLabel.centerXAnchor.constraint(equalTo: resetButtonView.centerXAnchor).isActive = true
     }
 }
 extension FilterViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -219,6 +240,7 @@ extension FilterViewController: UICollectionViewDataSource, UICollectionViewDele
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FilterCollectionViewCell.identifier, for: indexPath) as? FilterCollectionViewCell {
+            cell.mark(isMarked: FilterModel.shared.words.contains(where: { $0 == words[indexPath.row] }))
             cell.setup(title: words[indexPath.row])
             return cell
         }
@@ -238,6 +260,8 @@ extension FilterViewController: UICollectionViewDataSource, UICollectionViewDele
                 FilterModel.shared.words.removeAll(where: { $0 == words[indexPath.row] })
             }
             print(FilterModel.shared.words)
+            guard let delegate = servicesViewControllerDelegate else { return }
+            delegate.applyFilters()
         }
     }
 }

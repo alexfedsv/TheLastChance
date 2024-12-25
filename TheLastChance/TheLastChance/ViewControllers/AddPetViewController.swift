@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class AddPetViewController: UIViewController {
+final class AddPetViewController: BaseViewController {
 
     var userModel: UserProfileModel?
     var petModel: PetProfileModel?
@@ -31,6 +31,11 @@ final class AddPetViewController: UIViewController {
         imageView.image = UIImage(systemName: "plus.circle")
         imageView.tintColor = .systemTeal
         return imageView
+    }()
+    private let activityIndicator: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .large)
+        view.hidesWhenStopped = true
+        return view
     }()
     private lazy var separator0View: UIView = {
         let view = UIView()
@@ -152,6 +157,7 @@ final class AddPetViewController: UIViewController {
         scrollView.addSubview(contentView)
         view.addSubview(petPhotoImageView)
         petPhotoImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(addPetImage)))
+        petPhotoImageView.addSubview(activityIndicator)
         view.addSubview(userPhotoImageView)
         view.addSubview(separator0View)
         view.addSubview(typeOfAnimalLabel)
@@ -226,6 +232,9 @@ final class AddPetViewController: UIViewController {
     private func savePet() {
         guard let userViewController = userViewController else { return }
         guard let petModel = petModel else { return }
+        if petModel.petAvatar != nil {
+            activityIndicator.startAnimating()
+        }
         saveButtonView.isUserInteractionEnabled = false
         UIView.animate(withDuration: 0.3) {
             self.saveButtonView.layer.opacity = 0.9
@@ -250,6 +259,9 @@ final class AddPetViewController: UIViewController {
                             self.navigationController?.popViewController(animated: true)
                         case .failure(let failure):
                             break
+                        }
+                        if petModel.petAvatar != nil {
+                            self.activityIndicator.stopAnimating()
                         }
                         self.saveButtonView.isUserInteractionEnabled = true
                     }
@@ -287,6 +299,7 @@ extension AddPetViewController {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         userPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
         petPhotoImageView.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         separator0View.translatesAutoresizingMaskIntoConstraints = false
         typeOfAnimalLabel.translatesAutoresizingMaskIntoConstraints = false
         typeOfAnimalTextView.translatesAutoresizingMaskIntoConstraints = false
@@ -314,6 +327,9 @@ extension AddPetViewController {
         petPhotoImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor).isActive = true
         petPhotoImageView.widthAnchor.constraint(equalToConstant: 150).isActive = true
         petPhotoImageView.heightAnchor.constraint(equalTo: petPhotoImageView.widthAnchor).isActive = true
+        
+        activityIndicator.centerXAnchor.constraint(equalTo: petPhotoImageView.centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: petPhotoImageView.centerYAnchor).isActive = true
         
         userPhotoImageView.bottomAnchor.constraint(equalTo: petPhotoImageView.bottomAnchor).isActive = true
         userPhotoImageView.leadingAnchor.constraint(equalTo: petPhotoImageView.trailingAnchor, constant: -30).isActive = true

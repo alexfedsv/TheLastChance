@@ -12,7 +12,7 @@ protocol ServicesViewControllerDelegate: AnyObject {
     func applyFilters()
 }
 
-final class ServicesViewController: UIViewController {
+final class ServicesViewController: BaseViewController {
 
     private var filterConstraint0 = NSLayoutConstraint()
     private var filterConstraint1 = NSLayoutConstraint()
@@ -83,10 +83,13 @@ final class ServicesViewController: UIViewController {
         print(#function)
         DispatchQueue.main.async {
             DataManager.shared.getWordsForFilter { strings in
-                let viewController = FilterViewController()
-                viewController.servicesViewControllerDelegate = self
-                viewController.words = strings.map({ $0 })
-                self.navigationController?.pushViewController(viewController, animated: true)
+                DispatchQueue.main.async {
+                    let viewController = FilterViewController()
+                    viewController.servicesViewControllerDelegate = self
+                    viewController.words = strings.map({ $0 })
+                    print(strings)
+                    self.navigationController?.pushViewController(viewController, animated: true)
+                }
             }
         }
     }
@@ -151,28 +154,35 @@ extension ServicesViewController: UISearchBarDelegate {
 extension ServicesViewController: ServicesViewControllerDelegate {
     func applyFilters() {
         print(#function)
-        DataManager.shared.getFilteredServices() { err in
-            DispatchQueue.main.async {
-                if err == nil && !FilterModel.shared.servicesFiltered.isEmpty {
-                    DispatchQueue.main.async {
-                        self.filterConstraint0.priority = UILayoutPriority(rawValue: 750)
-                        self.filterConstraint1.priority = UILayoutPriority(rawValue: 950)
-                        self.isFilterOn = true
-                        self.collectionFilterView.reloadData()
-                        self.collectionServicesView.reloadData()
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        self.filterConstraint0.priority = UILayoutPriority(rawValue: 950)
-                        self.filterConstraint1.priority = UILayoutPriority(rawValue: 750)
-                        self.isFilterOn = false
-                        self.collectionFilterView.reloadData()
-                        self.collectionServicesView.reloadData()
+        if FilterModel.shared.price.isEmpty && FilterModel.shared.words.isEmpty {
+            self.filterConstraint0.priority = UILayoutPriority(rawValue: 950)
+            self.filterConstraint1.priority = UILayoutPriority(rawValue: 750)
+            self.isFilterOn = false
+            self.collectionFilterView.reloadData()
+            self.collectionServicesView.reloadData()
+        } else {
+            DataManager.shared.getFilteredServices() { err in
+                DispatchQueue.main.async {
+                    if err == nil && !FilterModel.shared.servicesFiltered.isEmpty {
+                        DispatchQueue.main.async {
+                            self.filterConstraint0.priority = UILayoutPriority(rawValue: 750)
+                            self.filterConstraint1.priority = UILayoutPriority(rawValue: 950)
+                            self.isFilterOn = true
+                            self.collectionFilterView.reloadData()
+                            self.collectionServicesView.reloadData()
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.filterConstraint0.priority = UILayoutPriority(rawValue: 950)
+                            self.filterConstraint1.priority = UILayoutPriority(rawValue: 750)
+                            self.isFilterOn = false
+                            self.collectionFilterView.reloadData()
+                            self.collectionServicesView.reloadData()
+                        }
                     }
                 }
             }
         }
-        
     }
     func setModeSlaveMaster(mode: ServiceModel.Mode) {
         self.modeSlaveMaster = mode
@@ -205,7 +215,7 @@ extension ServicesViewController {
         filterConstraint0.priority = UILayoutPriority(rawValue: 950)
         filterConstraint0.isActive = true
         
-        filterConstraint1 = NSLayoutConstraint(item: collectionFilterView as Any, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 100)
+        filterConstraint1 = NSLayoutConstraint(item: collectionFilterView as Any, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 30)
         filterConstraint1.priority = UILayoutPriority(rawValue: 750)
         filterConstraint1.isActive = true
     }
@@ -234,7 +244,7 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
             }
         } else if collectionView == collectionFilterView {
             if isFilterOn {
-                return FilterModel.shared.words.count
+                return FilterModel.shared.words.count + FilterModel.shared.price.count
             } else {
                 return 0
             }
@@ -248,13 +258,15 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
             if collectionView == collectionServicesView {
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ServicesCollectionViewCell.identifier, for: indexPath) as? ServicesCollectionViewCell {
                     cell.setup(title: FilterModel.shared.servicesFiltered[indexPath.row].title,
-                               description: FilterModel.shared.servicesFiltered[indexPath.row].description,
+                               description: FilterModel.shared.servicesFiltered[indexPath.row].description, 
+                               price: String(FilterModel.shared.servicesFiltered[indexPath.row].price),
                                imageData: FilterModel.shared.servicesFiltered[indexPath.row].userImageData)
                     return cell
                 }
             } else if collectionView == collectionFilterView {
                 if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FilterCollectionViewCell.identifier, for: indexPath) as? FilterCollectionViewCell {
-                    cell.setup(title: String(indexPath.row))
+                    let rules = FilterModel.shared.words + FilterModel.shared.price
+                    cell.setup(title: rules[indexPath.row])
                     return cell
                 }
             } else {
@@ -268,21 +280,25 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
                     case .master:
                         if isSearchOn {
                             cell.setup(title: ServicesModel.shared.servicesMasterSearch[indexPath.row].title,
-                                       description: ServicesModel.shared.servicesMasterSearch[indexPath.row].description,
+                                       description: ServicesModel.shared.servicesMasterSearch[indexPath.row].description, 
+                                       price: String(ServicesModel.shared.servicesMasterSearch[indexPath.row].price),
                                        imageData: ServicesModel.shared.servicesMasterSearch[indexPath.row].userImageData)
                         } else {
                             cell.setup(title: ServicesModel.shared.servicesMaster[indexPath.row].title,
                                        description: ServicesModel.shared.servicesMaster[indexPath.row].description,
+                                       price: String(ServicesModel.shared.servicesMaster[indexPath.row].price),
                                        imageData: ServicesModel.shared.servicesMaster[indexPath.row].userImageData)
                         }
                     case .slave:
                         if isSearchOn {
                             cell.setup(title: ServicesModel.shared.servicesSlaveSearch[indexPath.row].title,
-                                       description: ServicesModel.shared.servicesSlaveSearch[indexPath.row].description,
+                                       description: ServicesModel.shared.servicesSlaveSearch[indexPath.row].description, 
+                                       price: String(ServicesModel.shared.servicesSlaveSearch[indexPath.row].price),
                                        imageData: ServicesModel.shared.servicesSlaveSearch[indexPath.row].userImageData)
                         } else {
                             cell.setup(title: ServicesModel.shared.servicesSlave[indexPath.row].title,
-                                       description: ServicesModel.shared.servicesSlave[indexPath.row].description,
+                                       description: ServicesModel.shared.servicesSlave[indexPath.row].description, 
+                                       price: String(ServicesModel.shared.servicesSlave[indexPath.row].price),
                                        imageData: ServicesModel.shared.servicesSlave[indexPath.row].userImageData)
                         }
                     }
@@ -303,8 +319,9 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
         if collectionView == collectionServicesView {
             return CGSize(width: collectionView.bounds.width, height: 70)
         } else {
+            let rules = FilterModel.shared.words + FilterModel.shared.price
             let att = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 13)]
-            let size = ("tmp" as NSString).size(withAttributes: att)
+            let size = (rules[indexPath.row] as NSString).size(withAttributes: att)
             return CGSize(width: size.width + 20, height: 30)
         }
     }

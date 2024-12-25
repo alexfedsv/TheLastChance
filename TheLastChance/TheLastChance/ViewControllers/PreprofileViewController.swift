@@ -11,7 +11,7 @@ protocol PreprofileViewControllerDelegate: AnyObject {
     func childIsKilled(commandToParent: PreprofileViewController.Command)
 }
 
-final class PreprofileViewController: UIViewController {
+final class PreprofileViewController: BaseViewController {
 
     enum Command {
         case toLogin

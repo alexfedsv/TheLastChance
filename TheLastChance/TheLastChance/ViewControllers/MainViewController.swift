@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class MainViewController: UIViewController {
+final class MainViewController: BaseViewController {
 
     private lazy var slaveButtonView: UIView = {
         let view = UIView()
@@ -20,7 +20,7 @@ final class MainViewController: UIViewController {
         let label = UILabel()
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = "ИСПОЛНИТЕЛЬ\n\nЯ хочу предоставить услугу по уходу за питомцем"
+        label.text = "ИСПОЛНИТЕЛИ\n\nХотят предоставить услугу по уходу за питомцем"
         label.textColor = .white
         return label
     }()
@@ -35,7 +35,7 @@ final class MainViewController: UIViewController {
         let label = UILabel()
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.text = "ЗАКАЗЧИК\n\nЯ нуждаюсь в услуге по уходу за питомцем"
+        label.text = "ЗАКАЗЧИКИ\n\nНуждаются в услуге по уходу за питомцем"
         label.textColor = .white
         return label
     }()
@@ -64,6 +64,7 @@ final class MainViewController: UIViewController {
         masterButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(masterTapped)))
         view.addSubview(titleLabel)
         setupConstraints()
+
     }
     @objc
     private func slaveTapped() {

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ServiceViewController: UIViewController {
+class ServiceViewController: BaseViewController {
 
     var serviceModel: ServiceModel?
     var userModel: UserProfileModel?
@@ -353,7 +353,7 @@ extension ServiceViewController {
         priceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20).isActive = true
         
         priceValLabel.topAnchor.constraint(equalTo: priceTitleLabel.bottomAnchor, constant: 5).isActive = true
-        priceValLabel.leadingAnchor.constraint(equalTo: priceLabel.trailingAnchor, constant: 10).isActive = true
+        priceValLabel.leadingAnchor.constraint(equalTo: priceLabel.trailingAnchor, constant: 5).isActive = true
         
         separator2View.topAnchor.constraint(greaterThanOrEqualTo: priceLabel.bottomAnchor, constant: 15).isActive = true
         separator2View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true

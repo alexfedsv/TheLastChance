@@ -22,4 +22,5 @@ enum APIfunc: String {
     case deleteService = "delete_service"
     case updateUser = "update_user"
     case getAdvice = "get_advice"
+    case getWordsForFilter = "get_top_animals"
 }

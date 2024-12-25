@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class RegistrationViewController: UIViewController {
+final class RegistrationViewController: BaseViewController {
 
     weak var preprofileViewControllerDelegate: PreprofileViewControllerDelegate?
     private var commandToParent: PreprofileViewController.Command = .back
@@ -365,17 +365,24 @@ extension RegistrationViewController: UITextViewDelegate {
             registrationModel.contacts = text
         }
         if textView == passwordTextView {
-            registrationModel.password = text
-            //textView.text = String(repeating: "*", count: (textView.text ?? "").count)
+            textView.text = String(repeating: "*", count: (textView.text ?? "").count)
         }
         if textView == confirmPasswordTextView {
-            registrationModel.passwordConfirmation = text
+            textView.text = String(repeating: "*", count: (textView.text ?? "").count)
         }
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             textView.resignFirstResponder()
             return false
+        }
+        if text == " " && text != "" {
+            return false
+        }
+        if textView == passwordTextView {
+            registrationModel.password = ((registrationModel.password) as NSString).replacingCharacters(in: range, with: text)
+        } else if textView == confirmPasswordTextView {
+            registrationModel.passwordConfirmation = ((registrationModel.passwordConfirmation) as NSString).replacingCharacters(in: range, with: text)
         }
         return true
     }

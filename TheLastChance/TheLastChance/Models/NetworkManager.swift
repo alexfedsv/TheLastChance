@@ -8,7 +8,7 @@
 import Foundation
 
 final class NetworkManager: NetworkProtocol {
-    
+
     enum HTTPMethod: String {
         case POST
         case GET
@@ -598,11 +598,47 @@ final class NetworkManager: NetworkProtocol {
             }
         }.resume()
     }
-    func getWordsForFilter(completion: @escaping (Result<[JSON.WordsForFilter], NetworkError>) -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0, execute: {
-            let words = [JSON.WordsForFilter(word: "Кошка"), JSON.WordsForFilter(word: "Собака"), JSON.WordsForFilter(word: "Змея"), JSON.WordsForFilter(word: "Чупакабра"), JSON.WordsForFilter(word: "Мустанг"), JSON.WordsForFilter(word: "Олень"), JSON.WordsForFilter(word: "Котик"), JSON.WordsForFilter(word: "Велосипед"), JSON.WordsForFilter(word: "Магистр"), JSON.WordsForFilter(word: "Черепаха"), JSON.WordsForFilter(word: "Крыса"), JSON.WordsForFilter(word: "Собака"), JSON.WordsForFilter(word: "Змея"), JSON.WordsForFilter(word: "Чупакабра"), JSON.WordsForFilter(word: "Мустанг"), JSON.WordsForFilter(word: "Олень"), JSON.WordsForFilter(word: "Котик"), JSON.WordsForFilter(word: "Велосипед"), JSON.WordsForFilter(word: "Магистр"), JSON.WordsForFilter(word: "Черепаха"), JSON.WordsForFilter(word: "Крыса"), JSON.WordsForFilter(word: "Собакоситер"), JSON.WordsForFilter(word: "Черепахи"), JSON.WordsForFilter(word: "Няня")]
-            completion(.success(words))
-        })
+    func getWordsForFilter(completion: @escaping (Result<JSON.WordsForFilter, NetworkError>) -> Void) {
+        guard let url = URL(string: baseURL + APIfunc.getWordsForFilter.rawValue) else {
+            let error: NetworkError = .invalidRequest(atFunc: #function)
+            completion(.failure(error))
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.GET.rawValue
+        request.setValue(Headers.path.rawValue, forHTTPHeaderField: Headers.contentType.rawValue)
+        let session = URLSession.shared
+        session.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("ERROR[\(#function)]: \(error.localizedDescription)")
+                let err: NetworkError = .knownError(err: error, atFunc: #function)
+                completion(.failure(err))
+                return
+            } else if let response = response as? HTTPURLResponse, let data = data {
+                if response.statusCode == 200 {
+                    do {
+                        let jsonObject = try JSONDecoder().decode(JSON.WordsForFilter.self, from: data)
+                        completion(.success(jsonObject))
+                        return
+                    } catch {
+                        print("ERROR[\(#function)]: Decoding JSON: \(error)")
+                        let err: NetworkError = .decodingJSON(err: error, atFunc: #function)
+                        completion(.failure(err))
+                        return
+                    }
+                } else {
+                    print("ERROR[\(#function)]: Something went wrong, response.statusCode: \(response.statusCode)")
+                    let err: NetworkError = .errorStatusCode(statusCode: response.statusCode, atFunc: #function)
+                    completion(.failure(err))
+                    return
+                }
+            } else {
+                print("ERROR[\(#function)]: Something went wrong")
+                let err: NetworkError = .unknownError(atFunc: #function)
+                completion(.failure(err))
+                return
+            }
+        }.resume()
     }
     func getFilteredServices(completion: @escaping (Result<[JSON.Service], NetworkError>) -> Void) {
         completion(.success([

@@ -22,6 +22,6 @@ protocol NetworkProtocol {
     func editUserProfile(model: UserProfileEditedModel, completion: @escaping (NetworkError?) -> Void)
     func editUserSettings(model: UserSettingsEditedModel, completion: @escaping (NetworkError?) -> Void)
     func getAdvice(typeOfAnimal: String, info: String, completion: @escaping (Result<JSON.Advice, NetworkError>) -> Void)
-    func getWordsForFilter(completion: @escaping (Result<[JSON.WordsForFilter], NetworkError>) -> Void)
+    func getWordsForFilter(completion: @escaping (Result<JSON.WordsForFilter, NetworkError>) -> Void)
     func getFilteredServices(completion: @escaping (Result<[JSON.Service], NetworkError>) -> Void)
 }

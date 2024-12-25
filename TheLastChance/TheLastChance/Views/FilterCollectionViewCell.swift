@@ -38,6 +38,10 @@ final class FilterCollectionViewCell: UICollectionViewCell {
         backgroundColor = .systemTeal.withAlphaComponent(isMarked ? 0.7 : 0.3)
         return isMarked
     }
+    func mark(isMarked: Bool) {
+        self.isMarked = isMarked
+        backgroundColor = .systemTeal.withAlphaComponent(isMarked ? 0.7 : 0.3)
+    }
     override func layoutSubviews() {
         super.layoutSubviews()
     }

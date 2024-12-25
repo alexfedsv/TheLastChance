@@ -115,9 +115,9 @@ struct JSON {
         }
     }
     struct WordsForFilter: Codable {
-        var word: String
+        var words: [String]
         private enum CodingKeys: String, CodingKey {
-            case word = "word"
+            case words = "animals"
         }
     }
 }

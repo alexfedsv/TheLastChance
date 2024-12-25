@@ -9,7 +9,7 @@
 import MapKit
 import CoreLocation
 
-final class MapViewController: UIViewController, CLLocationManagerDelegate {
+final class MapViewController: BaseViewController, CLLocationManagerDelegate {
     private var mapView: MKMapView = MKMapView()
     private let locationManager = CLLocationManager()
     

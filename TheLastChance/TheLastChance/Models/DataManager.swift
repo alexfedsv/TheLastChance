@@ -8,7 +8,7 @@
 import Foundation
 
 protocol DataManagerProtocol: AnyObject {
-    func login(login: String, password: String, completion: @escaping (NetworkError?) -> Void)
+    func login(loginModel: LoginModel, completion: @escaping (NetworkError?) -> Void)
     func registrate(registrationModel: RegistrationModel, completion: @escaping (NetworkError?) -> Void)
     func getUserProfile(userId: String, completion: @escaping (Result<JSON.UserProfile, NetworkError>) -> Void)
     func getPets(userId: String, completion: @escaping (Result<JSON.PetIds, NetworkError>) -> Void)
@@ -32,7 +32,7 @@ class DataManager: DataManagerProtocol {
         case mock
     }
     static let shared = DataManager()
-    var dataSource: DataSource = .mock
+    var dataSource: DataSource = .net
     var networkServiceProtocol: NetworkProtocol
 
     init() {
@@ -43,8 +43,8 @@ class DataManager: DataManagerProtocol {
             self.networkServiceProtocol = NetworkMockManager()
         }
     }
-    func login(login: String, password: String, completion: @escaping (NetworkError?) -> Void) {
-        self.networkServiceProtocol.login(login: login, password: password) { userIdResult in
+    func login(loginModel: LoginModel, completion: @escaping (NetworkError?) -> Void) {
+        self.networkServiceProtocol.login(login: loginModel.login, password: loginModel.password) { userIdResult in
             switch userIdResult {
             case .success(let json):
                 self.networkServiceProtocol.getUserProfile(userId: json.userId) { userProfileResult in
@@ -52,7 +52,7 @@ class DataManager: DataManagerProtocol {
                     case .success(let userProfile):
                         print("[DEBUG][\(#function)] юзер авторизован с userId: \(json.userId)")
                         Settings.shared.userId = json.userId
-                        Settings.shared.login = login
+                        Settings.shared.login = loginModel.login
                         UserHostProfileModel.shared.setup(userId: json.userId, json: userProfile)
                         completion(nil)
                     case .failure(let failure):
@@ -180,7 +180,8 @@ class DataManager: DataManagerProtocol {
         networkServiceProtocol.getWordsForFilter { result in
             switch result {
             case .success(let success):
-                let words = success.map({ $0.word })
+                var words: [String] = []
+                success.words.forEach({ words.append($0) })
                 completion(words)
             case .failure(let failure):
                 completion([])

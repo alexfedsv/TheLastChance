@@ -8,7 +8,7 @@
 import UIKit
 
 
-final class UserHostProfileViewController: UIViewController {
+final class UserHostProfileViewController: BaseViewController {
 
     var petsModel: PetsModel = PetsModel()
     private var myServices: [ServiceModel] = []
@@ -351,7 +351,8 @@ extension UserHostProfileViewController: UICollectionViewDataSource, UICollectio
         } else if collectionView == collectionServicesView {
             if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ServicesCollectionViewCell.identifier, for: indexPath) as? ServicesCollectionViewCell {
                 cell.setup(title: myServices[indexPath.row].title,
-                           description: myServices[indexPath.row].description,
+                           description: myServices[indexPath.row].description, 
+                           price: String(myServices[indexPath.row].price),
                            imageData: myServices[indexPath.row].userImageData)
                 return cell
             }

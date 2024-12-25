@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class UserEditViewController: UIViewController {
+final class UserEditViewController: BaseViewController {
 
     var userModel: UserProfileModel?
 

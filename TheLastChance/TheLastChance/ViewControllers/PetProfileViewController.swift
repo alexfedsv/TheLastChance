@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class PetProfileViewController: UIViewController {
+final class PetProfileViewController: BaseViewController {
 
     var userModel: UserProfileModel?
     var petModel: PetProfileModel?

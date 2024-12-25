@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class AddServiceViewController: UIViewController {
+final class AddServiceViewController: BaseViewController {
 
     var petsModel: PetsModel = PetsModel()
     var serviceAddModel = ServiceAddModel()
@@ -77,6 +77,13 @@ final class AddServiceViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.text = "Цена:"
+        label.numberOfLines = 1
+        return label
+    }()
+    private lazy var priceTailLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 16)
+        label.text = "рублей"
         label.numberOfLines = 1
         return label
     }()
@@ -190,6 +197,7 @@ final class AddServiceViewController: UIViewController {
         contentView.addSubview(descriptionTextView)
         contentView.addSubview(priceLabel)
         contentView.addSubview(priceTextView)
+        contentView.addSubview(priceTailLabel)
         contentView.addSubview(separator1View)
         contentView.addSubview(saveButtonView)
         saveButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(save)))
@@ -413,6 +421,7 @@ extension AddServiceViewController {
         descriptionTextView.translatesAutoresizingMaskIntoConstraints = false
         priceLabel.translatesAutoresizingMaskIntoConstraints = false
         priceTextView.translatesAutoresizingMaskIntoConstraints = false
+        priceTailLabel.translatesAutoresizingMaskIntoConstraints = false
         separator1View.translatesAutoresizingMaskIntoConstraints = false
         separator2View.translatesAutoresizingMaskIntoConstraints = false
         saveButtonView.translatesAutoresizingMaskIntoConstraints = false
@@ -492,8 +501,11 @@ extension AddServiceViewController {
         
         priceTextView.topAnchor.constraint(equalTo: priceLabel.bottomAnchor, constant: 3).isActive = true
         priceTextView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15).isActive = true
-        priceTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15).isActive = true
+        priceTextView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -100).isActive = true
         priceTextView.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        priceTailLabel.centerYAnchor.constraint(equalTo: priceTextView.centerYAnchor, constant: 7).isActive = true
+        priceTailLabel.leadingAnchor.constraint(equalTo: priceTextView.trailingAnchor, constant: 5).isActive = true
         
         separator1View.topAnchor.constraint(equalTo: priceTextView.bottomAnchor, constant: 15).isActive = true
         separator1View.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true

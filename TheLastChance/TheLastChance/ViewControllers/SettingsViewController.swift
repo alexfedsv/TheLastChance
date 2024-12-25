@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class SettingsViewController: UIViewController {
+final class SettingsViewController: BaseViewController {
 
     var userModel: UserProfileModel?
 

@@ -11,16 +11,39 @@ final class FilterModel {
     static let shared = FilterModel()
     private init() {}
     var words: [String] = []
-    var minPrice: Int = 0
-    var maxPrice: Int = 0
+    var price: [String] = []
+    var minPrice: Int = 0 {
+        didSet {
+            if checkData() {
+                price = []
+                price.append(priceRole())
+            } else {
+                price = []
+            }
+        }
+    }
+    var maxPrice: Int = 0 {
+        didSet {
+            if checkData() {
+                price = []
+                price.append(priceRole())
+            } else {
+                price = []
+            }
+        }
+    }
     var servicesFiltered: [ServiceModel] = []
     func checkData() -> Bool {
-        return minPrice <= maxPrice
-    }
-    func rulesCounter() -> Int {
-        return words.count + (checkData() ? 1 : 0)
+        return minPrice < maxPrice
     }
     func priceRole() -> String {
         return String("\(minPrice)-\(maxPrice) руб.")
+    }
+    func reset() {
+        words = []
+        price = []
+        minPrice = 0
+        maxPrice = 0
+        servicesFiltered = []
     }
 }
