@@ -10,6 +10,7 @@ import Foundation
 final class FilterModel {
     static let shared = FilterModel()
     private init() {}
+    var query: String = ""
     var words: [String] = []
     var price: [String] = []
     var minPrice: Int = 0 {

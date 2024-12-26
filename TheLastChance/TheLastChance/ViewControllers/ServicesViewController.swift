@@ -10,6 +10,7 @@ import UIKit
 protocol ServicesViewControllerDelegate: AnyObject {
     func setModeSlaveMaster(mode: ServiceModel.Mode)
     func applyFilters()
+    func deleteService(serviceId: String)
 }
 
 final class ServicesViewController: BaseViewController {
@@ -69,14 +70,19 @@ final class ServicesViewController: BaseViewController {
         let backButton = UIBarButtonItem()
         backButton.title = ""
         self.navigationItem.backBarButtonItem = backButton
-        let rightButtonImageFilter = UIImage(systemName: "slider.vertical.3")
-        let rightBarButtonItemFilter = UIBarButtonItem(image: rightButtonImageFilter, style: .plain, target: self, action: #selector(filterButtonTapped))
-        //let rightButtonImageMap = UIImage(systemName: "globe")
-        //let rightBarButtonItemMap = UIBarButtonItem(image: rightButtonImageMap, style: .plain, target: self, action: #selector(mapButtonTapped))
-        let rightButtonImageAdd = UIImage(systemName: "plus")
-        let rightBarButtonItemAdd = UIBarButtonItem(image: rightButtonImageAdd, style: .plain, target: self, action: #selector(addButtonTapped))
-        self.navigationItem.rightBarButtonItems = [rightBarButtonItemAdd, rightBarButtonItemFilter]
-        
+        guard let modeSlaveMaster = modeSlaveMaster else { return }
+        switch modeSlaveMaster {
+        case .master:
+            let rightButtonImageFilter = UIImage(systemName: "slider.vertical.3")
+            let rightBarButtonItemFilter = UIBarButtonItem(image: rightButtonImageFilter, style: .plain, target: self, action: #selector(filterButtonTapped))
+            let rightButtonImageAdd = UIImage(systemName: "plus")
+            let rightBarButtonItemAdd = UIBarButtonItem(image: rightButtonImageAdd, style: .plain, target: self, action: #selector(addButtonTapped))
+            self.navigationItem.rightBarButtonItems = [rightBarButtonItemAdd, rightBarButtonItemFilter]
+        case .slave:
+            let rightButtonImageAdd = UIImage(systemName: "plus")
+            let rightBarButtonItemAdd = UIBarButtonItem(image: rightButtonImageAdd, style: .plain, target: self, action: #selector(addButtonTapped))
+            self.navigationItem.rightBarButtonItems = [rightBarButtonItemAdd]
+        }
     }
     @objc
     private func filterButtonTapped() {
@@ -92,10 +98,6 @@ final class ServicesViewController: BaseViewController {
                 }
             }
         }
-    }
-    @objc
-    private func mapButtonTapped() {
-        print(#function)
     }
     @objc
     private func addButtonTapped() {
@@ -147,9 +149,6 @@ extension ServicesViewController: UISearchBarDelegate {
         }
         collectionServicesView.reloadData()
     }
-    func searchBarTextDidEndEditing(_: UISearchBar) {
-        
-    }
 }
 extension ServicesViewController: ServicesViewControllerDelegate {
     func applyFilters() {
@@ -187,6 +186,16 @@ extension ServicesViewController: ServicesViewControllerDelegate {
     func setModeSlaveMaster(mode: ServiceModel.Mode) {
         self.modeSlaveMaster = mode
         DispatchQueue.main.async {
+            self.collectionServicesView.reloadData()
+        }
+    }
+    func deleteService(serviceId: String) {
+        print(#function)
+        DispatchQueue.main.async {
+            ServicesModel.shared.servicesMaster.removeAll(where: { $0.serviceId == serviceId })
+            ServicesModel.shared.servicesSlave.removeAll(where: { $0.serviceId == serviceId })
+            ServicesModel.shared.servicesMasterSearch.removeAll(where: { $0.serviceId == serviceId })
+            ServicesModel.shared.servicesSlaveSearch.removeAll(where: { $0.serviceId == serviceId })
             self.collectionServicesView.reloadData()
         }
     }
@@ -329,24 +338,30 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
         if collectionView == collectionServicesView {
             guard let modeSlaveMaster = modeSlaveMaster else { return }
             let viewController = ServiceViewController()
+            viewController.servicesViewControllerDelegate = self
             var userId: String
             var serviceModel: ServiceModel
-            switch modeSlaveMaster {
-            case .master:
-                if isSearchOn{
-                    userId = ServicesModel.shared.servicesMasterSearch[indexPath.row].userId
-                    serviceModel = ServicesModel.shared.servicesMasterSearch[indexPath.row]
-                } else {
-                    userId = ServicesModel.shared.servicesMaster[indexPath.row].userId
-                    serviceModel = ServicesModel.shared.servicesMaster[indexPath.row]
-                }
-            case .slave:
-                if isSearchOn{
-                    userId = ServicesModel.shared.servicesSlaveSearch[indexPath.row].userId
-                    serviceModel = ServicesModel.shared.servicesSlaveSearch[indexPath.row]
-                } else {
-                    userId = ServicesModel.shared.servicesSlave[indexPath.row].userId
-                    serviceModel = ServicesModel.shared.servicesSlave[indexPath.row]
+            if isFilterOn {
+                userId = FilterModel.shared.servicesFiltered[indexPath.row].userId
+                serviceModel = FilterModel.shared.servicesFiltered[indexPath.row]
+            } else {
+                switch modeSlaveMaster {
+                case .master:
+                    if isSearchOn {
+                        userId = ServicesModel.shared.servicesMasterSearch[indexPath.row].userId
+                        serviceModel = ServicesModel.shared.servicesMasterSearch[indexPath.row]
+                    } else {
+                        userId = ServicesModel.shared.servicesMaster[indexPath.row].userId
+                        serviceModel = ServicesModel.shared.servicesMaster[indexPath.row]
+                    }
+                case .slave:
+                    if isSearchOn {
+                        userId = ServicesModel.shared.servicesSlaveSearch[indexPath.row].userId
+                        serviceModel = ServicesModel.shared.servicesSlaveSearch[indexPath.row]
+                    } else {
+                        userId = ServicesModel.shared.servicesSlave[indexPath.row].userId
+                        serviceModel = ServicesModel.shared.servicesSlave[indexPath.row]
+                    }
                 }
             }
             DataManager.shared.getUserProfile(userId: userId) { result in
@@ -365,8 +380,6 @@ extension ServicesViewController: UICollectionViewDataSource, UICollectionViewDe
                     }
                 }
             }
-        } else {
-            print("filter tapped")
         }
     }
 }

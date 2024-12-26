@@ -63,8 +63,31 @@ final class MainViewController: BaseViewController {
         masterButtonView.addSubview(masterButtonLabel)
         masterButtonView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(masterTapped)))
         view.addSubview(titleLabel)
+        getServices()
         setupConstraints()
 
+    }
+    private func getServices() {
+        if !ServicesModel.shared.isLoaded {
+            DataManager.shared.getServices { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let success):
+                        for elem in success {
+                            if elem.role == "master" {
+                                ServicesModel.shared.servicesMaster.append(ServiceModel(json: elem))
+                            }
+                            if elem.role == "slave" {
+                                ServicesModel.shared.servicesSlave.append(ServiceModel(json: elem))
+                            }
+                        }
+                        ServicesModel.shared.isLoaded = true
+                    case .failure(let failure):
+                        super.showAlertActionSheet(message: failure.censorshipDescription())
+                    }
+                }
+            }
+        }
     }
     @objc
     private func slaveTapped() {
@@ -100,37 +123,16 @@ final class MainViewController: BaseViewController {
                 targetButtonLabel.layer.opacity = 1
                 targetButtonLabel.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
             } completion: { _ in
-                if !ServicesModel.shared.isLoaded {
-                    DataManager.shared.getServices { result in
-                        DispatchQueue.main.async {
-                            switch result {
-                            case .success(let success):
-                                let viewController = ServicesViewController()
-                                for elem in success {
-                                    if elem.role == "master" {
-                                        ServicesModel.shared.servicesMaster.append(ServiceModel(json: elem))
-                                    }
-                                    if elem.role == "slave" {
-                                        ServicesModel.shared.servicesSlave.append(ServiceModel(json: elem))
-                                    }
-                                }
-                                viewController.modeSlaveMaster = modeSlaveMaster
-                                self.navigationController?.pushViewController(viewController, animated: true)
-                                self.masterButtonView.isUserInteractionEnabled = true
-                                self.slaveButtonView.isUserInteractionEnabled = true
-                                ServicesModel.shared.isLoaded = true
-                            case .failure(let failure):
-                                self.masterButtonView.isUserInteractionEnabled = true
-                                self.slaveButtonView.isUserInteractionEnabled = true
-                            }
-                        }
+                DispatchQueue.main.async {
+                    if ServicesModel.shared.isLoaded {
+                        let viewController = ServicesViewController()
+                        viewController.modeSlaveMaster = modeSlaveMaster
+                        self.navigationController?.pushViewController(viewController, animated: true)
+                        self.masterButtonView.isUserInteractionEnabled = true
+                        self.slaveButtonView.isUserInteractionEnabled = true
+                    } else {
+                        self.getServices()
                     }
-                } else {
-                    let viewController = ServicesViewController()
-                    viewController.modeSlaveMaster = modeSlaveMaster
-                    self.navigationController?.pushViewController(viewController, animated: true)
-                    self.masterButtonView.isUserInteractionEnabled = true
-                    self.slaveButtonView.isUserInteractionEnabled = true
                 }
             }
         }

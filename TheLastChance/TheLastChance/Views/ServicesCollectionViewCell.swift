@@ -85,7 +85,7 @@ extension ServicesCollectionViewCell {
         
         priceLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 3).isActive = true
         priceLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 1).isActive = true
-        priceLabel.widthAnchor.constraint(equalTo: imageView.widthAnchor, constant: 8).isActive = true
+        priceLabel.widthAnchor.constraint(equalTo: imageView.widthAnchor, constant: 9).isActive = true
 
         titleLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 5).isActive = true
         titleLabel.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: 8).isActive = true

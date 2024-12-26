@@ -378,7 +378,7 @@ extension RegistrationViewController: UITextViewDelegate {
             textView.resignFirstResponder()
             return false
         }
-        if textView != usernameTextView {
+        if textView != usernameTextView && textView != contactsTextView  {
             if text == " " && text != "" {
                 return false
             }

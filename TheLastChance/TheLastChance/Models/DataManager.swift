@@ -133,7 +133,9 @@ class DataManager: DataManagerProtocol {
         }
     }
     func deleteService(serviceId: String, completion: @escaping (NetworkError?) -> Void) {
-        
+        networkServiceProtocol.deleteService(serviceId: serviceId) { err in
+            completion(err)
+        }
     }
     func addPet(petModel: PetProfileModel, completion: @escaping (Result<PetProfileModel, NetworkError>) -> Void) {
         networkServiceProtocol.addPet(petModel: petModel) { result in

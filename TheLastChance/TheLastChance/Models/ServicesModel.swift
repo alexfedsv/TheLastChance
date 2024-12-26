@@ -15,4 +15,5 @@ final class ServicesModel {
     var servicesMasterSearch: [ServiceModel] = []
     var servicesSlaveSearch: [ServiceModel] = []
     var isLoaded: Bool = false
+    var isNeedToRelоad: Bool = false
 }

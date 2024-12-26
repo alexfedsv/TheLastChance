@@ -767,7 +767,7 @@ final class NetworkManager: NetworkProtocol {
             "max_price": FilterModel.shared.maxPrice,
             "animals": FilterModel.shared.words
         ]
-        guard let url = URL(string: baseURL + APIfunc.getFilteredServices.rawValue + "?query=\"\""), let body = try? JSONSerialization.data(withJSONObject: parameters, options: []) else {
+        guard let url = URL(string: baseURL + APIfunc.getFilteredServices.rawValue/* + "?query=\"\(FilterModel.shared.query)\""*/), let body = try? JSONSerialization.data(withJSONObject: parameters, options: []) else {
             let error: NetworkError = .invalidRequest(atFunc: #function)
             completion(.failure(error))
             return
@@ -788,6 +788,7 @@ final class NetworkManager: NetworkProtocol {
                 if response.statusCode == 200 {
                     do {
                         let jsonObject = try JSONDecoder().decode([JSON.Service].self, from: data)
+                        print("DEBUG[\(#function)]: Получено \(jsonObject.count) отфильтрованных сервисов")
                         completion(.success(jsonObject))
                         return
                     } catch {

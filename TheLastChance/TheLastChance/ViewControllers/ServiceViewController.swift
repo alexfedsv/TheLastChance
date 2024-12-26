@@ -7,10 +7,11 @@
 
 import UIKit
 
-class ServiceViewController: BaseViewController {
+final class ServiceViewController: BaseViewController {
 
     var serviceModel: ServiceModel?
     var userModel: UserProfileModel?
+    weak var servicesViewControllerDelegate: ServicesViewControllerDelegate?
     private var petsModel: PetsModel = PetsModel()
     private var scrollView: UIScrollView = UIScrollView()
     private var contentView: UIView = UIView()
@@ -265,6 +266,18 @@ class ServiceViewController: BaseViewController {
     @objc
     private func removeService() {
         print(#function)
+        guard let serviceModel = serviceModel else { return }
+        guard let delegate = servicesViewControllerDelegate else { return }
+        DataManager.shared.deleteService(serviceId: serviceModel.serviceId) { err in
+            DispatchQueue.main.async {
+                if err != nil {
+                    delegate.deleteService(serviceId: serviceModel.serviceId)
+                    self.navigationController?.popViewController(animated: true)
+                } else {
+                    super.showAlertActionSheet(message: err?.censorshipDescription() ?? "")
+                }
+            }
+        }
     }
 }
 extension ServiceViewController {

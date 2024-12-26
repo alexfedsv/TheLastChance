@@ -122,27 +122,30 @@ final class UserOtherProfileViewController: BaseViewController {
         guard let userModel = userModel else { return }
         let dispatchGroup = DispatchGroup()
         DataManager.shared.getPets(userId: userModel.userId) { resultPetIds in
-            switch resultPetIds {
-            case .success(let successPetIds):
-                for petId in successPetIds.petIds {
-                    dispatchGroup.enter()
-                    DataManager.shared.getPetProfile(petId: petId) { resultPetProfile in
-                        switch resultPetProfile {
-                        case .success(let successPetProfile):
-                            self.petsModel.pets.append(successPetProfile)
-                        case .failure(let failurePetProfile):
-                            print("[ERROR]: \(failurePetProfile.message())")
+            DispatchQueue.main.async {
+                switch resultPetIds {
+                case .success(let successPetIds):
+                    for petId in successPetIds.petIds {
+                        dispatchGroup.enter()
+                        DataManager.shared.getPetProfile(petId: petId) { resultPetProfile in
+                            switch resultPetProfile {
+                            case .success(let successPetProfile):
+                                self.petsModel.pets.append(successPetProfile)
+                            case .failure(let failurePetProfile):
+                                print("[ERROR]: \(failurePetProfile.message())")
+                            }
+                            dispatchGroup.leave()
                         }
-                        dispatchGroup.leave()
                     }
-                }
-                dispatchGroup.notify(queue: .main) {
-                    DispatchQueue.main.async {
-                        self.collectionView.reloadData()
+                    dispatchGroup.notify(queue: .main) {
+                        DispatchQueue.main.async {
+                            self.collectionView.reloadData()
+                        }
                     }
+                case .failure(let failurePetIds):
+                    print("[ERROR]: \(failurePetIds.message())")
                 }
-            case .failure(let failurePetIds):
-                print("[ERROR]: \(failurePetIds.message())")
+                self.otherPetsLabel.isHidden = self.petsModel.pets.isEmpty
             }
         }
     }

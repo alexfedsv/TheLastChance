@@ -211,11 +211,14 @@ final class PetProfileViewController: BaseViewController {
         DataManager.shared.getAdvice(typeOfAnimal: petModel.typeOfAnimal, info: petModel.info) { advice in
             DispatchQueue.main.async {
                 print("advice = \(advice)")
-                self.adviceLabel.text = advice
+                self.adviceLabel.text = self.delStars(string: advice)
                 self.activityIndicator.stopAnimating()
                 self.adviceImageView.isUserInteractionEnabled = true
             }
         }
+    }
+    private func delStars(string: String) -> String {
+        return string.replacingOccurrences(of: "**", with: " ")
     }
     func renewPetProfile(petProfileEdited: PetProfileModel) {
         DispatchQueue.main.async {

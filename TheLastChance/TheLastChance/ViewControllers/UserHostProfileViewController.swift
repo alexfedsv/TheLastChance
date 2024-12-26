@@ -162,7 +162,6 @@ final class UserHostProfileViewController: BaseViewController {
                 DispatchQueue.main.async {
                     switch result {
                     case .success(let success):
-                        let viewController = ServicesViewController()
                         for elem in success {
                             if elem.role == "master" {
                                 ServicesModel.shared.servicesMaster.append(ServiceModel(json: elem))
@@ -186,36 +185,37 @@ final class UserHostProfileViewController: BaseViewController {
             DispatchQueue.main.async {
                 self.myServices = ServicesModel.shared.servicesMaster.filter({ $0.userId == Settings.shared.userId }) + ServicesModel.shared.servicesSlave.filter({ $0.userId == Settings.shared.userId })
                 self.collectionServicesView.reloadData()
-                if self.myServices.isEmpty {
-                    self.myServicesLabel.isHidden = self.myServices.isEmpty
-                }
+                self.myServicesLabel.isHidden = self.myServices.isEmpty
             }
         }
     }
     private func getPets() {
         let dispatchGroup = DispatchGroup()
         DataManager.shared.getPets(userId: UserHostProfileModel.shared.userId) { resultPetIds in
-            switch resultPetIds {
-            case .success(let successPetIds):
-                for petId in successPetIds.petIds {
-                    dispatchGroup.enter()
-                    DataManager.shared.getPetProfile(petId: petId) { resultPetProfile in
-                        switch resultPetProfile {
-                        case .success(let successPetProfile):
-                            self.petsModel.pets.append(successPetProfile)
-                        case .failure(let failurePetProfile):
-                            print("[ERROR]: \(failurePetProfile.message())")
+            DispatchQueue.main.async {
+                switch resultPetIds {
+                case .success(let successPetIds):
+                    for petId in successPetIds.petIds {
+                        dispatchGroup.enter()
+                        DataManager.shared.getPetProfile(petId: petId) { resultPetProfile in
+                            switch resultPetProfile {
+                            case .success(let successPetProfile):
+                                self.petsModel.pets.append(successPetProfile)
+                            case .failure(let failurePetProfile):
+                                print("[ERROR]: \(failurePetProfile.message())")
+                            }
+                            dispatchGroup.leave()
                         }
-                        dispatchGroup.leave()
                     }
-                }
-                dispatchGroup.notify(queue: .main) {
-                    DispatchQueue.main.async {
-                        self.collectionPetsView.reloadData()
+                    dispatchGroup.notify(queue: .main) {
+                        DispatchQueue.main.async {
+                            self.collectionPetsView.reloadData()
+                        }
                     }
+                case .failure(let failurePetIds):
+                    print("[ERROR]: \(failurePetIds.message())")
                 }
-            case .failure(let failurePetIds):
-                print("[ERROR]: \(failurePetIds.message())")
+                self.myPetsLabel.isHidden = self.petsModel.pets.isEmpty
             }
         }
     }

@@ -67,29 +67,6 @@ struct JSON {
             case backgroundImage = "background_image_string"
         }
     }
-    /*struct Services: Codable {
-        struct Service: Codable {
-            var role: String
-            var serviceId: String
-            var userId: String
-            var title: String
-            var description: String
-            var userImage: String
-            var petIds: [String]
-            var price: Int
-            private enum CodingKeys: String, CodingKey {
-                case role = "role"
-                case serviceId = "service_id"
-                case userId = "user_id"
-                case title = "title"
-                case description = "description"
-                case userImage = "user_image"
-                case petIds = "pet_ids"
-                case price = "price"
-            }
-        }
-        var services: [Service]
-    }*/
     struct Service: Codable {
         var role: String
         var serviceId: String
