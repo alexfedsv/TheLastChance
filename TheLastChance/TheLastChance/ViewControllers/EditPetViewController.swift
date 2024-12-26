@@ -290,6 +290,7 @@ final class EditPetViewController: BaseViewController {
                                 self.saveButtonView.isUserInteractionEnabled = true
                             }
                         } else {
+                            super.showAlertActionSheet(message: err?.censorshipDescription() ?? "")
                             self.saveButtonView.isUserInteractionEnabled = true
                         }
                     }

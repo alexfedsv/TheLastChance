@@ -258,7 +258,7 @@ final class AddPetViewController: BaseViewController {
                             userViewController.reloadCollection()
                             self.navigationController?.popViewController(animated: true)
                         case .failure(let failure):
-                            break
+                            super.showAlertActionSheet(message: failure.censorshipDescription())
                         }
                         if petModel.petAvatar != nil {
                             self.activityIndicator.stopAnimating()

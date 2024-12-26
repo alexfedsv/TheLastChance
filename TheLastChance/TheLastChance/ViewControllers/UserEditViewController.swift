@@ -224,9 +224,12 @@ final class UserEditViewController: BaseViewController {
                     DispatchQueue.main.async {
                         if err == nil {
                             userViewController.setupUser()
+                            self.applyChangesButtonView.isUserInteractionEnabled = true
+                            self.navigationController?.popViewController(animated: true)
+                        } else {
+                            super.showAlertActionSheet(message: err?.censorshipDescription() ?? "")
+                            self.applyChangesButtonView.isUserInteractionEnabled = true
                         }
-                        self.applyChangesButtonView.isUserInteractionEnabled = true
-                        self.navigationController?.popViewController(animated: true)
                     }
                 }
             }

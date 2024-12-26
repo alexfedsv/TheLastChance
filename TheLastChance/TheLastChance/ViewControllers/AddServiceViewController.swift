@@ -331,7 +331,7 @@ final class AddServiceViewController: BaseViewController {
                             servicesViewController.setModeSlaveMaster(mode: self.serviceAddModel.role)
                             self.navigationController?.popViewController(animated: true)
                         case .failure(let failure):
-                            break
+                            super.showAlertActionSheet(message: failure.censorshipDescription())
                         }
                         self.saveButtonView.isUserInteractionEnabled = true
                     }

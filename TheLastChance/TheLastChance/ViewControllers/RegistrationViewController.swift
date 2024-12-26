@@ -330,7 +330,7 @@ final class RegistrationViewController: BaseViewController {
                             if err == nil {
                                 self.dismiss(animated: true, completion: nil)
                             } else {
-                                self.dismiss(animated: true, completion: nil)
+                                super.showAlertActionSheet(message: err?.censorshipDescription() ?? "")
                             }
                             self.saveButtonView.isUserInteractionEnabled = true
                         }

@@ -108,6 +108,30 @@ final class NetworkManager: NetworkProtocol {
                         completion(.failure(err))
                         return
                     }
+                } else if response.statusCode == 406 {
+                    do {
+                        let jsonObject = try JSONDecoder().decode(JSON.Err.self, from: data)
+                        print("DEBUG[\(#function)]: \(jsonObject.message)")
+                        completion(.failure(.censorshipMedia(atFunc: #function)))
+                        return
+                    } catch {
+                        print("ERROR[\(#function)]: Decoding JSON: \(error)")
+                        let err: NetworkError = .decodingJSON(err: error, atFunc: #function)
+                        completion(.failure(err))
+                        return
+                    }
+                } else if response.statusCode == 422 {
+                    do {
+                        let jsonObject = try JSONDecoder().decode(JSON.Err.self, from: data)
+                        print("DEBUG[\(#function)]: \(jsonObject.message)")
+                        completion(.failure(.censorshipText(atFunc: #function)))
+                        return
+                    } catch {
+                        print("ERROR[\(#function)]: Decoding JSON: \(error)")
+                        let err: NetworkError = .decodingJSON(err: error, atFunc: #function)
+                        completion(.failure(err))
+                        return
+                    }
                 } else {
                     print("ERROR[\(#function)]: Something went wrong, response.statusCode: \(response.statusCode)")
                     let err: NetworkError = .errorStatusCode(statusCode: response.statusCode, atFunc: #function)
@@ -332,6 +356,30 @@ final class NetworkManager: NetworkProtocol {
                         completion(.failure(err))
                         return
                     }
+                } else if response.statusCode == 406 {
+                    do {
+                        let jsonObject = try JSONDecoder().decode(JSON.Err.self, from: data)
+                        print("DEBUG[\(#function)]: \(jsonObject.message)")
+                        completion(.failure(.censorshipMedia(atFunc: #function)))
+                        return
+                    } catch {
+                        print("ERROR[\(#function)]: Decoding JSON: \(error)")
+                        let err: NetworkError = .decodingJSON(err: error, atFunc: #function)
+                        completion(.failure(err))
+                        return
+                    }
+                } else if response.statusCode == 422 {
+                    do {
+                        let jsonObject = try JSONDecoder().decode(JSON.Err.self, from: data)
+                        print("DEBUG[\(#function)]: \(jsonObject.message)")
+                        completion(.failure(.censorshipText(atFunc: #function)))
+                        return
+                    } catch {
+                        print("ERROR[\(#function)]: Decoding JSON: \(error)")
+                        let err: NetworkError = .decodingJSON(err: error, atFunc: #function)
+                        completion(.failure(err))
+                        return
+                    }
                 } else {
                     print("ERROR[\(#function)]: Something went wrong, response.statusCode: \(response.statusCode)")
                     let err: NetworkError = .errorStatusCode(statusCode: response.statusCode, atFunc: #function)
@@ -362,7 +410,7 @@ final class NetworkManager: NetworkProtocol {
                 let err: NetworkError = .knownError(err: error, atFunc: #function)
                 completion(err)
                 return
-            } else if let response = response as? HTTPURLResponse, let data = data {
+            } else if let response = response as? HTTPURLResponse, let _ = data {
                 if response.statusCode == 200 {
                     completion(nil)
                 } else {
@@ -417,11 +465,23 @@ final class NetworkManager: NetworkProtocol {
                         return
                     }
                     
-                } else if response.statusCode == 400 {
+                } else if response.statusCode == 406 {
                     do {
                         let jsonObject = try JSONDecoder().decode(JSON.Err.self, from: data)
                         print("DEBUG[\(#function)]: \(jsonObject.message)")
-                        completion(.failure(.censorship(atFunc: #function)))
+                        completion(.failure(.censorshipMedia(atFunc: #function)))
+                        return
+                    } catch {
+                        print("ERROR[\(#function)]: Decoding JSON: \(error)")
+                        let err: NetworkError = .decodingJSON(err: error, atFunc: #function)
+                        completion(.failure(err))
+                        return
+                    }
+                } else if response.statusCode == 422 {
+                    do {
+                        let jsonObject = try JSONDecoder().decode(JSON.Err.self, from: data)
+                        print("DEBUG[\(#function)]: \(jsonObject.message)")
+                        completion(.failure(.censorshipText(atFunc: #function)))
                         return
                     } catch {
                         print("ERROR[\(#function)]: Decoding JSON: \(error)")
@@ -459,7 +519,7 @@ final class NetworkManager: NetworkProtocol {
                 let err: NetworkError = .knownError(err: error, atFunc: #function)
                 completion(err)
                 return
-            } else if let response = response as? HTTPURLResponse, let data = data {
+            } else if let response = response as? HTTPURLResponse, let _ = data {
                 if response.statusCode == 200 {
                     completion(nil)
                 } else {
@@ -505,6 +565,30 @@ final class NetworkManager: NetworkProtocol {
             } else if let response = response as? HTTPURLResponse, let data = data {
                 if response.statusCode == 200 {
                     completion(nil)
+                } else if response.statusCode == 406 {
+                    do {
+                        let jsonObject = try JSONDecoder().decode(JSON.Err.self, from: data)
+                        print("DEBUG[\(#function)]: \(jsonObject.message)")
+                        completion(.censorshipMedia(atFunc: #function))
+                        return
+                    } catch {
+                        print("ERROR[\(#function)]: Decoding JSON: \(error)")
+                        let err: NetworkError = .decodingJSON(err: error, atFunc: #function)
+                        completion(err)
+                        return
+                    }
+                } else if response.statusCode == 422 {
+                    do {
+                        let jsonObject = try JSONDecoder().decode(JSON.Err.self, from: data)
+                        print("DEBUG[\(#function)]: \(jsonObject.message)")
+                        completion(.censorshipText(atFunc: #function))
+                        return
+                    } catch {
+                        print("ERROR[\(#function)]: Decoding JSON: \(error)")
+                        let err: NetworkError = .decodingJSON(err: error, atFunc: #function)
+                        completion(err)
+                        return
+                    }
                 } else {
                     print("ERROR[\(#function)]: Something went wrong, response.statusCode: \(response.statusCode)")
                     let err: NetworkError = .errorStatusCode(statusCode: response.statusCode, atFunc: #function)
@@ -552,6 +636,30 @@ final class NetworkManager: NetworkProtocol {
             } else if let response = response as? HTTPURLResponse, let data = data {
                 if response.statusCode == 200 {
                     completion(nil)
+                } else if response.statusCode == 406 {
+                    do {
+                        let jsonObject = try JSONDecoder().decode(JSON.Err.self, from: data)
+                        print("DEBUG[\(#function)]: \(jsonObject.message)")
+                        completion(.censorshipMedia(atFunc: #function))
+                        return
+                    } catch {
+                        print("ERROR[\(#function)]: Decoding JSON: \(error)")
+                        let err: NetworkError = .decodingJSON(err: error, atFunc: #function)
+                        completion(err)
+                        return
+                    }
+                } else if response.statusCode == 422 {
+                    do {
+                        let jsonObject = try JSONDecoder().decode(JSON.Err.self, from: data)
+                        print("DEBUG[\(#function)]: \(jsonObject.message)")
+                        completion(.censorshipText(atFunc: #function))
+                        return
+                    } catch {
+                        print("ERROR[\(#function)]: Decoding JSON: \(error)")
+                        let err: NetworkError = .decodingJSON(err: error, atFunc: #function)
+                        completion(err)
+                        return
+                    }
                 } else {
                     print("ERROR[\(#function)]: Something went wrong, response.statusCode: \(response.statusCode)")
                     let err: NetworkError = .errorStatusCode(statusCode: response.statusCode, atFunc: #function)
